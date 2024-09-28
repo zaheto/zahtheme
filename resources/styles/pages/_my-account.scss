@@ -1,0 +1,116 @@
+
+.woocommerce-account {
+  .main {
+    @apply py-10 px-0;
+    .woocommerce {
+      @apply flex flex-col md:flex-row;
+      .u-columns {
+        @apply flex flex-col md:flex-row gap-6 w-full;
+
+        .woocommerce-Address-title {
+          h3 {
+            @apply font-bold text-22 mb-3;
+          }
+          a {
+            @apply block mb-3 underline text-main hover:no-underline;
+          }
+        }
+
+        address {
+          @apply not-italic;
+        }
+
+        .col-1,
+        .col-2 {
+          @apply rounded p-6 bg-gray flex-1;
+
+          .woocommerce-privacy-policy-text {
+            @apply hidden;
+          }
+
+          h2 {
+            @apply font-bold text-22 text-black mb-3;
+          }
+          .woocommerce-form-login__submit,
+          .woocommerce-form-register__submit  {
+            @apply bg-main border border-main text-white;
+          }
+        }
+      }
+    }
+    .woocommerce-MyAccount-navigation {
+      @apply mr-0 md:mr-10 p-6 mb-0 bg-gray  w-full md:max-w-[280px];
+      ul {
+        li {
+          a {
+            @apply text-15 py-2 px-0 font-semibold text-black hover:text-main block ;
+          }
+        }
+      }
+    }
+    .woocommerce-MyAccount-content {
+      @apply w-full py-6 px-0 md:p-6;
+
+      h3 {
+        @apply font-bold text-22 mb-2;
+      }
+      .button {
+        @apply text-white bg-main font-bold leading-7 text-15;
+      }
+      .shop_table {
+        @apply w-full;
+        thead {
+          tr {
+            th {
+              @apply py-2 px-4 text-14 text-left bg-gray;
+            }
+          }
+        }//thead
+        tbody {
+          tr {
+            td {
+              @apply border-b border-black/20 py-2 px-4 text-14 text-left;
+              .button {
+                @apply font-bold leading-7 text-14 py-2 px-4;
+              }
+            }
+          }
+        }
+
+      }
+      .woocommerce-order-details {
+        @apply mb-6;
+        .woocommerce-order-details__title {
+          @apply font-bold mb-3;
+        }
+        tfoot {
+          tr {
+            th, td {
+              @apply py-2 px-4 text-left;
+            }
+          }
+        }
+      }
+      .woocommerce-customer-details {
+        @apply flex w-full;
+        .woocommerce-columns {
+          @apply flex w-full flex-col md:flex-row gap-6;
+          .woocommerce-column {
+            @apply rounded border border-black/20 p-3 flex-1;
+            .woocommerce-column__title {
+
+              @apply mb-2 text-base font-bold;
+            }
+            address {
+              @apply not-italic leading-6;
+            }
+          }
+        }
+      }
+    }//account
+  }
+}
+
+.woocommerce-MyAccount-navigation-link--downloads {
+  @apply hidden;
+}

@@ -1,0 +1,25 @@
+.modal {
+  @apply fixed left-0 top-0  h-full w-full  bg-black/80 flex items-center content-center justify-center invisible opacity-0;
+  &.open {
+    @apply visible opacity-100 z-60;
+  }
+}
+.modal-wrap {
+  @apply bg-white rounded-md z-70 relative translate-y-[-50px] transition-all duration-300 ease-in-out m-4 w-full md:m-0 md:max-w-[680px] transform-none opacity-100;
+}
+
+.modal-content {
+  @apply p-4 relative z-80;
+}
+
+.modal-head {
+  @apply flex items-center justify-between mb-4;
+  .close-btn {
+    @apply text-black hover:text-main block text-24 leading-5 relative cursor-pointer hover:cursor-pointer;
+  }
+
+  h4 {
+    @apply text-base md:text-18 font-semibold uppercase m-0 p-0 leading-5;
+  }
+}
+

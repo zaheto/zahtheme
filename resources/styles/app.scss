@@ -1,0 +1,40 @@
+@import '~swiper/scss'; // Base styles
+@import '~swiper/scss/autoplay'; // Additional modules if needed
+@import '~swiper/scss/navigation';
+@import '~swiper/scss/effect-fade';
+@import '~swiper/scss/pagination';
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@import "common/global";
+@import "common/swiper";
+@import "common/fonts";
+@import "common/buttons";
+@import "common/modals";
+@import "common/badges";
+@import "common/woocommerce";
+@import "partials/header";
+@import "partials/footer";
+
+@import "blocks/big-slider";
+@import "blocks/product-list";
+@import "blocks/category-list";
+@import "blocks/half-secton";
+@import "blocks/seo-section";
+@import "blocks/about-section";
+@import "blocks/contacts-section";
+
+@import "pages/homepage";
+@import "pages/static-page";
+@import "pages/inside-product";
+@import "pages/collections";
+@import "pages/cart";
+@import "pages/checkout";
+@import "pages/thank-you";
+@import "pages/my-account";
+
+@import "components/mobile-nav";
+@import "components/products";
+@import "components/cart-popup";

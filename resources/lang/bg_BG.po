@@ -1,0 +1,162 @@
+# Copyright (C) 2024 Viktor Zahov
+# This file is distributed under the MIT License.
+msgid ""
+msgstr ""
+"Project-Id-Version: Zah Theme 10.x-dev\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/theme/zah\n"
+"POT-Creation-Date: 2024-05-17T07:30:24+00:00\n"
+"PO-Revision-Date: 2024-05-23 13:16+0300\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: bg_BG\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.4\n"
+"X-Domain: zah\n"
+
+#: resources/views/woocommerce/single-product/tabs/description.php:40
+msgid "Read More"
+msgstr "Прочети повече"
+
+#. Description of the theme
+msgid "Sage is a WordPress starter theme."
+msgstr "Sage is a WordPress starter theme."
+
+#. Author of the theme
+msgid "Viktor Zahov"
+msgstr "Viktor Zahov"
+
+#. Name of the theme
+msgid "Zah Theme"
+msgstr "Zah Theme"
+
+msgid "Email address"
+msgstr "Имейл адрес"
+
+msgid "Call us now"
+msgstr "Позвънете на"
+
+msgid "copy footer"
+msgstr "©2024 XXXXXXX. Всички права запазени."
+
+msgid "Your account"
+msgstr "Твоят профил"
+
+msgid "Filters"
+msgstr "Филтри"
+
+msgid "Loading..."
+msgstr "Зарежда…"
+
+msgid "My Cart"
+msgstr "Моята количка"
+
+msgid "Your bag is empty"
+msgstr "Количката е празна"
+
+msgid "Continue shopping"
+msgstr "Продължете с пазаруването"
+
+msgid "To cart"
+msgstr "Продължи с пазаруването"
+
+msgid "Remove"
+msgstr "Премахни"
+
+msgid "Calculate at checkout"
+msgstr "Цената за доставка се начислява при плащане."
+
+msgid "Free shipping"
+msgstr "Безплатна доставка"
+
+msgid "Checkout"
+msgstr "ЗАВЪРШИ ПОРЪЧКАТА"
+
+msgid "You are "
+msgstr "Остават ви"
+
+msgid " away from free delivery"
+msgstr "до БЕЗПЛАТНА ДОСТАВКА"
+
+msgid "Congrats! You've reached free shipping."
+msgstr "Честито! Достигнахте безплатна доставка."
+
+msgid "Related products"
+msgstr "Подобни продукти"
+
+msgid "You may also like"
+msgstr "Може да харесате"
+
+msgid "You may be interested in"
+msgstr "Може да харесате, още"
+
+msgid "Information"
+msgstr "Информация"
+
+msgid "Reviews"
+msgstr "Ревюта"
+
+msgid "Gallery"
+msgstr "Галерия"
+
+msgid "In the box"
+msgstr "В кутията"
+
+msgid "Video"
+msgstr "Видео"
+
+msgid "BUY NOW"
+msgstr "ДОБАВИ В КОЛИЧКАТА"
+
+msgid "Prices from:"
+msgstr "Цени от:"
+
+msgid "Quick order with phone"
+msgstr "Бърза поръчка"
+
+msgid "Landing Feature 1"
+msgstr "Бързи и сигурни покупки"
+
+msgid "Landing Feature 2"
+msgstr "14 дни гаранция за връщане на парите"
+
+msgid "Landing Feature 3"
+msgstr "Доставка до куриерска фирма или адрес"
+
+msgid "Landing Feature 4"
+msgstr "Срок на доставка 1-3 работни дни"
+
+msgid "Add to cart"
+msgstr "Добави"
+
+msgid "Quick View"
+msgstr "Бърз преглед"
+
+msgid "Your cart"
+msgstr "Твоята количка"
+
+msgid "Shopping Cart"
+msgstr "Количка"
+
+msgid "Shipping and Checkout"
+msgstr "Доставка и плащане"
+
+msgid "Confirmation"
+msgstr "Потвърждение"
+
+#: includes/class-frontend.php:58
+msgid "Select options"
+msgstr "TTTT"
+
+msgid "Apply Coupon"
+msgstr "Приложи"
+
+msgid "Enter Coupon Code"
+msgstr "Въведи промо код"
+
+msgid "In stock"
+msgstr "Наличено"
+
+msgid "Out of stock"
+msgstr "Изчерпано"

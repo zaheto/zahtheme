@@ -1,0 +1,192 @@
+
+
+.subcategories-slider {
+  @apply mt-4 h-auto;
+  .swiper-wrapper {
+    @apply flex justify-center;
+  }
+  .swiper-slide {
+    @apply w-auto max-w-[300px];
+    a {
+      @apply relative after:content-[''] after:bg-gradient-to-b after:from-black/0 after:to-black/60 after:absolute after:top-0 after:left-0 after:right-0 after:bottom-0 after:block;
+      h3 {
+        @apply absolute text-center leading-5 left-0 right-0 bottom-5 text-18  text-white font-semibold z-10 uppercase;
+      }
+    }
+  }
+  .swiper-button-next,
+  .swiper-button-prev {
+      @apply hidden;
+  }
+}
+
+.subcategories-slider:hover .swiper-button-next,
+.subcategories-slider:hover .swiper-button-prev {
+  @apply opacity-100
+}
+
+.widget_product_categories {
+  @apply mb-2 pb-4 border-b border-black/10;
+}
+
+.widget_product_categories h3 {
+  @apply text-black/50 text-14 font-medium font-Inter mb-1 uppercase;
+}
+
+.product-categories ul.children {
+  @apply hidden;
+}
+
+.product-categories ul.children ul.children li {
+  a {
+    @apply text-black/70 pl-2 border-l border-black/10 hover:text-black;
+  }
+  &.current-cat {
+   a {
+    @apply text-main;
+   }
+  }
+}
+
+.product-categories .current-cat {
+  > a {
+    @apply text-main;
+  }
+  > .count {
+    @apply text-main;
+  }
+  > ul.children {
+    @apply block;
+  }
+}
+
+.product-categories > .current-cat .toggle-button {
+  @apply hidden;
+}
+
+.product-categories .cat-item {
+  a {
+    @apply leading-6 block;
+  }
+}
+
+.product-categories > .cat-item {
+  > a {
+    @apply text-15 uppercase font-bold leading-6;
+  }
+}
+
+.product-categories .cat-item {
+  @apply relative text-15 text-black capitalize;
+  a {
+    @apply hover:text-main;
+  }
+}
+
+.product-categories .cat-item .toggle-button {
+  @apply cursor-pointer block absolute right-0 top-0  text-main w-[32px] h-[32px] hover:bg-main/10 transition-all duration-150;
+}
+
+.product-categories .toggle-button:after {
+  @apply w-[32px] h-[32px] flex items-center justify-center;
+}
+
+.product-categories .toggle-button:after {
+  content: "+";
+}
+
+.product-categories .toggle-button.open:after {
+  content: "-";
+}
+
+
+.widget-woof  {
+ > h3 {
+  @apply hidden;
+ }
+}
+
+.filterby-top {
+  @apply mb-2;
+}
+
+.archive .site-main {
+  @apply md:mt-4;
+}
+
+aside.left {
+  @apply w-full md:max-w-[260px] md:mr-12 md:mt-6 absolute opacity-0 -left-[380px] z-20 p-6 top-20 md:top-auto md:p-8 bg-gray md:bg-white lg:relative lg:left-auto lg:visible lg:opacity-100 lg:bg-transparent lg:p-0;
+}
+
+aside.left.open {
+  @apply left-0 opacity-100 visible min-w-[260px] z-100;
+}
+
+.archive .term-description {
+  @apply bg-gray p-8 mt-8;
+}
+
+.woocommerce-pagination {
+  @apply p-6 relative;
+}
+
+.woocommerce-pagination .page-numbers {
+  @apply flex items-center content-center justify-center relative;
+}
+
+.woocommerce-pagination .page-numbers li {
+  @apply m-1;
+}
+
+.woocommerce-pagination .page-numbers li span {
+  @apply box-border flex flex-col justify-center items-center py-2 px-3 gap-3 w-8 h-8 text-15 bg-main text-white border border-main rounded-full flex-none order-1 flex-grow-0;
+}
+
+.woocommerce-pagination .page-numbers li a {
+  @apply box-border flex flex-col justify-center items-center py-2 px-3 gap-3 w-8 h-8 text-15 bg-white text-black hover:text-white hover:bg-main border border-black/10 rounded-full flex-none order-2 flex-grow-0
+}
+
+.archive {
+  .irs--round .irs-bar,
+  .irs--round .irs-from,
+  .irs--round .irs-single,
+  .irs--round .irs-to  {
+    @apply bg-main;
+  }
+  .woof_container {
+    @apply m-0 py-4 border-b border-black/10;
+    &.woof_price_filter  {
+      @apply pb-4;
+    }
+    &.woof_container_color .woof_list_color {
+      @apply flex flex-wrap gap-1;
+      li {
+        @apply p-0 m-0 w-1/6;
+        .woof_color_term {
+          @apply w-10 h-10 shadow-md;
+        }
+      }
+    }
+    &.woof_container_checkbox {
+      .woof_list_checkbox {
+        @apply flex flex-wrap;
+        li {
+          @apply flex w-1/2 items-center leading-4;
+          .icheckbox_square-red {
+            @apply m-0;
+            .woof_checkbox_label {
+              @apply leading-4 p-0;
+            }
+          }
+        }
+      }
+    }
+    .woof_container_inner {
+      h4 {
+        @apply text-black/50 text-14 font-medium font-Inter mb-1 uppercase;
+      }
+    }
+  }
+}
+
+

@@ -1,0 +1,62 @@
+
+.page-template-template-custom {
+  .wpcf7 {
+    @apply flex flex-col mb-4 bg-gray p-6 w-full;
+
+    .row {
+      @apply w-full gap-3 flex flex-col;
+      .cell {
+        @apply flex-1;
+      }
+    }
+
+    label {
+      @apply pb-1 uppercase text-14 text-black/50 block;
+    }
+
+    br {
+      @apply hidden;
+    }
+
+    .wpcf7-form-control-wrap {
+      @apply w-full;
+
+      input, textarea {
+        @apply w-full py-3 px-4;
+      }
+    }
+
+    .wpcf7-submit {
+      @apply py-3 px-8 rounded uppercase text-white bg-main;
+    }
+  }
+}
+
+.ui-accordion  {
+  .ui-icon {
+    @apply mr-3 w-[16px] h-[16px] overflow-hidden -indent-10 relative -mt-1 align-middle inline-block;
+  }
+  .ui-icon-triangle-1-e {
+    background-position: -32px -16px;
+  }
+
+  > div {
+    @apply rounded h-auto -mt-1 mb-3 pt-4 px-6 pb-3 border border-black/10 bg-white;
+    p {
+      @apply leading-7 text-base m-0 mb-3;
+    }
+  }
+
+  h3 {
+    @apply mb-1 cursor-pointer relative font-bold py-3 px-6 rounded bg-gray;
+  }
+
+  .ui-icon, .ui-widget-content .ui-icon {
+    @apply bg-menu-arrow-down bg-no-repeat bg-center;
+  }
+
+  .ui-state-active .ui-icon,
+  .ui-button:active .ui-icon {
+    @apply transform rotate-180;
+  }
+}

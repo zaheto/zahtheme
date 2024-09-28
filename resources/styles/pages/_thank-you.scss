@@ -1,0 +1,110 @@
+
+.woocommerce-order-received {
+  .shipped_via {
+    @apply hidden;
+  }
+  .woocommerce-customer-details {
+    @apply p-6;
+    .woocommerce-columns--2 {
+      @apply flex flex-col md:flex-row;
+      > div {
+        @apply flex-1;
+        .woocommerce-column__title {
+          @apply font-bold text-22;
+        }
+      }
+      address {
+        @apply not-italic;
+      }
+    }
+  }
+  .woocommerce-thankyou-order-received {
+    @apply mb-3 md:mb-6 p-4 md:p-6 text-center leading-7 text-18 md:text-24 text-green bg-green/20
+  }
+
+  .woocommerce-order-details {
+    @apply bg-white border border-black/20 p-5;
+    .woocommerce-order-details__title {
+      @apply font-bold text-22;
+    }
+
+    .shop_table {
+      @apply w-full;
+      td {
+        @apply text-14;
+      }
+      thead {
+        @apply hidden;
+        th {
+          @apply text-left text-13 border border-black/20 py-2 px-0;
+        }
+      }
+
+      tbody {
+        td {
+          @apply text-left py-1 px-0;
+          &.product-total {
+            @apply text-right md:text-left;
+          }
+          a {
+            @apply text-15;
+          }
+        }
+
+        .product-name {
+          .wc-item-meta {
+            @apply flex flex-col md:flex-row items-start md:items-center gap-0 md:gap-2 mb-2;
+            li {
+              @apply flex text-13 items-start text-black/60 gap-1;
+              strong {
+                @apply hidden;
+              }
+              p {
+                @apply m-0 p-0 text-13 text-black/60;
+              }
+            }
+          }
+        }
+      }
+
+      tfoot {
+        @apply rounded bg-gray;
+
+        th {
+          @apply font-normal py-2 px-4 text-15 text-left;
+        }
+
+        td {
+          @apply text-left text-15 pt-2 px-4;
+        }
+        .cart-subtotal {
+          th, td {
+            @apply pt-6;
+          }
+        }
+        .order-total {
+          th {
+            @apply text-18 font-bold pt-3 pb-6;
+          }
+          td {
+            @apply text-18 pt-3 pb-6;
+          }
+        }
+      }
+      tbody:after {
+        @apply w-full content-[''] block h-2;
+      }
+
+      tbody:before {
+        @apply w-full content-[''] block h-6;
+      }
+    }
+  }
+
+  .woocommerce-order-overview {
+    @apply mb-3 md:mb-6 rounded p-4 bg-gray;
+    li {
+      @apply my-1 mx-0;
+    }
+  }
+}

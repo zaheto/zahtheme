@@ -1,0 +1,41 @@
+.product-list-builder {
+  @apply flex flex-col items-center gap-4 md:gap-6 lg:gap-10 ;
+  h2.title {
+    @apply inline-block uppercase whitespace-nowrap mx-auto text-black text-28 lg:text-36 font-bold text-center relative;
+    span {
+      @apply block w-full h-1 mb-2;
+    }
+  }
+
+  .swiper-slide,
+  .swiper-container {
+    @apply h-full;
+    .product {
+      @apply h-full;
+    }
+  }
+
+  .swiper-wrapper {
+    @apply flex justify-between;
+  }
+
+  .swiper {
+    @apply pb-10;
+
+    .swiper-pagination {
+      @apply relative w-auto bottom-auto z-0 flex items-center justify-center content-center;
+      .swiper-pagination-bullet {
+        @apply bg-black/40 hover:bg-main;
+        &.swiper-pagination-bullet-active {
+          @apply bg-black hover:bg-main;
+        }
+      }
+    }
+  }
+
+}//product-list-builder
+
+
+
+
+

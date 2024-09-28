@@ -1,0 +1,20 @@
+.onsale {
+  @apply bg-main text-white py-0.5 px-2 text-13 absolute top-2 left-2 z-10 rounded-sm;
+}
+
+.product-label {
+  @apply bg-red-600 text-white text-13 py-0.5 px-2 z-10 rounded-sm;
+}
+
+.products .product .product-label,
+.swiper .product .product-label {
+  @apply absolute top-2 right-2;
+}
+
+.product-out-of-stock {
+  @apply bg-black/50 text-white py-0.5 px-2 text-13 text-center inline-block  rounded-sm;
+}
+
+.products .product .product-out-of-stock {
+  @apply absolute top-2 left-1/2 -translate-x-1/2 z-10 ;
+}

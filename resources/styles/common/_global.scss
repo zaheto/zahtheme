@@ -1,0 +1,83 @@
+html,
+body {
+  width: 100%;
+}
+
+body {
+  @apply pt-[86px] lg:pt-[155px] overflow-x-hidden overflow-y-auto;
+
+  &.disable-scroll {
+    @apply overflow-hidden;
+  }
+
+  &.auto {
+    overflow: inherit!important;
+  }
+
+  &.woocommerce-checkout {
+    @apply pt-0 pb-[40px];
+  }
+}
+
+.site-main,
+.content-area {
+  @apply w-full;
+}
+
+.container {
+  @apply relative px-3 md:px-5;
+}
+
+p {
+  @apply text-15 xl:text-base text-black leading-6 md:leading-7 font-normal tracking-normal mb-4;
+  strong {
+    @apply font-bold;
+  }
+}
+
+a,
+button {
+  @apply transition-all duration-200 cursor-pointer hover:transition-all hover:cursor-pointer;
+}
+
+ul {
+  li {
+    @apply text-15 xl:text-base text-black leading-6 font-normal tracking-normal py-0.5 xl:py-1;
+  }
+}
+
+.main {
+  @apply overflow-hidden;
+}
+
+.icon-header i  {
+  @apply text-32;
+}
+
+.admin-bar {
+  @apply pt-[46px] md:pt-[122px];
+}
+
+.overlay {
+  @apply hidden opacity-0 transition-all duration-200;
+}
+
+.overlay.active {
+  @apply flex opacity-100 transition-all duration-200;
+}
+
+// .cart-popup {
+//   @apply  transition-all opacity-0 invisible -right-[100%] duration-700;
+// }
+
+// .cart-popup.open {
+//   @apply block visible right-0  opacity-100 transition-all duration-300;
+// }
+
+// .cart-popup .cart-inner {
+//   @apply opacity-0 invisible duration-200;
+// }
+
+// .cart-popup.open .cart-inner {
+//   @apply visible opacity-100 transition-all duration-200;
+// }

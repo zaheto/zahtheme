@@ -1,0 +1,11 @@
+.about-section {
+  @apply pt-4 md:pt-10 flex flex-col items-center content-center;
+  .about-image {
+    @apply max-w-[1280px] w-full flex flex-col items-center justify-end pb-2 relative;
+  }//seo-image
+
+  .content {
+    @apply py-4 md:py-10 max-w-[980px] flex flex-col content-center items-start justify-center m-auto;
+  }
+
+}//seo-section

@@ -1,0 +1,443 @@
+.landing-header {
+  @apply w-full relative min-w-full py-2 px-2  flex items-center content-center justify-center;
+  .container {
+    @apply w-full relative min-w-full flex items-center content-center justify-between;
+  }
+  img {
+    @apply max-w-[132px] md:max-w-[180px] w-full block mx-auto;
+  }
+  .header-corners {
+    @apply w-full;
+    &.right {
+      @apply justify-end;
+    }
+  }
+}
+.buy-scroll {
+  @apply py-2 fixed z-100 -top-20 left-0 right-0 bg-white/90 border-b border-black/20 opacity-0 invisible duration-200 transition-all overflow-hidden;
+  &.scroll {
+    @apply top-0 opacity-100 visible duration-200 transition-all;
+  }
+  .container {
+    @apply flex items-center justify-between content-center;
+  }
+
+  .heading {
+    @apply text-14 md:text-22 font-bold leading-tight;
+  }
+
+  .right {
+    @apply flex items-center content-end gap-6;
+    ul {
+      @apply hidden md:flex items-center gap-5;
+      a {
+        @apply text-14 text-black uppercase font-medium hover:text-main;
+      }
+    }
+    .btn {
+      @apply whitespace-nowrap;
+    }
+  }
+}
+
+.landing-hero-section {
+  @apply bg-white p-0 md:p-10 flex flex-col items-center overflow-hidden;
+
+  .content {
+    @apply py-4 md:py-4 px-0 flex flex-col items-center gap-2 md:gap-4;
+
+    h3 {
+      @apply text-green text-15 md:text-17 font-semibold uppercase font-Inter text-center;
+    }
+
+    h2 {
+      @apply text-black text-38 md:text-60 font-extrabold font-Inter text-center;
+    }
+
+    .description {
+      @apply text-18 text-black/80;
+      p {
+        @apply text-18  text-black/80 text-center;
+      }
+    }
+
+    .bottom-cta {
+      @apply flex flex-col items-center max-w-[360px] w-full gap-4;
+      .btn {
+        @apply w-full;
+      }
+    }
+
+    .price-from {
+      @apply text-20 text-black flex items-center gap-2;
+      p {
+        @apply font-bold m-0 p-0 text-20 text-black;
+        span {
+          @apply font-bold m-0 p-0 text-20 text-black;
+          bdi {
+            @apply font-bold m-0 p-0 text-20 text-black;
+            span {
+              @apply font-bold m-0 p-0 text-20 text-black;
+            }
+          }
+        }
+      }
+    }
+
+    .hero-desktop {
+      @apply hidden md:block max-w-[892px];
+    }
+
+    .hero-mobile {
+      @apply block md:hidden max-w-[80%];
+    }
+
+
+  }
+
+
+
+  &.is-dark {
+    @apply bg-black;
+    .content {
+      h2 {
+        @apply text-white;
+      }
+      .description {
+        @apply  text-white/80;
+        p {
+          @apply text-white/80;
+        }
+      }
+
+      .price-from {
+        @apply text-white;
+        p {
+          @apply text-white;
+          span {
+            @apply text-white;
+            bdi {
+              @apply text-white;
+              span {
+                @apply text-white;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+}
+
+.landing-title {
+  @apply font-extrabold font-Inter text-black text-28 md:text-40 uppercase  leading-8 md:leading-[50px];
+}
+
+.landing-subtitle {
+  @apply font-medium font-Inter text-black/60 text-base uppercase;
+}
+
+.features-boxes {
+  @apply overflow-hidden;
+}
+
+.features-landing {
+  @apply border-t border-black/10 py-4;
+  .box {
+    @apply w-full flex items-center content-center justify-start px-1 md:px-2 gap-1 md:gap-2;
+    p {
+      @apply w-full m-0 p-0 leading-tight text-13 md:text-14 font-medium text-black/80 ;
+    }
+  }
+}
+
+
+.landing-introduction-section {
+  @apply bg-gray py-8 md:py-16 flex flex-col items-center gap-6 overflow-hidden;
+  .content {
+    @apply max-w-[900px] flex flex-col items-center content-center gap-4 px-4;
+    .landing-title {
+      @apply text-center;
+    }
+
+    .description {
+      @apply text-18 text-black/80;
+      p {
+        @apply text-18  text-black/80 text-center;
+      }
+    }
+  }
+
+  .video-box {
+    @apply relative rounded-xl overflow-hidden flex items-center content-center justify-center max-h-[560px] mb-10;
+    a {
+      @apply absolute left-0 right-0 bottom-0 top-0 block z-20;
+    }
+    .play {
+      @apply absolute left-0 right-0 bottom-0 top-0 z-10 flex items-center content-center justify-center bg-black/50;
+    }
+    .thumb {
+      @apply block w-full max-w-full;
+    }
+  }
+}//landing-introduction-section
+
+
+.features-center-with-image {
+  @apply flex flex-col md:flex-row items-center content-center justify-center gap-6 md:gap-8;
+  ul {
+    @apply mb-0;
+  }
+  ul li h3 {
+    @apply font-Inter text-20 text-center md:text-left md:text-24 text-black font-extrabold;
+  }
+
+  ul li p {
+    @apply text-base leading-tight mb-4 md:mb-6 text-center md:text-left text-black/80;
+  }
+
+  .features-list.left {
+    li h3 {
+      @apply text-center md:text-right;
+    }
+
+    li p {
+      @apply text-base leading-tight text-center md:text-right;
+    }
+  }
+}//features-center-with-image
+
+
+.landing-half-section {
+  .container {
+    @apply flex flex-col lg:flex-row items-center;
+  }
+
+  .container .cell {
+    @apply flex-1;
+  }
+  .cell .content {
+    @apply px-0 py-8 lg:p-8 xl:p-16 text-left;
+  }
+
+  .cell .content h2.landing-title {
+    @apply text-left mb-4;
+  }
+
+  .cell .content .description {
+    @apply text-18  text-black/80;
+      p {
+        @apply text-18  text-black/80 text-left;
+      }
+  }
+
+  &.right .container {
+    @apply flex-col lg:flex-row-reverse;
+  }
+
+
+}//landing-half-section
+
+
+.spacer-section {
+  @apply h-[var(--spacer-mobile)] overflow-hidden; /* Mobile first */
+
+  @screen sm { /* Small screens (640px and up) */
+      @apply h-[var(--spacer-tablet)];
+  }
+
+  @screen lg { /* Large screens (1024px and up) */
+      @apply h-[var(--spacer-desktop)];
+  }
+}
+
+.lading-gallery {
+  @apply overflow-hidden;
+  .swiper-wrapper {
+      transition-timing-function: linear;
+  }
+}
+
+
+.landing-how-to {
+  @apply bg-gray py-10 md:py-16 flex flex-col items-center overflow-hidden;
+
+  .content-top {
+    @apply flex flex-col items-center gap-2;
+    h2 {
+      @apply text-center;
+    }
+    h4 {
+      @apply text-center;
+    }
+  }
+
+
+  .how-to-list .content {
+    @apply flex flex-col items-center;
+  }
+
+  .how-to-list .content img {
+    @apply mb-2 w-auto;
+  }
+
+  .how-to-list .content h3 {
+    @apply text-center font-extrabold font-Inter text-black text-20 md:text-24 mb-0 px-4;
+  }
+
+  .how-to-list .content p {
+    @apply text-base text-black/80 text-center px-0 md:px-4 leading-tight;
+  }
+
+  .how-to-list .swiper-pagination {
+    @apply relative mt-4;
+    .swiper-pagination-bullet {
+      @apply bg-black/50 w-3 h-3;
+    }
+
+    .swiper-pagination-bullet.swiper-pagination-bullet-active {
+      @apply bg-black/80;
+    }
+  }
+
+}//landing-how-to}
+
+.landing-product-size {
+  @apply bg-gradient-to-t from-[#232323] to-[#363636] pt-10 md:pt-16 flex flex-col items-center overflow-hidden;
+
+  .content {
+    @apply flex flex-col items-center gap-2;
+    h2.landing-title {
+      @apply text-center text-white;
+    }
+    h4.landing-subtitle {
+      @apply text-center text-white/60;
+    }
+  }
+
+  .desktop {
+    @apply hidden md:block;
+  }
+
+  .mobile {
+    @apply block md:hidden;
+  }
+}//landing-product-size
+
+.landing-in-the-box {
+  @apply py-12 md:py-24 min-h-[620px] flex items-center ;
+  .container {
+    @apply flex items-center content-start;
+    .content {
+      @apply bg-white/90 p-6 md:p-10 w-full max-w-full md:max-w-[540px];
+      .landing-title {
+        @apply text-32 mb-4;
+      }
+      .description {
+        @apply text-18 text-black/80;
+          p {
+            @apply text-18  text-black/80 text-left;
+          }
+
+          ul li,
+          ol li {
+            @apply text-18 py-2 list-disc ml-5 text-black/80 text-left leading-tight;
+          }
+      }
+    }
+  }
+}//landing-in-the-box
+
+.wpcpq-table {
+  @apply flex flex-wrap gap-2;
+  .wpcpq-head .wpcpq-row-price {
+    @apply hidden;
+  }
+
+  .wpcpq-row > div {
+    @apply w-auto flex-auto;
+  }
+
+  .wpcpq-item {
+    @apply py-4 px-0 flex-1 relative flex flex-col md:flex-row items-center content-center justify-center bg-second/10 border-2 border-second/20 rounded-md duration-100 transition-all hover:scale-95 hover:duration-200 hover:transition-all;
+    &.wpcpq-item-active {
+      @apply bg-[#232323] border-2 border-[#232323];
+    }
+    .wpcpq-item-qty {
+      @apply text-right mr-1 font-extrabold text-base leading-5;
+      .ex {
+        @apply inline text-green text-center text-13;
+      }
+    }
+  }
+
+  .wpcpq-item-price-val {
+    @apply font-bold text-base leading-5;
+  }
+
+  .wpcpq-item-text .save {
+    @apply absolute left-1/2 -translate-x-1/2 -top-3 md:-top-2.5 block bg-red-500 rounded-xl text-white font-medium text-center text-12 px-1.5 md:px-3 whitespace-nowrap;
+  }
+
+  .wpcpq-item-text .ex {
+    @apply inline text-green text-center text-13;
+  }
+
+  .wpcpq-item-text .qntt {
+    @apply inline text-black/40 text-center text-12;
+  }
+
+  .wpcpq-item.wpcpq-item-active .wpcpq-item-text .qntt {
+    @apply text-white/60;
+  }
+
+  .wpcpq-head {
+    @apply p-0;
+  }
+
+  .wpcpq-summary,
+  .wpcpq-head {
+    @apply w-full;
+  }
+
+  .wpcpq-summary-total {
+    @apply text-right;
+  }
+}
+
+
+.quick-form-product {
+  @apply bg-white w-full p-6 rounded-md shadow-lg relative;
+  h5 {
+    @apply text-black text-18 md:text-22 font-extrabold font-Inter mb-2;
+  }
+
+  .close-modal {
+    @apply absolute top-0 right-0 flex items-center justify-center content-center w-10 h-10 p-0 m-0 text-green hover:text-black text-18 md:text-22 font-bold  cursor-pointer leading-none;
+  }
+
+  br {
+    @apply hidden;
+  }
+
+  p {
+    @apply m-0 p-0;
+  }
+
+  .wpcf7-form-control-wrap {
+    @apply w-full block mb-2;
+    input {
+      @apply w-full block border border-black/20 rounded-md h-12 px-4;
+    }
+  }
+
+  .wpcf7-submit  {
+    @apply inline-flex items-center content-center justify-center rounded-md px-6 py-2 text-base font-bold border gap-2 transition-all duration-300 hover:transition-all hover:duration-300 bg-main border-main text-white hover:bg-button-hover  hover:border-button-hover hover:shadow-md hover:shadow-main/20;
+  }
+
+  .wpcf7-response-output {
+    @apply py-2 px-4 bg-green/20 text-green rounded-md mt-4 mx-0 mb-0;
+  }
+}

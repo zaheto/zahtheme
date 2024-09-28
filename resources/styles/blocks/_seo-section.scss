@@ -1,0 +1,14 @@
+.seo-section {
+  @apply p-6 flex flex-col items-center;
+  .seo-image {
+    @apply w-full min-h-[300px] flex flex-col items-center justify-end px-8 pb-8 relative before:content-[''] before:block before:left-0 before:top-0 before:bottom-0 before:right-0 before:bg-gradient-to-b before:from-black/0 before:to-black/80 before:z-10 before:absolute;
+    h2 {
+      @apply text-white text-36 text-center relative z-20;
+    }
+  }//seo-image
+
+  .content {
+    @apply py-4 px-0 md:p-8 max-w-[1280px] md:columns-2 md:gap-16;
+  }
+
+}//seo-section

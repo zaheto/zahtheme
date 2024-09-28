@@ -1,0 +1,150 @@
+.home .products.columns-6,
+.archive .products.columns-6 {
+  @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 grid-rows-1;
+}
+
+.home .products.columns-5,
+.archive .products.columns-5 {
+  @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 grid-rows-1;
+}
+
+.home .products.columns-4,
+.archive .products.columns-4 {
+  @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 grid-rows-1;
+}
+
+.related-wrapper {
+  @apply w-full md:w-auto;
+}
+
+.products {
+  @apply flex flex-wrap -mx-[0.5%];
+}
+
+.products .product,
+.swiper-products .product {
+  @apply relative rounded-md flex flex-col content-start items-center justify-start bg-white  mt-0 pt-0 transition-all duration-200 hover:transition-all hover:duration-200 hover:shadow-xl hover:z-20 before:hidden md:before:block md:before:content-[''] before:bg-white before:shadow-xl before:invisible before:absolute before:left-0 before:opacity-0 before:w-full before:h-[calc(100%+50px)] hover:before:visible hover:before:opacity-100;
+}
+
+.products .product .product-loop--container,
+.swiper-products .product .product-loop--container {
+  @apply relative flex flex-col justify-start items-center w-full ;
+}
+
+.products .product .product-loop-title-container,
+.swiper-products .product .product-loop-title-container {
+  @apply flex gap-1  items-start justify-start flex-col w-full;
+}
+
+.products .product .product-loop-title-container h2,
+.swiper-products .product .product-loop-title-container h2 {
+  @apply text-left text-black text-15 leading-4 font-medium mt-2;
+}
+
+.products .product .woocommerce-LoopProduct-link,
+.swiper-products .product .woocommerce-LoopProduct-link {
+  @apply flex flex-col items-start justify-center content-center w-full overflow-hidden text-left leading-tight;
+}
+
+.products .product .woocommerce-LoopProduct-link img,
+.swiper-products .product .woocommerce-LoopProduct-link img {
+  @apply w-full p-2;
+}
+
+.products .product .woocommerce-card__header,
+.swiper-products .product .woocommerce-card__header {
+  @apply px-4 pt-0 pb-4 w-full;
+}
+
+.woocommerce-loop-product__title {
+  @apply text-14 font-Inter text-left mt-2  block  w-full;
+}
+
+.products .product .button,
+.swiper-products .product .button {
+  @apply absolute left-4 right-4 -bottom-[40px] border-none bg-main text-white hover:bg-black py-2 px-6 opacity-0 invisible whitespace-nowrap transition-all duration-200 hover:transition-all hover:duration-200;
+}
+
+.products .product:hover .button,
+.swiper-products .product:hover .button {
+  @apply md:opacity-100 md:visible transition-all duration-200 ;
+}
+
+.woocommerce-cart .products.columns-2  {
+  @apply block;
+}
+
+.products .product,
+.swiper-products .product  {
+  .price {
+    @apply flex flex-row items-center content-center justify-center mb-0 text-14;
+
+    .woocommerce-Price-amount.amount bdi,
+    ins .woocommerce-Price-amount.amount bdi,
+    ins  {
+      @apply text-center  text-14 no-underline font-bold text-main;
+    }
+
+    ins  {
+      @apply text-center ml-2 text-14 no-underline font-bold text-main;
+    }
+
+    del .woocommerce-Price-amount.amount bdi,
+    del {
+      @apply text-black text-center font-medium text-14 opacity-70;
+    }
+  }
+}
+
+.cross-sells,
+.related.products,
+.upsells.products {
+  @apply block text-center relative pt-10 md:pt-16 pb-2 md:pb-14 bg-white before:content-[''] before:block before:absolute before:top-0 before:bottom-0 before:-left-full before:w-full before:bg-white after:block after:absolute after:top-0 after:bottom-0 after:-right-full after:w-full after:bg-white;
+  .swiper {
+    @apply pb-8;
+  }
+  > h2 {
+    @apply text-black uppercase  text-22 md:text-32 xl:text-36 text-center mb-2 md:mb-6 relative before:absolute before:content-[''] before:block before:left-0 before:right-0 before:-top-2 pt-2 before:h-[4px] before:bg-blue-300 inline-block mx-auto;
+  }
+
+  .products {
+    @apply flex gap-3 flex-1 overflow-x-scroll md:overflow-x-hidden h-full flex-nowrap touch-auto md:touch-none -ml-4 md:ml-0 pl-4 md:pl-0 pb-6 md:pb-0 snap-x md:snap-none overscroll-contain md:overscroll-none;
+  }
+
+  .product {
+    @apply md:mb-0 pb-0 before:hidden hover:before:hidden max-w-[320px] min-w-[320px] lg:max-w-none lg:min-w-0 flex-col snap-center flex-1;
+    .button {
+      @apply opacity-100 visible relative left-auto right-auto bottom-auto w-full;
+    }
+  }
+
+  .swiper-pagination {
+    @apply bottom-0;
+    .swiper-pagination-bullet {
+      @apply bg-black;
+      &.swiper-pagination-bullet-active {
+        @apply bg-main;
+      }
+    }
+  }
+
+}
+.related.products {
+  @apply bg-[#f2f2f2] before:bg-[#f2f2f2] after:bg-[#f2f2f2];
+}
+
+
+.more-products-slider {
+  .swiper-button-prev,
+  .swiper-button-next {
+    @apply hidden md:flex;
+  }
+}
+
+
+
+
+
+
+
+

@@ -1,0 +1,423 @@
+.announce-bar {
+  @apply overflow-x-hidden relative bg-main flex;
+}
+
+.announce-bar ul {
+  @apply flex animate-marquee md:animate-none whitespace-nowrap py-1 gap-24 relative top-0 md:top-auto w-full items-center content-center justify-between;
+}
+
+.announce-bar ul li {
+  @apply m-0 text-13 text-white;
+}
+
+.announce-bar ul li p {
+  @apply m-0 text-white text-13;
+}
+
+.announce-bar ul li a {
+  @apply underline;
+}
+
+.header .inner-header {
+  @apply py-3 flex items-center container;
+}
+
+.header .inner-header .header-left {
+  @apply w-full lg:w-auto flex items-center lg:flex-auto relative;
+}
+
+.header .inner-header .header-left .icon-wrap  {
+  @apply w-[32px] h-[32px] mr-4 ;
+}
+
+.header .logo-wrap  {
+  @apply flex lg:inline-block w-full lg:w-auto  h-auto items-center justify-center content-center relative;
+}
+
+.header .logo-wrap .logo {
+  @apply block w-full flex-auto;
+}
+
+.header .logo-wrap .logo img {
+  @apply  w-full max-w-full min-w-full block;
+}
+
+.header .inner-header .header-left .icon {
+  @apply w-[32px] h-[32px] transition-all duration-200 scale-100 hover:scale-95 transform;
+}
+
+.headroom {
+  @apply fixed top-0 left-0 right-0 z-50;
+}
+
+.header #desktop-menu {
+  @apply absolute z-50 hidden opacity-0 top-1/2 -translate-y-1/2 left-0 transition-all duration-200;
+}
+
+.header .main-nav {
+  @apply hidden lg:flex flex-wrap w-full border-t relative z-100;
+}
+
+.navbar ul li {
+  @apply static;
+}
+
+.navbar ul li a {
+  @apply whitespace-nowrap px-5 py-3 flex text-15 uppercase font-semibold;
+}
+
+.navbar ul li .sub-menu {
+  @apply invisible opacity-0 absolute top-12 transition-all duration-200 min-w-[140px] bg-gray rounded-md shadow-md flex-col;
+}
+
+.navbar ul li .sub-menu li a {
+  @apply text-black hover:text-main;
+}
+
+.navbar ul li:hover .sub-menu {
+  @apply visible opacity-100 transition-all duration-200 py-2;
+}
+
+.navbar .header-main-nav .menu-item.menu-item-has-children,
+.navbar .header-right-nav .menu-item.menu-item-has-children {
+  @apply flex justify-between ;
+}
+
+.navbar .header-main-nav .menu-item.menu-item-has-children a,
+.navbar .header-right-nav .menu-item.menu-item-has-children a  {
+  @apply pr-6 relative;
+}
+
+.navbar .nav .menu-item.menu-item-has-children .sub-menu .sub-menu {
+  @apply invisible opacity-0 transition-all duration-200 absolute left-2 min-w-[140px] top-10 bg-gray rounded-md shadow-md flex-col;
+}
+
+.navbar .nav .menu-item.menu-item-has-children:hover .sub-menu .sub-menu {
+  @apply visible opacity-100 transition-all duration-200 py-2;
+}
+
+.navbar .nav .menu-item.menu-item-has-children:hover .sub-menu li a {
+  @apply py-2;
+}
+
+.navbar .nav li.has-mega-menu .sub-menu {
+  @apply w-full max-w-full;
+}
+
+.navbar .nav li.has-mega-menu .sub-menu {
+  @apply flex flex-col lg:flex-row flex-wrap;
+}
+
+.navbar .nav li.has-mega-menu .sub-menu li {
+  @apply lg:w-1/4;
+}
+
+.navbar .nav li.has-mega-menu .sub-menu li a {
+  @apply cursor-pointer ;
+}
+
+.header .main-nav .menu-item.menu-item-has-children > a:after {
+  @apply block content-[''] w-[15px] absolute top-0 right-0 bottom-0 bg-menu-arrow-down bg-no-repeat bg-center;
+}
+
+.header .main-nav .menu-item.menu-item-has-children:hover > a:after {
+  @apply rotate-180;
+}
+
+.search-box {
+  @apply flex-auto hidden invisible lg:visible opacity-0 lg:opacity-100 lg:flex lg:w-full absolute lg:relative top-[54px] lg:top-auto -left-5 lg:left-auto -right-5 lg:right-auto bg-black/50 lg:bg-white/20 lg:rounded-full py-2 px-6 lg:px-0 lg:py-0 z-20 shadow-md lg:shadow-none;
+}
+
+.search-box.active {
+  @apply visible opacity-100 flex;
+}
+
+.search-box .aws-container {
+  @apply w-full rounded-full bg-white lg:bg-transparent border-transparent lg:border lg:border-black/10 m-1;
+}
+
+.search-box .aws-container .aws-search-form .aws-form-btn {
+  @apply rounded-full border-none bg-main w-[38px] min-w-[38px] h-[38px] mt-[3px] mr-[3px];
+}
+.search-box .aws-search-result .aws_result_image img {
+  @apply w-[70px] bg-main;
+}
+
+.aws-container .aws-search-form .aws-search-field {
+  @apply text-14 pl-6 border-none;
+}
+
+.header-white .aws-search-form .aws-search-field {
+  @apply text-black bg-transparent ;
+}
+
+.header-black .aws-search-form .aws-search-field {
+  @apply text-white bg-transparent ;
+}
+
+.aws-search-result .aws_result_price {
+  @apply text-main text-14;
+}
+
+.aws-search-result .aws_result_title {
+  @apply text-black text-14 mb-[3px] font-normal block;
+}
+
+.aws-search-result .aws_result_excerpt,
+.aws-search-result .aws_result_sale,
+.product_meta .posted_in,
+.product_meta .tagged_as {
+  @apply hidden;
+}
+
+.aws-container .aws-search-form .aws-search-btn_icon {
+  @apply h-[26px];
+}
+
+.header.headroom--not-top #desktop-menu {
+  @apply lg:flex lg:opacity-100 transition-all duration-200;
+}
+
+.headroom.headroom--not-top {
+  @apply -top-9 transition-all duration-100;
+}
+
+.header.headroom--not-top .logo {
+  @apply ml-0 lg:ml-12;
+}
+
+.header.headroom--not-top .main-nav {
+  @apply hidden opacity-0 transition-all duration-200;
+}
+
+.header.headroom--not-top .main-nav.active {
+  @apply visible opacity-100 flex transition-all duration-200;
+}
+
+.scroll-phone-number {
+  @apply fixed bottom-[24px] right-[24px] z-50 bg-main rounded-full flex items-center justify-center content-center w-[50px] min-w-[50px] h-[50px] min-h-[50px];
+  .icon {
+    @apply text-white w-[28px] h-[28px];
+  }
+}
+
+.mobile-nav {
+  @apply md:max-w-[440px] flex flex-col lg:hidden fixed top-0 bottom-0 right-6 bg-white z-100 shadow-lg transition-all duration-200;
+  .icon-wrap {
+    @apply flex items-center justify-start px-4 pt-4 pb-3 mb-0;
+  }
+  #close-cart-popup .icon {
+    @apply rotate-45 w-[32px] h-[32px] hover:text-main transition-all duration-200 scale-100 hover:scale-95 transform;
+  }
+}
+
+.mobile-nav--inner {
+  @apply h-full flex flex-col justify-start overflow-x-hidden overflow-y-auto pb-20;
+}
+
+.mobile-nav .header--my-account {
+  @apply px-6 py-4 border-t border-black/10 bg-white z-50 shadow-[-3px_-10px_15px_1px_rgba(255,255,255,0.9)];
+}
+
+.mobile-nav .header--my-account li a {
+  @apply flex items-center text-15 text-black hover:text-main;
+}
+
+.mobile-nav .header--my-account li a .icon {
+  @apply text-detail  w-[40px] h-[40px]  hover:text-main transition-all duration-200 scale-100 hover:scale-95 transform mr-2;
+}
+
+.header-info {
+  @apply hidden lg:flex items-center mx-6;
+}
+
+.header-info .info-icon  {
+  @apply  mr-2 w-[32px] h-[32px];
+}
+
+.header-info--wrap {
+  @apply flex flex-col text-12 text-white/60 font-medium whitespace-nowrap;
+}
+
+.header-info--wrap a {
+  @apply text-white text-15 font-semibold -mt-1 whitespace-nowrap;
+}
+
+.header .header-right {
+  @apply absolute lg:relative right-3 lg:right-auto flex items-center gap-4;
+}
+
+.header .header--my-account .icon-wrap  {
+  @apply flex w-[32px] h-[32px];
+}
+
+.header .header--my-account .icon-wrap .icon {
+  @apply  w-[32px] h-[32px] transition-all duration-200 scale-100 hover:scale-95 transform;
+}
+
+.header .cart-info .icon {
+  @apply w-[32px] h-[32px]  transition-all duration-200 scale-100 hover:scale-95 transform;
+}
+
+.header-black {
+  @apply bg-black shadow-md;
+
+  .main-nav {
+    @apply  border-white/10 bg-black;
+  }
+
+  .main-nav .navbar ul li a {
+    @apply text-white hover:text-main;
+  }
+
+  .main-nav .navbar ul li .sub-menu li a {
+    @apply text-black;
+  }
+
+  .icon {
+    @apply text-white hover:text-main;
+  }
+
+  .mobile-nav--inner .navbar {
+    @apply border-b border-white/10;
+  }
+
+  .aws-container .aws-search-form .aws-search-btn_icon {
+    @apply text-black;
+  }
+
+  .navbar ul.header-right-nav li a  {
+    @apply text-white/80 hover:text-main;
+  }
+  .header-info--wrap {
+    @apply text-white/60 ;
+  }
+
+  .header-info--wrap a {
+    @apply text-white;
+  }
+
+  .header--my-account .icon-wrap .icon {
+    @apply text-white hover:text-main ;
+  }
+
+  .cart-info .icon {
+    @apply text-white hover:text-main ;
+  }
+
+}//header black
+
+
+.header-white {
+  @apply bg-white shadow-md;
+
+  .main-nav {
+    @apply  border-black/10 bg-white;
+  }
+
+  .main-nav .navbar ul li a {
+    @apply text-black hover:text-main;
+  }
+
+  .icon {
+    @apply text-black hover:text-main;
+  }
+
+  .mobile-nav--inner .navbar {
+    @apply border-b border-black/10;
+  }
+
+  .aws-container .aws-search-form .aws-search-btn_icon {
+    @apply text-black;
+  }
+
+  .navbar ul.header-right-nav li a  {
+    @apply text-black/80 hover:text-main;
+  }
+
+  .header-info--wrap {
+    @apply text-black/60 ;
+  }
+
+  .header-info--wrap a {
+    @apply text-black;
+  }
+
+  .header--my-account .icon-wrap .icon {
+    @apply text-black hover:text-main ;
+  }
+
+  .cart-info .icon {
+    @apply text-black hover:text-main;
+  }
+
+}//header white
+
+
+// header styles
+
+.header-1 {
+
+  .main-nav .container {
+    @apply flex flex-col lg:flex-row justify-between;
+  }
+
+  .logo-wrap  {
+    @apply mr-0 lg:mr-4;
+  }
+
+  .logo-wrap .logo {
+    @apply mr-0 lg:mr-4;
+  }
+
+}//header 1
+
+
+.header-2 {
+  .main-nav .container {
+    @apply flex flex-col lg:flex-row justify-center;
+  }
+
+  .search-box {
+    @apply flex-auto hidden invisible opacity-0 lg:opacity-100 lg:flex lg:w-full absolute top-[54px] lg:top-[82px] -left-5 -right-5 bg-white py-2 px-6 lg:px-0 lg:py-0 z-[200] shadow-md lg:shadow-none;
+  }
+
+  .search-box.active {
+    @apply visible opacity-100 flex;
+  }
+
+  .header-center {
+    @apply w-full flex items-center content-center justify-center;
+    .logo {
+      @apply m-0;
+    }
+  }
+
+  .inner-header .header-left {
+    @apply absolute  left-3  flex items-center gap-4;
+  }
+
+  .header-right {
+    @apply absolute  right-3  flex items-center gap-4;
+  }
+
+  .logo-wrap  {
+    @apply mr-0 lg:mr-0;
+  }
+
+  .logo-wrap .logo {
+    @apply mr-0 lg:mr-0;
+  }
+
+  #search-menu {
+    @apply flex items-center content-center absolute top-1/2 -translate-y-1/2 lg:left-1 left-14 z-50;
+  }
+
+  &.headroom--not-top #search-menu {
+    @apply lg:left-14;
+  }
+
+}//header 2
+
+
+

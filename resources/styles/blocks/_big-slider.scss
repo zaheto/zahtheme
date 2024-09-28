@@ -1,0 +1,12 @@
+.slider-home {
+  @apply h-auto ;
+  .swiper-slide {
+    @apply h-auto;
+    .desktop {
+      @apply  hidden md:block;
+    }
+    .mobile {
+      @apply block md:hidden;
+    }
+  }
+}//slider-home
