@@ -188,3 +188,16 @@ add_action('widgets_init', function () {
 //     echo json_encode($notices);
 // });
 
+add_action('rest_api_init', function () {
+    register_rest_route('blinds-calculator/v1', '/calculate', [
+        'methods' => 'POST',
+        'callback' => [new \App\Calculator(), 'calculate'],
+        'permission_callback' => '__return_true',
+    ]);
+});
+
+add_action('wp_enqueue_scripts', function () {
+    if (is_page_template('views/template-calculator.blade.php')) {
+        wp_enqueue_script('blinds-calculator', asset('scripts/calculator.js')->uri(), ['jquery'], null, true);
+    }
+});
