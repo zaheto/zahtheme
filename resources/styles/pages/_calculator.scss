@@ -1,0 +1,60 @@
+.calculator {
+    @apply max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md;
+  
+    .tabs {
+      @apply flex mb-6 border-b;
+  
+      li {
+        @apply mr-2;
+  
+        a {
+          @apply inline-block px-4 py-2 text-gray hover:text-gray hover:bg-gray rounded-t-lg;
+  
+          &.active {
+            @apply bg-gray text-gray font-semibold;
+          }
+        }
+      }
+    }
+  
+    .tab-content {
+      @apply hidden;
+  
+      &.active {
+        @apply block;
+      }
+    }
+  
+    .row {
+      @apply flex flex-wrap mb-4 -mx-2;
+  
+      input, select {
+        @apply w-full px-3 py-2 border rounded mx-2 mb-2;
+        flex: 1 1 calc(33.333% - 1rem);
+      }
+    }
+  
+    button {
+      @apply px-4 py-2 bg-main text-white rounded hover:bg-main;
+  
+      &.add-row {
+        @apply bg-green hover:bg-green mb-4;
+      }
+    }
+  
+    #results {
+      @apply mt-8;
+  
+      h3 {
+        @apply text-xl font-semibold mb-4;
+      }
+  
+      h4 {
+        @apply text-lg font-medium mb-2;
+      }
+  
+      ul {
+        @apply list-disc pl-6 mb-4;
+      }
+    }
+  }

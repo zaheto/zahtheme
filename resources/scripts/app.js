@@ -1,5 +1,6 @@
 //import domReady from '@roots/sage/client/dom-ready';
 
+import './atlas-fence-calculator.js';
 
 // if you're using a bundler, first import:
 import Headroom from "headroom.js";
