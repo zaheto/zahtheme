@@ -205,3 +205,9 @@ add_action('widgets_init', function () {
 //         wp_enqueue_script('blinds-calculator', asset('scripts/calculator.js')->uri(), ['jquery'], null, true);
 //     }
 // });
+
+// add_action('wp_enqueue_scripts', function () {
+//     if (is_product()) {
+//         wp_enqueue_script('atlas-fence-calculator', asset('scripts/atlas-fence-calculator.js')->uri(), ['jquery'], null, true);
+//     }
+// });

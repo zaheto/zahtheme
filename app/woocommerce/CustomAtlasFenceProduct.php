@@ -3,6 +3,8 @@
 namespace App\WooCommerce;
 
 class CustomAtlasFenceProduct extends \WC_Product {
+    protected $product_type;
+
     public function __construct($product = 0) {
         $this->product_type = 'custom_atlas_fence';
         parent::__construct($product);
@@ -16,6 +18,10 @@ class CustomAtlasFenceProduct extends \WC_Product {
         error_log("Calculating price for ATLAS fence: width=$width, height=$height, num_panels=$num_panels");
         
         // Fetch ACF fields
+        $price_per_linear_meter = $this->get_regular_price();
+        $total_linear_meters = $width * $num_panels;
+        $total_price = $total_linear_meters * $price_per_linear_meter;
+        
         $price_panels_pcs = get_field('price_panels_pcs', $this->get_id());
         $price_panels_lin_meter = get_field('price_panels_lin_meter', $this->get_id());
         $price_u_profile_left = get_field('price_u_profile_left', $this->get_id());

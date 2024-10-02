@@ -2,7 +2,7 @@ console.log('ATLAS Fence Calculator script loaded');
 
 jQuery(document).ready(function($) {
     console.log('DOM ready, searching for ATLAS Fence Calculator form');
-    var $form = $('#atlas-fence-form');
+    var $form = $('.atlas-fence-calculator');
     console.log('Form found:', $form.length > 0);
 
     if ($form.length === 0) {
@@ -10,10 +10,10 @@ jQuery(document).ready(function($) {
         return;
     }
 
-    console.log('Attaching submit event to form');
-    $form.on('submit', function(e) {
+    console.log('Attaching click event to calculate button');
+    $('#calculate-price').on('click', function(e) {
         e.preventDefault();
-        console.log('Form submitted');
+        console.log('Calculate button clicked');
         var width = $('#fence_width').val();
         var height = $('#fence_height').val();
         var num_panels = $('#num_panels').val();
@@ -38,17 +38,20 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 console.log('AJAX response received:', response);
                 if (response.success) {
-                    $('#atlas-fence-price').html('Calculated Price: $' + response.data.price);
-                    // Update the add to cart button with the new price
-                    $('input[name="add-to-cart"]').val(response.data.price);
+                    // Update the product price display
+                    $('.price').html(response.data.price_html);
+                    // Update hidden fields for add to cart
+                    $('input[name="fence_width"]').val(width);
+                    $('input[name="fence_height"]').val(height);
+                    $('input[name="num_panels"]').val(num_panels);
                 } else {
                     console.error('Error calculating price:', response.data);
-                    $('#atlas-fence-price').html('Error calculating price. Please try again.');
+                    alert('Error calculating price. Please try again.');
                 }
             },
             error: function(xhr, status, error) {
                 console.error('AJAX error:', status, error);
-                $('#atlas-fence-price').html('Error calculating price. Please try again.');
+                alert('Error calculating price. Please try again.');
             }
         });
     });

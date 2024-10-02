@@ -361,3 +361,9 @@ add_filter('woocommerce_product_class', function ($classname, $product_type) {
     }
     return $classname;
 }, 10, 2);
+
+add_action('woocommerce_before_single_product', function() {
+    global $product;
+    error_log("Product type on frontend: " . $product->get_type());
+    error_log("Product class on frontend: " . get_class($product));
+});
