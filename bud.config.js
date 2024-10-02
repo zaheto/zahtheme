@@ -14,7 +14,7 @@ export default async (app) => {
    * @see {@link https://bud.js.org/docs/bud.assets}
    */
   app
-    .entry('app', ['@scripts/app', '@scripts/calculator', '@styles/app'])
+    .entry('app', ['@scripts/app', '@styles/app'])
     .entry('editor', ['@scripts/editor', '@styles/editor'])
     .assets(['images', 'icons'])
 

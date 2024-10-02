@@ -2,10 +2,8 @@
 
 namespace App\WooCommerce;
 
-use WC_Product;
-
-class CustomAtlasFenceProduct extends WC_Product {
-    public function __construct($product) {
+class CustomAtlasFenceProduct extends \WC_Product {
+    public function __construct($product = 0) {
         $this->product_type = 'custom_atlas_fence';
         parent::__construct($product);
     }
@@ -15,6 +13,8 @@ class CustomAtlasFenceProduct extends WC_Product {
     }
 
     public function calculate_price($width, $height, $num_panels) {
+        error_log("Calculating price for ATLAS fence: width=$width, height=$height, num_panels=$num_panels");
+        
         // Fetch ACF fields
         $price_panels_pcs = get_field('price_panels_pcs', $this->get_id());
         $price_panels_lin_meter = get_field('price_panels_lin_meter', $this->get_id());
@@ -24,6 +24,17 @@ class CustomAtlasFenceProduct extends WC_Product {
         $price_panel_sqm = get_field('price_panel_sqm', $this->get_id());
         $reinforcing_profile = get_field('reinforcing_profile', $this->get_id());
         $price_rivets = get_field('price_rivets', $this->get_id());
+
+        error_log("ACF fields: " . json_encode([
+            'price_panels_pcs' => $price_panels_pcs,
+            'price_panels_lin_meter' => $price_panels_lin_meter,
+            'price_u_profile_left' => $price_u_profile_left,
+            'price_u_profile_right' => $price_u_profile_right,
+            'price_u_horizontal_panel' => $price_u_horizontal_panel,
+            'price_panel_sqm' => $price_panel_sqm,
+            'reinforcing_profile' => $reinforcing_profile,
+            'price_rivets' => $price_rivets,
+        ]));
 
         // Calculate materials needed
         $blinds_profile = ceil($width * $num_panels * 10);
@@ -44,6 +55,7 @@ class CustomAtlasFenceProduct extends WC_Product {
             ($reinforcing_profile_length * $reinforcing_profile) +
             ($rivets * $price_rivets);
 
+        error_log("Calculated total price: $total_price");
         return $total_price;
     }
 }

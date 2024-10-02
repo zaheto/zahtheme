@@ -53,9 +53,12 @@ add_action('after_setup_theme', function () {
     //add_theme_support('wc-product-gallery-lightbox');
     //add_theme_support('wc-product-gallery-slider');
 
+    error_log("Initializing WooCommerceSetup");
+    // new WooCommerceSetup();
 
-    new WooCommerceSetup();
-
+    add_action('woocommerce_init', function () {
+        new \App\WooCommerce\WooCommerceSetup();
+    });
 
     /**
      * Disable full-site editing support.
