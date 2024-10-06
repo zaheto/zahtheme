@@ -2,39 +2,40 @@
 
 namespace App\WooCommerce;
 
-class WooCommerceSetup {
-    public function __construct() {
+class WooCommerceSetup
+{
+    public function __construct()
+    {
         add_action('init', [$this, 'registerCustomAtlasFenceProductType']);
         add_filter('product_type_selector', [$this, 'addCustomAtlasFenceProductType']);
         add_filter('woocommerce_product_class', [$this, 'getCustomAtlasFenceProductClass'], 10, 2);
         add_action('admin_footer', [$this, 'customAtlasFenceCustomJs']);
-        add_action('woocommerce_before_add_to_cart_button', [$this, 'atlasFenceCalculatorForm']);
+        add_action('woocommerce_before_single_product', [$this, 'atlasFenceCalculatorForm']);
         add_action('wp_ajax_calculate_atlas_fence_price', [$this, 'calculateAtlasFencePrice']);
         add_action('wp_ajax_nopriv_calculate_atlas_fence_price', [$this, 'calculateAtlasFencePrice']);
-        add_filter('woocommerce_add_to_cart_validation', [$this, 'validateCustomFields'], 10, 3);
-        add_filter('woocommerce_add_cart_item_data', [$this, 'addCustomFieldsToCart'], 10, 3);
-        add_action('woocommerce_before_calculate_totals', [$this, 'calculateCustomPrice']);
-        add_filter('woocommerce_get_item_data', [$this, 'displayCustomFieldsInCart'], 10, 2);
-        add_action('woocommerce_checkout_create_order_line_item', [$this, 'addCustomFieldsToOrderItems'], 10, 4);
     }
 
-    public function registerCustomAtlasFenceProductType() {
+    public function registerCustomAtlasFenceProductType()
+    {
         require_once __DIR__ . '/CustomAtlasFenceProduct.php';
     }
 
-    public function addCustomAtlasFenceProductType($types) {
+    public function addCustomAtlasFenceProductType($types)
+    {
         $types['custom_atlas_fence'] = __('Custom ATLAS Fence', 'sage');
         return $types;
     }
 
-    public function getCustomAtlasFenceProductClass($classname, $product_type) {
+    public function getCustomAtlasFenceProductClass($classname, $product_type)
+    {
         if ($product_type === 'custom_atlas_fence') {
             $classname = 'App\WooCommerce\CustomAtlasFenceProduct';
         }
         return $classname;
     }
 
-    public function customAtlasFenceCustomJs() {
+    public function customAtlasFenceCustomJs()
+    {
         if ('product' != get_post_type()) {
             return;
         }
@@ -47,20 +48,29 @@ class WooCommerceSetup {
         <?php
     }
 
-    public function atlasFenceCalculatorForm() {
+    public function atlasFenceCalculatorForm()
+    {
+        error_log('atlasFenceCalculatorForm method called');
         global $product;
+        error_log('Product type: ' . $product->get_type());
+        error_log('Product ID: ' . $product->get_id());
+        
         if ($product->get_type() !== 'custom_atlas_fence') {
+            error_log('Not a custom_atlas_fence product, exiting');
             return;
         }
 
         $width_min = get_field('width_min', $product->get_id());
         $width_max = get_field('width_max', $product->get_id());
+        error_log('Width min: ' . $width_min . ', Width max: ' . $width_max);
 
         $height_options = [
-            0.745, 0.845, 0.945, 1.045, 1.145, 1.245, 1.345, 1.445, 1.545, 1.645, 1.745, 1.845, 1.945, 
+            0.745, 0.845, 0.945, 1.045, 1.145, 1.245, 1.345, 1.445, 1.545, 1.645, 1.745, 1.845, 1.945,
             2.045, 2.145, 2.245, 2.445, 2.545, 2.645, 2.745, 2.845, 2.945, 3.045, 3.145
         ];
 
+        error_log('Rendering form HTML');
+        ob_start();
         ?>
         <div class="atlas-fence-calculator">
             <h4><?php _e('Calculate Your ATLAS Fence', 'sage'); ?></h4>
@@ -83,9 +93,13 @@ class WooCommerceSetup {
             <button type="button" id="calculate-price"><?php _e('Calculate Price', 'sage'); ?></button>
         </div>
         <?php
+        $form_html = ob_get_clean();
+        error_log('Form HTML: ' . $form_html);
+        echo $form_html;
     }
 
-    public function calculateAtlasFencePrice() {
+    public function calculateAtlasFencePrice()
+    {
         $product_id = $_POST['product_id'];
         $width = floatval($_POST['width']);
         $height = floatval($_POST['height']);
@@ -104,90 +118,6 @@ class WooCommerceSetup {
             ));
         } else {
             wp_send_json_error('Invalid product');
-        }
-    }
-
-    public function validateCustomFields($passed, $product_id, $quantity) {
-        if (isset($_POST['fence_width']) && isset($_POST['fence_height']) && isset($_POST['num_panels'])) {
-            $width = floatval($_POST['fence_width']);
-            $height = floatval($_POST['fence_height']);
-            $num_panels = intval($_POST['num_panels']);
-
-            $width_min = get_field('width_min', $product_id);
-            $width_max = get_field('width_max', $product_id);
-
-            if ($width < $width_min || $width > $width_max || $num_panels < 1) {
-                wc_add_notice(__('Invalid fence dimensions or number of panels.', 'sage'), 'error');
-                return false;
-            }
-        } else {
-            wc_add_notice(__('Please enter fence dimensions and number of panels.', 'sage'), 'error');
-            return false;
-        }
-        return $passed;
-    }
-
-    public function addCustomFieldsToCart($cart_item_data, $product_id, $variation_id) {
-        if (isset($_POST['fence_width'])) {
-            $cart_item_data['fence_width'] = sanitize_text_field($_POST['fence_width']);
-        }
-        if (isset($_POST['fence_height'])) {
-            $cart_item_data['fence_height'] = sanitize_text_field($_POST['fence_height']);
-        }
-        if (isset($_POST['num_panels'])) {
-            $cart_item_data['num_panels'] = sanitize_text_field($_POST['num_panels']);
-        }
-        return $cart_item_data;
-    }
-
-    public function calculateCustomPrice($cart) {
-        if (is_admin() && !defined('DOING_AJAX')) {
-            return;
-        }
-
-        foreach ($cart->get_cart() as $cart_item) {
-            $product = $cart_item['data'];
-            if ($product->get_type() === 'custom_atlas_fence' && isset($cart_item['fence_width'], $cart_item['fence_height'], $cart_item['num_panels'])) {
-                $width = floatval($cart_item['fence_width']);
-                $height = floatval($cart_item['fence_height']);
-                $num_panels = intval($cart_item['num_panels']);
-                $new_price = $product->calculate_price($width, $height, $num_panels);
-                $product->set_price($new_price);
-            }
-        }
-    }
-
-    public function displayCustomFieldsInCart($item_data, $cart_item) {
-        if (isset($cart_item['fence_width'])) {
-            $item_data[] = array(
-                'key' => __('Width', 'sage'),
-                'value' => wc_clean($cart_item['fence_width']) . 'm'
-            );
-        }
-        if (isset($cart_item['fence_height'])) {
-            $item_data[] = array(
-                'key' => __('Height', 'sage'),
-                'value' => wc_clean($cart_item['fence_height']) . 'm'
-            );
-        }
-        if (isset($cart_item['num_panels'])) {
-            $item_data[] = array(
-                'key' => __('Panels', 'sage'),
-                'value' => wc_clean($cart_item['num_panels'])
-            );
-        }
-        return $item_data;
-    }
-
-    public function addCustomFieldsToOrderItems($item, $cart_item_key, $values, $order) {
-        if (isset($values['fence_width'])) {
-            $item->add_meta_data(__('Width', 'sage'), $values['fence_width'] . 'm');
-        }
-        if (isset($values['fence_height'])) {
-            $item->add_meta_data(__('Height', 'sage'), $values['fence_height'] . 'm');
-        }
-        if (isset($values['num_panels'])) {
-            $item->add_meta_data(__('Panels', 'sage'), $values['num_panels']);
         }
     }
 }
