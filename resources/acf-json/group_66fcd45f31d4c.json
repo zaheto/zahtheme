@@ -95,29 +95,6 @@
             "append": ""
         },
         {
-            "key": "field_66fcd4d4f39ad",
-            "label": "Цена на ламели (Брой)",
-            "name": "price_panels_pcs",
-            "aria-label": "",
-            "type": "number",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "min": "",
-            "max": "",
-            "allow_in_bindings": 0,
-            "placeholder": "",
-            "step": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
             "key": "field_66fcd519f39ae",
             "label": "Цена на ламели (Линеен метър)",
             "name": "price_panels_lin_meter",
@@ -210,29 +187,6 @@
             "append": ""
         },
         {
-            "key": "field_66fcd56bf39b2",
-            "label": "Цена на Пано в кв.м",
-            "name": "price_panel_sqm",
-            "aria-label": "",
-            "type": "number",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "min": "",
-            "max": "",
-            "allow_in_bindings": 0,
-            "placeholder": "",
-            "step": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
             "key": "field_66fcd587f39b3",
             "label": "Задни профили (Квадрат)",
             "name": "reinforcing_profile",
@@ -259,6 +213,75 @@
             "key": "field_66fcd5aef39b4",
             "label": "Цена на нитове",
             "name": "price_rivets",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "min": "",
+            "max": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "step": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_670215b3b47a6",
+            "label": "Цена на Самонарезни винтове",
+            "name": "price_self_tapping_screw",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "min": "",
+            "max": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "step": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_670215cdb47a7",
+            "label": "Цена на Тапи\/дюбели",
+            "name": "price_dowels",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "min": "",
+            "max": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "step": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_670215fcb47a9",
+            "label": "Цена на ъгли",
+            "name": "price_corners",
             "aria-label": "",
             "type": "number",
             "instructions": "",
@@ -309,5 +332,5 @@
     "acfe_form": 0,
     "acfe_meta": "",
     "acfe_note": "",
-    "modified": 1727845951
+    "modified": 1728189977
 }

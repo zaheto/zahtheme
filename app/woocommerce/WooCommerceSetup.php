@@ -90,7 +90,7 @@ class WooCommerceSetup
                 <label for="num_panels"><?php _e('Number of Panels:', 'sage'); ?></label>
                 <input type="number" id="num_panels" name="num_panels" min="1" step="1" required>
             </p>
-            <button type="button" id="calculate-price"><?php _e('Calculate Price', 'sage'); ?></button>
+            
         </div>
         <?php
         $form_html = ob_get_clean();

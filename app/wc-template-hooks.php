@@ -367,3 +367,4 @@ add_action('woocommerce_before_single_product', function() {
     error_log("Product type on frontend: " . $product->get_type());
     error_log("Product class on frontend: " . get_class($product));
 });
+
