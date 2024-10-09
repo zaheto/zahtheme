@@ -50,10 +50,10 @@
         },
         {
             "key": "field_66fcd4c1f39ac",
-            "label": "Височина Min",
-            "name": "height_min",
+            "label": "Височина",
+            "name": "panel_height",
             "aria-label": "",
-            "type": "number",
+            "type": "textarea",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -62,37 +62,13 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "min": "",
-            "max": "",
-            "allow_in_bindings": 0,
+            "default_value": "0.745\r\n0.845\r\n0.945\r\n1.045\r\n1.145\r\n1.245\r\n1.345\r\n1.445\r\n1.545\r\n1.645\r\n1.745\r\n1.845\r\n1.945\r\n2.045\r\n2.145\r\n2.245\r\n2.345\r\n2.445\r\n2.545\r\n2.645\r\n2.745\r\n2.845\r\n2.945\r\n3.045\r\n3.145",
+            "acfe_textarea_code": 0,
+            "maxlength": "",
+            "allow_in_bindings": 1,
+            "rows": "",
             "placeholder": "",
-            "step": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_66fcd635517f3",
-            "label": "Височина Max",
-            "name": "height_max",
-            "aria-label": "",
-            "type": "number",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "min": "",
-            "max": "",
-            "allow_in_bindings": 0,
-            "placeholder": "",
-            "step": "",
-            "prepend": "",
-            "append": ""
+            "new_lines": ""
         },
         {
             "key": "field_66fcd519f39ae",
@@ -188,8 +164,8 @@
         },
         {
             "key": "field_66fcd587f39b3",
-            "label": "Задни профили (Квадрат)",
-            "name": "reinforcing_profile",
+            "label": "Цена за Задни профили (Квадрат)",
+            "name": "price_reinforcing_profile",
             "aria-label": "",
             "type": "number",
             "instructions": "",
@@ -332,5 +308,5 @@
     "acfe_form": 0,
     "acfe_meta": "",
     "acfe_note": "",
-    "modified": 1728189977
+    "modified": 1728450844
 }

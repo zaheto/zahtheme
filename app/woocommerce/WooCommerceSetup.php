@@ -10,7 +10,7 @@ class WooCommerceSetup
         add_filter('product_type_selector', [$this, 'addCustomAtlasFenceProductType']);
         add_filter('woocommerce_product_class', [$this, 'getCustomAtlasFenceProductClass'], 10, 2);
         add_action('admin_footer', [$this, 'customAtlasFenceCustomJs']);
-        add_action('woocommerce_before_single_product', [$this, 'atlasFenceCalculatorForm']);
+        add_action('woocommerce_before_single_product', [$this, 'bootCustomProductClasses']);
         add_action('wp_ajax_calculate_atlas_fence_price', [$this, 'calculateAtlasFencePrice']);
         add_action('wp_ajax_nopriv_calculate_atlas_fence_price', [$this, 'calculateAtlasFencePrice']);
     }
@@ -48,54 +48,22 @@ class WooCommerceSetup
         <?php
     }
 
-    public function atlasFenceCalculatorForm()
+    public function bootCustomProductClasses()
     {
-        error_log('atlasFenceCalculatorForm method called');
         global $product;
-        error_log('Product type: ' . $product->get_type());
-        error_log('Product ID: ' . $product->get_id());
         
-        if ($product->get_type() !== 'custom_atlas_fence') {
-            error_log('Not a custom_atlas_fence product, exiting');
-            return;
+        if ($product instanceof \WC_Product_Simple && has_term('atlas', 'product_tag', $product->get_id())) {
+            $this->enqueueCustomScripts();
         }
+    }
 
-        $width_min = get_field('width_min', $product->get_id());
-        $width_max = get_field('width_max', $product->get_id());
-        error_log('Width min: ' . $width_min . ', Width max: ' . $width_max);
-
-        $height_options = [
-            0.745, 0.845, 0.945, 1.045, 1.145, 1.245, 1.345, 1.445, 1.545, 1.645, 1.745, 1.845, 1.945,
-            2.045, 2.145, 2.245, 2.445, 2.545, 2.645, 2.745, 2.845, 2.945, 3.045, 3.145
-        ];
-
-        error_log('Rendering form HTML');
-        ob_start();
-        ?>
-        <div class="atlas-fence-calculator">
-            <h4><?php _e('Calculate Your ATLAS Fence', 'sage'); ?></h4>
-            <p>
-                <label for="fence_width"><?php _e('Fence Width (m):', 'sage'); ?></label>
-                <input type="number" id="fence_width" name="fence_width" min="<?php echo esc_attr($width_min); ?>" max="<?php echo esc_attr($width_max); ?>" step="0.01" required>
-            </p>
-            <p>
-                <label for="fence_height"><?php _e('Panel Height (m):', 'sage'); ?></label>
-                <select id="fence_height" name="fence_height" required>
-                    <?php foreach ($height_options as $height): ?>
-                        <option value="<?php echo esc_attr($height); ?>"><?php echo esc_html($height); ?> m</option>
-                    <?php endforeach; ?>
-                </select>
-            </p>
-            <p>
-                <label for="num_panels"><?php _e('Number of Panels:', 'sage'); ?></label>
-                <input type="number" id="num_panels" name="num_panels" min="1" step="1" required>
-            </p>
-            
-        </div>
-        <?php
-        $form_html = ob_get_clean();
-        error_log('Form HTML: ' . $form_html);
-        echo $form_html;
+    public function enqueueCustomScripts()
+    {
+        global $product;
+        
+        wp_enqueue_script('atlas-fence-calculator', get_template_directory_uri() . '/resources/scripts/atlas-fence-calculator.js', ['jquery'], null, true);
+        $customProduct = new CustomAtlasFenceProduct($product);
+        wp_localize_script('atlas-fence-calculator', 'atlasData', $customProduct->getAcfData());
     }
 
     public function calculateAtlasFencePrice()

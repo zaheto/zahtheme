@@ -9,6 +9,8 @@ namespace App;
 use function Roots\bundle;
 use App\WooCommerce\WooCommerceSetup;
 
+new \App\AjaxHandlers();
+
 /**
  * Register the theme assets.
  *
