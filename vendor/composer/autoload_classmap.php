@@ -6,11 +6,14 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\AjaxHandlers' => $baseDir . '/app/AjaxHandlers.php',
     'App\\Providers\\ThemeServiceProvider' => $baseDir . '/app/Providers/ThemeServiceProvider.php',
     'App\\View\\Components\\Alert' => $baseDir . '/app/View/Components/Alert.php',
     'App\\View\\Composers\\App' => $baseDir . '/app/View/Composers/App.php',
     'App\\View\\Composers\\PageBuildComposer' => $baseDir . '/app/View/Composers/PageBuildComposer.php',
     'App\\View\\Composers\\Post' => $baseDir . '/app/View/Composers/Post.php',
+    'App\\WooCommerce\\CustomAtlasFenceProduct' => $baseDir . '/app/WooCommerce/CustomAtlasFenceProduct.php',
+    'App\\WooCommerce\\WooCommerceSetup' => $baseDir . '/app/WooCommerce/WooCommerceSetup.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'BladeUI\\Icons\\BladeIconsServiceProvider' => $vendorDir . '/blade-ui-kit/blade-icons/src/BladeIconsServiceProvider.php',
     'BladeUI\\Icons\\Components\\Icon' => $vendorDir . '/blade-ui-kit/blade-icons/src/Components/Icon.php',

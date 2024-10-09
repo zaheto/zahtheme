@@ -1,7 +1,6 @@
 <?php
 
 namespace App;
-use App\WooCommerce\CustomAtlasFenceProduct;
 
 /**
  * WooCommerce Template Hooks
@@ -350,14 +349,3 @@ add_action( 'zah_before_site', 'zah_header_cart_drawer', 5 );
 // remove_action('woocommerce_before_reset_password_form', 'woocommerce_output_all_notices', 10);
 
 add_filter( 'woocommerce_add_to_cart_fragments', 'zah_cart_link_fragment' );
-
-
-// Debug action (keep for now, remove later if not needed)
-add_action('woocommerce_before_single_product', function() {
-    global $product;
-    error_log("Product type on frontend: " . $product->get_type());
-    error_log("Product class on frontend: " . get_class($product));
-});
-
-// Include Atlas calculator template
-add_action('woocommerce_single_product_summary', 'Roots\view', 21, ['woocommerce.single-product.atlas-calculator']);

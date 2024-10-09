@@ -1790,6 +1790,3 @@ add_filter('woocommerce_sale_flash', 'ds_change_sale_text');
 function ds_change_sale_text() {
 return '<span class="onsale">Промоция</span>';
 }
-
-
-

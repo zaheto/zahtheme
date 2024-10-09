@@ -7,9 +7,6 @@
 namespace App;
 
 use function Roots\bundle;
-use App\WooCommerce\WooCommerceSetup;
-
-new \App\AjaxHandlers();
 
 /**
  * Register the theme assets.
@@ -55,12 +52,6 @@ add_action('after_setup_theme', function () {
     //add_theme_support('wc-product-gallery-lightbox');
     //add_theme_support('wc-product-gallery-slider');
 
-    error_log("Initializing WooCommerceSetup");
-    // new WooCommerceSetup();
-
-    add_action('woocommerce_init', function () {
-        new \App\WooCommerce\WooCommerceSetup();
-    });
 
     /**
      * Disable full-site editing support.
@@ -213,3 +204,4 @@ add_action('widgets_init', function () {
 //         wp_enqueue_script('atlas-fence-calculator', asset('scripts/atlas-fence-calculator.js')->uri(), ['jquery'], null, true);
 //     }
 // });
+

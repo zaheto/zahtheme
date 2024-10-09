@@ -424,11 +424,14 @@ class ComposerStaticInitadf5ff1d3a4e622eff8422012c30795a
     );
 
     public static $classMap = array (
+        'App\\AjaxHandlers' => __DIR__ . '/../..' . '/app/AjaxHandlers.php',
         'App\\Providers\\ThemeServiceProvider' => __DIR__ . '/../..' . '/app/Providers/ThemeServiceProvider.php',
         'App\\View\\Components\\Alert' => __DIR__ . '/../..' . '/app/View/Components/Alert.php',
         'App\\View\\Composers\\App' => __DIR__ . '/../..' . '/app/View/Composers/App.php',
         'App\\View\\Composers\\PageBuildComposer' => __DIR__ . '/../..' . '/app/View/Composers/PageBuildComposer.php',
         'App\\View\\Composers\\Post' => __DIR__ . '/../..' . '/app/View/Composers/Post.php',
+        'App\\WooCommerce\\CustomAtlasFenceProduct' => __DIR__ . '/../..' . '/app/WooCommerce/CustomAtlasFenceProduct.php',
+        'App\\WooCommerce\\WooCommerceSetup' => __DIR__ . '/../..' . '/app/WooCommerce/WooCommerceSetup.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'BladeUI\\Icons\\BladeIconsServiceProvider' => __DIR__ . '/..' . '/blade-ui-kit/blade-icons/src/BladeIconsServiceProvider.php',
         'BladeUI\\Icons\\Components\\Icon' => __DIR__ . '/..' . '/blade-ui-kit/blade-icons/src/Components/Icon.php',
