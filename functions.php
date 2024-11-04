@@ -1790,3 +1790,51 @@ add_filter('woocommerce_sale_flash', 'ds_change_sale_text');
 function ds_change_sale_text() {
 return '<span class="onsale">Промоция</span>';
 }
+
+
+// Modify the price before adding to cart
+add_filter('woocommerce_add_cart_item_data', function ($cart_item_data, $product_id) {
+    if (isset($_POST['calculated_price']) && has_term('atlas', 'product_tag', $product_id)) {
+        $cart_item_data['custom_price'] = floatval($_POST['calculated_price']);
+    }
+    return $cart_item_data;
+}, 10, 2);
+
+// Apply the custom price
+add_action('woocommerce_before_calculate_totals', function($cart) {
+    if (is_admin() && !defined('DOING_AJAX')) {
+        return;
+    }
+
+    foreach ($cart->get_cart() as $cart_item) {
+        if (isset($cart_item['custom_price'])) {
+            $cart_item['data']->set_price($cart_item['custom_price']);
+        }
+    }
+}, 10, 1);
+
+// Add the calculated price to the add to cart form
+add_action('woocommerce_before_add_to_cart_button', function() {
+    if (has_term('atlas', 'product_tag')) {
+        echo '<input type="hidden" name="calculated_price" id="calculated_price" value="">';
+        ?>
+        <script>
+            jQuery(document).ready(function($) {
+                $('#atlas-calculate').on('click', function() {
+                    let calculatedPrice = $('.single_add_to_cart_button').attr('data-calculated-price');
+                    $('#calculated_price').val(calculatedPrice);
+                });
+            });
+        </script>
+        <?php
+    }
+});
+
+// Prevent add to cart if price hasn't been calculated
+add_filter('woocommerce_add_to_cart_validation', function($passed, $product_id) {
+    if (has_term('atlas', 'product_tag', $product_id) && empty($_POST['calculated_price'])) {
+        wc_add_notice('Please use the calculator before adding to cart.', 'error');
+        return false;
+    }
+    return $passed;
+}, 10, 2);

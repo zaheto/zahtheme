@@ -101,101 +101,87 @@ if (has_term('atlas', 'product_tag', get_the_ID())) {
 
 @if (has_term('atlas', 'product_tag', get_the_ID()))
     <script>
-        const regularPrice = {{ $regular_price }};
-
         jQuery(document).ready(function () {
-            console.log("Document is ready");
+    // Get price elements
+    const priceElement = jQuery('.price');
+    const addToCartButton = jQuery('button.single_add_to_cart_button');
+    
+    jQuery('#atlas-calculate').click(function () {
+        let panelWidth = parseFloat(jQuery('#atlas-panel-width').val());
+        let panelHeight = parseFloat(jQuery('#atlas-panel-height').val());
+        let numberOfPanels = parseInt(jQuery('#atlas-number-of-panels').val());
 
-            // Ensure the ATLAS calculator form exists before proceeding
-            if (jQuery('#atlas-fence-calculator').length === 0) {
-                console.error("ATLAS Fence Calculator form not found. Please make sure the form HTML is rendered properly.");
-                return;
-            } else {
-                console.log("ATLAS Fence Calculator form found.");
+        // Validation checks...
+        
+        try {
+            // Material calculations
+            let blindsProfilePcs = Math.max((panelHeight - 0.045) / 0.1 * numberOfPanels, 0);
+            let blindsProfileLm = Math.max((panelWidth - 0.01) * blindsProfilePcs, 0);
+
+            let uProfileLeftPcs = numberOfPanels;
+            let uProfileLeftLm = panelHeight * numberOfPanels;
+
+            let uProfileRightPcs = numberOfPanels;
+            let uProfileRightLm = panelHeight * numberOfPanels;
+
+            let horizontalUProfilePcs = numberOfPanels;
+            let horizontalUProfileLm = panelWidth * numberOfPanels;
+
+            let F20 = 0;
+            if (panelWidth > 1.29 && panelWidth < 2.1) {
+                F20 = 1;
+            } else if (panelWidth > 2.09) {
+                F20 = 2;
             }
+            let reinforcingProfilePcs = F20;
+            let reinforcingProfileLm = panelHeight * F20 * numberOfPanels;
 
-            // Add click event for the calculate button
-            jQuery('#atlas-calculate').click(function () {
-                console.log("Calculate button clicked.");
+            let rivetsPcs = Math.ceil(((blindsProfilePcs / numberOfPanels + 1) * (4 + F20) * numberOfPanels + (F20 * 2)) / numberOfPanels / 100) * 100 * numberOfPanels;
+            let selfTappingScrewPcs = numberOfPanels * 10;
+            let dowelsPcs = numberOfPanels * 10 + F20 * numberOfPanels;
+            let cornerPcs = F20 * numberOfPanels;
 
-                let panelWidth = parseFloat(jQuery('#atlas-panel-width').val());
-                let panelHeight = parseFloat(jQuery('#atlas-panel-height').val());
-                let numberOfPanels = parseInt(jQuery('#atlas-number-of-panels').val());
+            // Price Calculations using ACF fields
+            let totalPrice = (
+                blindsProfileLm * parseFloat(<?php echo get_field('price_panels_lin_meter'); ?>) +
+                uProfileLeftLm * parseFloat(<?php echo get_field('price_u_profile_left'); ?>) +
+                uProfileRightLm * parseFloat(<?php echo get_field('price_u_profile_right'); ?>) +
+                horizontalUProfileLm * parseFloat(<?php echo get_field('price_u_horizontal_panel'); ?>) +
+                reinforcingProfileLm * parseFloat(<?php echo get_field('price_reinforcing_profile'); ?>) +
+                rivetsPcs * parseFloat(<?php echo get_field('price_rivets'); ?>) +
+                selfTappingScrewPcs * parseFloat(<?php echo get_field('price_self_tapping_screw'); ?>) +
+                dowelsPcs * parseFloat(<?php echo get_field('price_dowels'); ?>) +
+                cornerPcs * parseFloat(<?php echo get_field('price_corners'); ?>)
+            );
 
-                // Log the inputs
-                if (isNaN(panelWidth) || isNaN(panelHeight) || isNaN(numberOfPanels)) {
-                    console.error("One or more inputs are missing or invalid.");
-                    return;
-                } else {
-                    console.log(`Inputs - Panel Width: ${panelWidth}, Panel Height: ${panelHeight}, Number of Panels: ${numberOfPanels}`);
-                }
+            // Update displayed price
+            priceElement.html(`<span class="woocommerce-Price-amount amount">
+                <bdi>${totalPrice.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
+            </span>`);
 
-                // Check min and max width values from input attributes
-                let minWidth = parseFloat(jQuery('#atlas-panel-width').attr('min'));
-                let maxWidth = parseFloat(jQuery('#atlas-panel-width').attr('max'));
+            // Update add to cart button data
+            addToCartButton.attr('data-calculated-price', totalPrice.toFixed(2));
 
-                if (panelWidth < minWidth || panelWidth > maxWidth) {
-                    console.error(`Panel width must be between ${minWidth} and ${maxWidth} meters.`);
-                    alert(`Panel width must be between ${minWidth} and ${maxWidth} meters.`);
-                    return;
-                }
+            // Display materials
+            jQuery('#atlas-results').html(`
+                <p>Blinds Profile: ${blindsProfilePcs.toFixed(2)} Pcs, ${blindsProfileLm.toFixed(2)} lm</p>
+                <p>U Profile Left: ${uProfileLeftPcs} Pcs, ${uProfileLeftLm.toFixed(3)} lm</p>
+                <p>U Profile Right: ${uProfileRightPcs} Pcs, ${uProfileRightLm.toFixed(3)} lm</p>
+                <p>Horizontal U Profile: ${horizontalUProfilePcs} Pcs, ${horizontalUProfileLm.toFixed(2)} lm</p>
+                <p>Reinforcing Profile: ${reinforcingProfilePcs} Pcs, ${reinforcingProfileLm.toFixed(3)} lm</p>
+                <p>Rivets: ${rivetsPcs} Pcs</p>
+                <p>Self-tapping Screws: ${selfTappingScrewPcs} Pcs</p>
+                <p>Dowels: ${dowelsPcs} Pcs</p>
+                <p>Corner: ${cornerPcs} Pcs</p>
+            `);
 
-                // Material Calculations
-                try {
-                    console.log("Starting material calculations...");
+            jQuery('#atlas-final-price').html(`<p>Total Price: ${totalPrice.toFixed(2)} лв.</p>`);
 
-                    let blindsProfilePcs = Math.max((panelHeight - 0.045) / 0.1 * numberOfPanels, 0);
-                    let blindsProfileLm = Math.max((panelWidth - 0.01) * blindsProfilePcs, 0);
-
-                    let uProfileLeftPcs = numberOfPanels;
-                    let uProfileLeftLm = panelHeight * numberOfPanels;
-
-                    let uProfileRightPcs = numberOfPanels;
-                    let uProfileRightLm = panelHeight * numberOfPanels;
-
-                    let horizontalUProfilePcs = numberOfPanels;
-                    let horizontalUProfileLm = panelWidth * numberOfPanels;
-
-                    let F20 = panelWidth > 1.29 && panelWidth < 2.1 ? 1 : panelWidth > 2.09 ? 2 : 0;
-                    let reinforcingProfilePcs = F20;
-                    let reinforcingProfileLm = panelHeight * F20 * numberOfPanels;
-
-                    let rivetsPcs = Math.ceil(((blindsProfilePcs / numberOfPanels + 1) * (4 + F20) * numberOfPanels + (F20 * 2)) / numberOfPanels / 100) * 100 * numberOfPanels;
-
-                    let selfTappingScrewPcs = numberOfPanels * 10;
-                    let dowelsPcs = numberOfPanels * 10 + F20 * numberOfPanels;
-                    let cornerPcs = F20 * numberOfPanels;
-
-                    console.log("Material calculations completed.");
-
-                    // Calculate Total Price using Regular Price
-                    console.log("Starting price calculations...");
-
-                    let totalPrice = regularPrice * numberOfPanels;
-
-                    console.log(`Total price calculated: ${totalPrice}`);
-
-                    // Display Results
-                    jQuery('#atlas-results').html(`
-                        <p>Blinds Profile: ${blindsProfilePcs.toFixed(2)} Pcs, ${blindsProfileLm.toFixed(2)} lm</p>
-                        <p>U Profile Left: ${uProfileLeftPcs} Pcs, ${uProfileLeftLm.toFixed(3)} lm</p>
-                        <p>U Profile Right: ${uProfileRightPcs} Pcs, ${uProfileRightLm.toFixed(3)} lm</p>
-                        <p>Horizontal U Profile: ${horizontalUProfilePcs} Pcs, ${horizontalUProfileLm.toFixed(2)} lm</p>
-                        <p>Reinforcing Profile: ${reinforcingProfilePcs} Pcs, ${reinforcingProfileLm.toFixed(3)} lm</p>
-                        <p>Rivets: ${rivetsPcs} Pcs</p>
-                        <p>Self-tapping Screws: ${selfTappingScrewPcs} Pcs</p>
-                        <p>Dowels: ${dowelsPcs} Pcs</p>
-                        <p>Corner: ${cornerPcs} Pcs</p>
-                    `);
-
-                    jQuery('#atlas-final-price').html(`<p>Total Price: ${totalPrice.toFixed(2)} лв.</p>`);
-                    console.log("Results displayed successfully.");
-
-                } catch (error) {
-                    console.error("An error occurred during calculations: ", error);
-                }
-            });
-        });
+        } catch (error) {
+            console.error("An error occurred during calculations: ", error);
+        }
+    });
+});
     </script>
 @endif
 
