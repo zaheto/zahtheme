@@ -4,7 +4,6 @@ const config = {
   theme: {
     fontFamily: {
       Inter: ['Inter', 'sans-serif'],
-      Oswald: ['Oswald', 'sans-serif'],
     },
     extend: {
       backgroundImage: {
@@ -56,9 +55,9 @@ const config = {
         },
 
         colors: {
-          'main': '#0095DA',
-          'second': '#ED1C24',
-          'third': '#FFCB05',
+          'main': '#FF6128',
+          'second': '#3A2A2F',
+          'third': '#0F4C81',
           'gray': '#F3F3F3',
           'box': '#F4F1EB',
           'third': '#FEB93B',

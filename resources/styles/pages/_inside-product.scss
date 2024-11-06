@@ -549,3 +549,11 @@ div.product table.variations select {
     @apply absolute top-0 left-0 right-0 bottom-0;
   }
 }
+
+.predefined-sizes .main-product-sizes__item {
+  @apply border border-black/10 rounded-full flex py-1 px-2 w-1/4 text-13; 
+}
+
+.predefined-sizes .main-product-sizes__item.selected {
+  @apply bg-second bg-white;
+}

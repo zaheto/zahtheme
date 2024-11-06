@@ -313,6 +313,13 @@ function zah_breadcumb() {
    }
 }
 
+// function zah_breadcumb() {
+//     // Check if breadcrumb is already displayed
+//     if ( function_exists('yoast_breadcrumb') && !did_action('woocommerce_breadcrumb') ) {
+//         yoast_breadcrumb( '<p id="breadcrumbs">','</p>' );
+//     }
+// }
+
 //Product page form
 // add_action( 'woocommerce_single_product_summary', 'zah_quick_order_form' );
 // function zah_quick_order_form() {
@@ -1722,19 +1729,6 @@ remove_action( 'woocommerce_before_single_product_summary', 'woocommerce_show_pr
 add_action( 'woocommerce_single_product_summary', 'woocommerce_show_product_sale_flash', 3 );
 
 
-
-/**
- * Appearance > Widgets > Custom Thank You Area. Loads at the bottom of the thank you page after an order has been placed.
- */
-// add_action( 'woocommerce_thankyou', 'zah_custom_thankyou_section' );
-
-// function zah_custom_thankyou_section() {
-// 	echo '<div class="thankyou-custom-field">';
-// 	dynamic_sidebar( 'thankyou-field' );
-// 	echo '</div>';
-// }
-
-
 /**
 * Remove "Description" heading from WooCommerce tabs.
 *
@@ -1765,26 +1759,6 @@ function woocommerce_rename_coupon_field_on_cart( $translated_text, $text, $doma
 }
 
 
-//Product page form
-add_action( 'woocommerce_after_add_to_cart_form', 'zah_quick_order_form' );
-function zah_quick_order_form() {
-    ?>
-    <div class="quick-form-product">
-        <button id="show-order-form" class="button w-full" style="cursor: pointer;">БЪРЗА ПОРЪЧКА</button>
-        <div id="order-form" class="p-4 bg-[#f2f2f2]" style="display: none;">
-            <?php echo do_shortcode('[contact-form-7 id="6abd287" title="Product Quick Order"]'); ?>
-        </div>
-    </div>
-
-    <script type="text/javascript">
-        jQuery(document).ready(function($) {
-            $('#show-order-form').click(function() {
-                $('#order-form').toggle();
-            });
-        });
-    </script>
-    <?php
-}
 
 add_filter('woocommerce_sale_flash', 'ds_change_sale_text');
 function ds_change_sale_text() {
@@ -1838,3 +1812,50 @@ add_filter('woocommerce_add_to_cart_validation', function($passed, $product_id) 
     }
     return $passed;
 }, 10, 2);
+
+
+// Hook the calculator form after product title
+add_action('woocommerce_single_product_summary', function() {
+    if (has_term('atlas', 'product_tag') && function_exists('get_field')) {
+        $atlas_pricing = [
+            'price_panels_lin_meter' => get_field('price_panels_lin_meter'),
+            'price_u_profile_left' => get_field('price_u_profile_left'),
+            'price_u_profile_right' => get_field('price_u_profile_right'),
+            'price_u_horizontal_panel' => get_field('price_u_horizontal_panel'),
+            'price_reinforcing_profile' => get_field('price_reinforcing_profile'),
+            'price_rivets' => get_field('price_rivets'),
+            'price_self_tapping_screw' => get_field('price_self_tapping_screw'),
+            'price_dowels' => get_field('price_dowels'),
+            'price_corners' => get_field('price_corners')
+        ];
+
+        $atlas_data = [
+            'pricing' => $atlas_pricing,
+            'panel_height' => explode("\r\n", get_field('panel_height')),
+            'width_min' => get_field('width_min'),
+            'width_max' => get_field('width_max')
+        ];
+
+        echo view('partials.product.atlas-calculator-form', ['atlasData' => $atlas_data])->render();
+    }
+}, 6); // After title (5), before price (10)
+
+// Hook the calculator results after product meta
+add_action('woocommerce_product_meta_end', function() {
+    if (has_term('atlas', 'product_tag')) {
+        echo view('partials.product.atlas-calculator-results')->render();
+    }
+});
+
+// Enqueue the calculator script
+add_action('wp_enqueue_scripts', function() {
+    if (is_product() && has_term('atlas', 'product_tag')) {
+        wp_enqueue_script(
+            'atlas-calculator', 
+            get_stylesheet_directory_uri() . '/resources/scripts/atlas-calculator.js', 
+            ['jquery'], 
+            '1.0.0', 
+            true
+        );
+    }
+});

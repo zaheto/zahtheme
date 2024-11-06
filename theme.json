@@ -1150,12 +1150,12 @@
         {
           "name": "Main",
           "slug": "main",
-          "color": "#0095da"
+          "color": "#ff6128"
         },
         {
           "name": "Second",
           "slug": "second",
-          "color": "#ed1c24"
+          "color": "#3a2a2f"
         },
         {
           "name": "Third",
@@ -1215,11 +1215,6 @@
           "name": "Inter",
           "slug": "Inter",
           "fontFamily": "Inter,sans-serif"
-        },
-        {
-          "name": "Oswald",
-          "slug": "Oswald",
-          "fontFamily": "Oswald,sans-serif"
         }
       ],
       "fontSizes": [
