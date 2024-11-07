@@ -306,13 +306,13 @@ function njengah_display_stock_availability( $availability, $_product ) {
 
 
 //Product page breadcrumb
-add_action( 'woocommerce_before_single_product', 'zah_breadcumb' );
 function zah_breadcumb() {
-   if ( function_exists('yoast_breadcrumb') ) {
-     yoast_breadcrumb( '<p id="breadcrumbs">','</p>' );
-   }
+    static $displayed = false;
+    if (!$displayed && function_exists('yoast_breadcrumb')) {
+        $displayed = true;
+        yoast_breadcrumb('<p id="breadcrumbs">', '</p>');
+    }
 }
-
 // function zah_breadcumb() {
 //     // Check if breadcrumb is already displayed
 //     if ( function_exists('yoast_breadcrumb') && !did_action('woocommerce_breadcrumb') ) {
@@ -1859,3 +1859,42 @@ add_action('wp_enqueue_scripts', function() {
         );
     }
 });
+
+
+// Remove default SKU location
+remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40);
+
+// Add new location for SKU and balloon text
+add_action('woocommerce_single_product_summary', 'custom_product_subheading', 4); // 4 to place before title (5)
+function custom_product_subheading() {
+    global $product;
+    
+    if (!$product) {
+        return;
+    }
+
+    // Get ACF balloon text
+    $balloon_text = get_field('product_balloon_text');
+    
+    // Start subheading div
+    echo '<div class="product-subheading">';
+    
+    // Add balloon text if exists
+    if ($balloon_text) {
+        echo '<span class="product-balloon-text">' . esc_html($balloon_text) . '</span>';
+    }
+    
+    // Add SKU
+    if ($product->get_sku()) {
+        echo '<span class="sku_wrapper">' . esc_html__('SKU:', 'woocommerce') . ' <span class="sku">' . esc_html($product->get_sku()) . '</span></span>';
+    }
+
+    // Add stock status
+    if ($product->is_in_stock()) {
+        echo '<span class="stock in-stock">' . __('In stock', 'woocommerce') . '</span>';
+    } else {
+        echo '<span class="stock out-of-stock">' . __('Out of stock', 'woocommerce') . '</span>';
+    }
+    
+    echo '</div>';
+}

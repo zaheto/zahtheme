@@ -1,4 +1,5 @@
 jQuery(document).ready(function () {
+    console.log('Atlas Pricing Data:', atlas_pricing);
 
     // Add toggle functionality
     jQuery('.required-materials--toggle-link').on('click', function(e) {
@@ -52,6 +53,9 @@ jQuery(document).ready(function () {
         let panelHeight = parseFloat(heightInput.val());
         let numberOfPanels = parseInt(panelsInput.val());
 
+        console.log('Base price:', atlas_pricing.base_price);
+        console.log('Number of panels:', numberOfPanels);
+
         try {
             // Material calculations
             let blindsProfilePcs = Math.max((panelHeight - 0.045) / 0.1 * numberOfPanels, 0);
@@ -93,23 +97,28 @@ jQuery(document).ready(function () {
             let dowelsPcs = numberOfPanels * 10 + F20 * numberOfPanels;
             let cornerPcs = F20 * numberOfPanels;
 
-            // Price Calculations using ACF fields
-            let totalPrice = (
-                blindsProfileLm * parseFloat(atlas_pricing.price_panels_lin_meter) +
-                uProfileLeftLm * parseFloat(atlas_pricing.price_u_profile_left) +
-                uProfileRightLm * parseFloat(atlas_pricing.price_u_profile_right) +
-                horizontalUProfileLm * parseFloat(atlas_pricing.price_u_horizontal_panel) +
-                reinforcingProfileLm * parseFloat(atlas_pricing.price_reinforcing_profile) +
-                rivetsPcs * parseFloat(atlas_pricing.price_rivets) +
-                selfTappingScrewPcs * parseFloat(atlas_pricing.price_self_tapping_screw) +
-                dowelsPcs * parseFloat(atlas_pricing.price_dowels) +
-                cornerPcs * parseFloat(atlas_pricing.price_corners)
-            );
+            console.log('Starting price calculations:');
+            
+            // Price Calculations
+let totalPrice = parseFloat(atlas_pricing.base_price) * numberOfPanels;
+console.log('After base price:', totalPrice);
 
+// Add essential components
+totalPrice += uProfileLeftLm * parseFloat(atlas_pricing.price_u_profile_left || 0);
+totalPrice += uProfileRightLm * parseFloat(atlas_pricing.price_u_profile_right || 0);
+totalPrice += horizontalUProfileLm * parseFloat(atlas_pricing.price_u_horizontal_panel || 0);
+totalPrice += reinforcingProfileLm * parseFloat(atlas_pricing.price_reinforcing_profile || 0);
+totalPrice += rivetsPcs * parseFloat(atlas_pricing.price_rivets || 0);
             // Update displayed price
             priceElement.html(`<span class="woocommerce-Price-amount amount">
                 <bdi>${totalPrice.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
             </span>`);
+
+              // When updating the results, check if they should be visible
+                const resultsSection = jQuery('#atlas-calculator-results');
+                if (!resultsSection.hasClass('hidden')) {
+                    resultsSection.show();
+                }
 
             // Update add to cart button data and hidden input
             addToCartButton.attr('data-calculated-price', totalPrice.toFixed(2));
@@ -172,22 +181,6 @@ jQuery(document).ready(function () {
         calculatePrice();
     });
 
-    // Add event listeners to all inputs
-    widthInput.on('input', calculatePrice);
-    heightInput.on('change', calculatePrice);
-    panelsInput.on('input', calculatePrice);
-
-    // Enable/disable add to cart button based on valid inputs
-    jQuery('input, select').on('input change', function() {
-        if (areInputsValid()) {
-            addToCartButton.prop('disabled', false);
-        } else {
-            addToCartButton.prop('disabled', true);
-        }
-    });
-
     // Trigger initial calculation with default values
     calculatePrice();
-
-    
 });

@@ -1,6 +1,6 @@
 <div id="atlas-calculator-form" class="atlas-calculator-section">
     <h2 class="mb-2">Въведете вашите индивидуални размери на оградата:</h2>
-    <form id="atlas-fence-calculator" class="flex gap-2">
+    <form id="atlas-fence-calculator" class="atlas-calculator-section">
         <div class="form-row">
             <label for="atlas-panel-width" class="font-normal">Ширина на паното (m)</label>
             <input 
@@ -52,4 +52,11 @@
             <a href="#" class=" main-product-sizes__item" data-l="1.8" data-h="1.845">1.8(ш) x 1.845(в)</a>
         </div>
     </div>
+    
+    @if(get_field('fence_information'))
+        <div class="fence-information mt-8">
+            {!! get_field('fence_information') !!}
+        </div>
+    @endif
+
 </div>

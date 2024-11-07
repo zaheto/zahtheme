@@ -28,34 +28,36 @@ the readme will list any important changes.
             the_post();
             do_action('woocommerce_before_single_product');
 
-            // Move this inside the loop to ensure we have the correct post ID
-            if (has_term('atlas', 'product_tag', get_the_ID())) {
-                $atlas_pricing = [
-                    'price_panels_lin_meter' => get_field('price_panels_lin_meter', get_the_ID()),
-                    'price_u_profile_left' => get_field('price_u_profile_left', get_the_ID()),
-                    'price_u_profile_right' => get_field('price_u_profile_right', get_the_ID()),
-                    'price_u_horizontal_panel' => get_field('price_u_horizontal_panel', get_the_ID()),
-                    'price_reinforcing_profile' => get_field('price_reinforcing_profile', get_the_ID()),
-                    'price_rivets' => get_field('price_rivets', get_the_ID()),
-                    'price_self_tapping_screw' => get_field('price_self_tapping_screw', get_the_ID()),
-                    'price_dowels' => get_field('price_dowels', get_the_ID()),
-                    'price_corners' => get_field('price_corners', get_the_ID())
-                ];
+           // Move this inside the loop to ensure we have the correct post ID
+           if (has_term('atlas', 'product_tag', get_the_ID())) {
+            $product = wc_get_product(get_the_ID());
+            $atlas_pricing = [
+                'base_price' => $product->get_regular_price(),
+                // Only include the fields you need, with default values if empty
+                'price_u_profile_left' => get_field('price_u_profile_left', get_the_ID()) ?: 0,
+                'price_u_profile_right' => get_field('price_u_profile_right', get_the_ID()) ?: 0,
+                'price_u_horizontal_panel' => get_field('price_u_horizontal_panel', get_the_ID()) ?: 0,
+                'price_reinforcing_profile' => get_field('price_reinforcing_profile', get_the_ID()) ?: 0,
+                'price_rivets' => get_field('price_rivets', get_the_ID()) ?: 0
+            ];
 
-                $atlas_data = [
-                    'pricing' => $atlas_pricing,
-                    'panel_height' => explode("\r\n", get_field('panel_height', get_the_ID())),
-                    'width_min' => get_field('width_min', get_the_ID()),
-                    'width_max' => get_field('width_max', get_the_ID())
-                ];
+            $atlas_data = [
+                'pricing' => $atlas_pricing,
+                'panel_height' => explode("\r\n", get_field('panel_height', get_the_ID())),
+                'width_min' => get_field('width_min', get_the_ID()),
+                'width_max' => get_field('width_max', get_the_ID())
+            ];
             }
         @endphp
 
-        @if (has_term('atlas', 'product_tag', get_the_ID()))
-            <script>
-                var atlas_pricing = @json($atlas_pricing);
-            </script>
-        @endif
+        
+
+    @if (has_term('atlas', 'product_tag', get_the_ID()))
+    <script>
+        var atlas_pricing = @json($atlas_pricing);
+        console.log('Initial Atlas Pricing:', atlas_pricing);
+    </script>
+    @endif
 
         <div id="product-{{ get_the_ID() }}" @php wc_product_class('', get_the_ID()); @endphp>
             <div class="summary entry-summary">
