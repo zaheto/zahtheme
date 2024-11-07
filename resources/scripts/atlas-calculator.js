@@ -100,18 +100,18 @@ jQuery(document).ready(function () {
             console.log('Starting price calculations:');
             
             // Price Calculations
-let totalPrice = parseFloat(atlas_pricing.base_price) * numberOfPanels;
-console.log('After base price:', totalPrice);
+            let totalPrice = parseFloat(atlas_pricing.base_price) * numberOfPanels;
+            console.log('After base price:', totalPrice);
 
-// Add essential components
-totalPrice += uProfileLeftLm * parseFloat(atlas_pricing.price_u_profile_left || 0);
-totalPrice += uProfileRightLm * parseFloat(atlas_pricing.price_u_profile_right || 0);
-totalPrice += horizontalUProfileLm * parseFloat(atlas_pricing.price_u_horizontal_panel || 0);
-totalPrice += reinforcingProfileLm * parseFloat(atlas_pricing.price_reinforcing_profile || 0);
-totalPrice += rivetsPcs * parseFloat(atlas_pricing.price_rivets || 0);
+            // Add essential components
+            totalPrice += uProfileLeftLm * parseFloat(atlas_pricing.price_u_profile_left || 0);
+            totalPrice += uProfileRightLm * parseFloat(atlas_pricing.price_u_profile_right || 0);
+            totalPrice += horizontalUProfileLm * parseFloat(atlas_pricing.price_u_horizontal_panel || 0);
+            totalPrice += reinforcingProfileLm * parseFloat(atlas_pricing.price_reinforcing_profile || 0);
+            totalPrice += rivetsPcs * parseFloat(atlas_pricing.price_rivets || 0);
             // Update displayed price
-            priceElement.html(`<span class="woocommerce-Price-amount amount">
-                <bdi>${totalPrice.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
+            priceElement.html(`<span class="woocommerce-Price-amount amount"> 
+                <bdi>Крайна цена: ${totalPrice.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
             </span>`);
 
               // When updating the results, check if they should be visible
@@ -137,7 +137,7 @@ totalPrice += rivetsPcs * parseFloat(atlas_pricing.price_rivets || 0);
                 <p>Corner: ${cornerPcs} Pcs</p>
             `);
 
-            jQuery('#atlas-final-price').html(`<p>Total Price: ${totalPrice.toFixed(2)} лв.</p>`);
+            jQuery('#atlas-final-price').html(`<p>Крайна цена: ${totalPrice.toFixed(2)} лв.</p>`);
 
         } catch (error) {
             console.error("An error occurred during calculations: ", error);
