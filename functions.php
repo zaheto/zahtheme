@@ -1841,7 +1841,7 @@ add_action('woocommerce_single_product_summary', function() {
 }, 6); // After title (5), before price (10)
 
 // Hook the calculator results after product meta
-add_action('woocommerce_product_meta_end', function() {
+add_action('woocommerce_after_add_to_cart_form', function() {
     if (has_term('atlas', 'product_tag')) {
         echo view('partials.product.atlas-calculator-results')->render();
     }

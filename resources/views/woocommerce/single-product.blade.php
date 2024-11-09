@@ -67,6 +67,7 @@ the readme will list any important changes.
                     wc_get_template_part('content', 'single-product');
                 @endphp
 
+        
             
             </div>
         </div>
