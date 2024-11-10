@@ -70,6 +70,26 @@ collect(['setup', 'filters'])
 
 add_filter('wp_nav_menu_items', 'do_shortcode');
 
+/**
+ * Enqueue product gallery script only on single product pages
+ */
+function zah_enqueue_product_gallery_script() {
+    if (is_product()) {
+        wp_enqueue_style('swiper-bundle', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css', array(), null);
+        wp_enqueue_script('swiper-bundle', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', array(), null, true);
+        
+        wp_enqueue_script(
+            'zah-product-gallery', 
+            get_template_directory_uri() . '/resources/scripts/product-gallery.js',
+            array('swiper-bundle', 'jquery'),
+            filemtime(get_template_directory() . '/resources/scripts/product-gallery.js'),
+            true
+        );
+    }
+}
+add_action('wp_enqueue_scripts', 'zah_enqueue_product_gallery_script');
+
+
 // function custom_enqueue_woocommerce_scripts() {
 //     if (function_exists('is_woocommerce')) {
 //         wp_enqueue_script('wc-add-to-cart');
@@ -1500,8 +1520,8 @@ function zah_loop_product_title() {
 /**
  * Display discounted % on product loop.
  */
-add_action( 'woocommerce_before_shop_loop_item_title', 'zah_change_displayed_sale_price_html', 7 );
-add_action( 'woocommerce_single_product_summary', 'zah_change_displayed_sale_price_html', 10 );
+// add_action( 'woocommerce_before_shop_loop_item_title', 'zah_change_displayed_sale_price_html', 7 );
+// add_action( 'woocommerce_single_product_summary', 'zah_change_displayed_sale_price_html', 10 );
 add_action( 'woocommerce_single_product_summary', 'zah_clear_product_price', 11 );
 
 if ( ! function_exists( 'zah_clear_product_price' ) ) {
@@ -1898,3 +1918,413 @@ function custom_product_subheading() {
     
     echo '</div>';
 }
+
+
+
+// Handle CSV import for product specifications
+add_action('acf/save_post', function($post_id) {
+    // Check if this is a product
+    if (get_post_type($post_id) !== 'product') {
+        return;
+    }
+
+    // Get the CSV file field
+    $csv_file = get_field('product_specificatoins_import_product_specificaition', $post_id);
+    
+    if (!$csv_file) {
+        return;
+    }
+
+    // Read CSV file
+    $file_path = get_attached_file($csv_file['ID']);
+    if (!$file_path || !file_exists($file_path)) {
+        return;
+    }
+
+    $specifications = [];
+    if (($handle = fopen($file_path, "r")) !== false) {
+        while (($data = fgetcsv($handle, 1000, ",")) !== false) {
+            if (count($data) >= 2) {
+                $specifications[] = [
+                    'column1' => $data[0],
+                    'column2' => $data[1]
+                ];
+            }
+        }
+        fclose($handle);
+    }
+
+    // Update the repeater field with CSV data
+    update_field('product_specificatoins_add_product_specification', $specifications, $post_id);
+    
+    // Clear the CSV file field
+    update_field('product_specificatoins_import_product_specificaition', '', $post_id);
+}, 20);
+
+
+/**
+ * Add product badges (sale, new) to product gallery
+ */
+
+// Remove existing sale flash hooks
+remove_action('woocommerce_before_shop_loop_item_title', 'woocommerce_show_product_loop_sale_flash', 7);
+remove_action('woocommerce_before_single_product_summary', 'woocommerce_show_product_sale_flash', 10);
+remove_action('woocommerce_single_product_summary', 'woocommerce_show_product_sale_flash', 3);
+
+if (!function_exists('zah_get_product_badges')) {
+    /**
+     * Get product badges HTML
+     * 
+     * @param WC_Product $product Product object
+     * @return string Badges HTML
+     */
+    function zah_get_product_badges($product) {
+        if (!$product) {
+            return '';
+        }
+
+        $badges = '';
+
+        // Sale badge with percentage
+        if ($product->is_on_sale() && !$product->is_type('grouped') && !$product->is_type('bundle')) {
+            $percentage = '';
+
+            if ($product->is_type('variable')) {
+                $percentages = array();
+                $prices = $product->get_variation_prices();
+
+                foreach ($prices['price'] as $key => $price) {
+                    if ($prices['regular_price'][$key] !== $price && $prices['regular_price'][$key] > 0.005) {
+                        $percentages[] = round(100 - ($prices['sale_price'][$key] / $prices['regular_price'][$key] * 100));
+                    }
+                }
+
+                if (!empty($percentages)) {
+                    $percentage = max($percentages);
+                }
+            } else {
+                $regular_price = (float) $product->get_regular_price();
+                if ($regular_price > 0.005) {
+                    $sale_price = (float) $product->get_price();
+                    $percentage = round(100 - ($sale_price / $regular_price * 100));
+                }
+            }
+
+            if ($percentage > 0) {
+                $badges .= sprintf(
+                    '<span class="product-badge sale">-%d%%</span>',
+                    $percentage
+                );
+            }
+        }
+
+        // New product badge (products less than 30 days old)
+        $days_as_new = apply_filters('zah_new_product_days', 30);
+        $created_date = strtotime($product->get_date_created());
+        
+        if ($created_date && (time() - $created_date) < ($days_as_new * 24 * 60 * 60)) {
+            $badges .= '<span class="product-badge new">' . esc_html__('New', 'zah') . '</span>';
+        }
+
+        // Out of stock badge
+        if (!$product->is_in_stock()) {
+            $badges .= '<span class="product-badge out-of-stock">' . esc_html__('Out of stock', 'zah') . '</span>';
+        }
+
+        if ($badges) {
+            return sprintf('<div class="product-badges">%s</div>', $badges);
+        }
+
+        return '';
+    }
+}
+
+// Add badges to single product gallery
+add_action('woocommerce_before_single_product_summary', function() {
+    global $product;
+    echo zah_get_product_badges($product);
+}, 8);
+
+// Add badges to product loop items
+add_action('woocommerce_before_shop_loop_item_title', function() {
+    global $product;
+    echo zah_get_product_badges($product);
+}, 7);
+
+// Add custom styles
+add_action('wp_head', function() {
+    ?>
+    <style>
+        .product-badges {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            pointer-events: none;
+        }
+
+        .product-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            line-height: 1.2;
+        }
+
+        .product-badge.sale {
+            background-color: #ff4747;
+            color: #fff;
+        }
+
+        .product-badge.new {
+            background-color: #00c853;
+            color: #fff;
+        }
+
+        .product-badge.out-of-stock {
+            background-color: #757575;
+            color: #fff;
+        }
+
+        /* Shop/Archive page specific styles */
+        .products .product .product-badges {
+            top: 10px;
+            left: 10px;
+        }
+
+        /* Hide badges in modal */
+        #gallery-modal .product-badges {
+            display: none;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .product-badges {
+                top: 10px;
+                left: 10px;
+            }
+
+            .product-badge {
+                padding: 4px 8px;
+                font-size: 11px;
+            }
+        }
+
+        /* Remove old sale flash styling */
+        .onsale {
+            display: none !important;
+        }
+    </style>
+    <?php
+});
+
+
+/**
+ * Add video modal functionality for product pages
+ */
+
+// Add video modal to page footer
+add_action('wp_footer', 'zah_product_video_modal');
+function zah_product_video_modal() {
+    if (!is_product()) {
+        return;
+    }
+    ?>
+    <div id="videoModal" class="video-modal fixed inset-0 z-[9999] hidden">
+        <div class="modal-overlay absolute inset-0 bg-black/90"></div>
+        <div class="modal-content relative z-[10000] w-full h-full flex items-center justify-center">
+            <button class="modal-close absolute top-4 right-4 text-white text-4xl z-[10001]">&times;</button>
+            <div class="video-container w-full max-w-60 mx-auto px-4 flex items-center justify-center">
+                <div class="relative  w-full pb-[56.25%] h-0 flex items-center justify-center">
+                    <iframe id="youtubeFrame" style="max-width: 680px;"  width="100%" height="315"  title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    jQuery(document).ready(function($) {
+        function openVideoModal(videoId) {
+            $('#youtubeFrame').attr('src', 'https://www.youtube.com/embed/' + videoId);
+            $('#videoModal').removeClass('hidden');
+            $('body').addClass('modal-open');
+        }
+
+        function closeVideoModal() {
+            $('#youtubeFrame').attr('src', '');
+            $('#videoModal').addClass('hidden');
+            $('body').removeClass('modal-open');
+        }
+
+        $('.product-video-btn').on('click', function(e) {
+            e.preventDefault();
+            var videoId = $(this).data('video');
+            openVideoModal(videoId);
+        });
+
+        $('.video-modal .modal-close, .video-modal .modal-overlay').on('click', function() {
+            closeVideoModal();
+        });
+
+        $(document).on('keydown', function(e) {
+            if (e.key === 'Escape' && !$('#videoModal').hasClass('hidden')) {
+                closeVideoModal();
+            }
+        });
+    });
+    </script>
+
+   
+    <?php
+}
+
+
+
+// Modify the product description tab to include video button
+add_filter('woocommerce_product_tabs', function($tabs) {
+    $tabs['description']['callback'] = function() {
+        echo '<div class="inside-description">';
+        // Get the default description
+        wc_get_template('single-product/tabs/description.php');
+        
+        // Add video button inside description
+        global $product;
+        $video_id = get_field('archive_video', $product->get_id());
+        if ($video_id) {
+            echo '<div class="description-video-wrapper mt-4">';
+            echo '<button class="product-video-btn" data-video="' . esc_attr($video_id) . '">';
+            echo '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>';
+            echo esc_html__('Watch Video', 'zah');
+            echo '</button>';
+            echo '</div>';
+        }
+        echo '</div>';
+        
+        // Get and display specifications
+        if (have_rows('product_specificatoins_add_product_specification')) {
+            echo '<div class="product-specifications">';
+            echo '<h3>Спецификации</h3>';
+            echo '<table class="specifications-table">';
+            
+            while (have_rows('product_specificatoins_add_product_specification')) {
+                the_row();
+                $column1 = get_sub_field('column1');
+                $column2 = get_sub_field('column2');
+                
+                echo '<tr>';
+                echo '<th>' . esc_html($column1) . '</th>';
+                echo '<td>' . wp_kses_post($column2) . '</td>';
+                echo '</tr>';
+            }
+            
+            echo '</table>';
+            echo '</div>';
+        }
+    };
+    
+    return $tabs;
+});
+
+// Add new sections after product tabs
+add_action('woocommerce_after_single_product_summary', function() {
+    global $product;
+    
+    // Get related products and free sample data
+    $related_products = get_field('related_products');
+    $free_sample = get_field('free_sample');
+    
+    if ($related_products || ($free_sample && !empty($free_sample['sample_heading']))) {
+        echo '<div class="product-additional-sections">';
+        
+        // Related Products Section
+        if ($related_products) {
+            $products_count = count($related_products);
+            $slider_class = $products_count >= 6 ? 'is-slider' : 'is-grid';
+            
+            echo '<section class="product-list-builder">';
+            echo '<div class="container flex flex-col items-center gap-6">';
+            echo '<h2>' . esc_html__('Connected Products', 'zah') . '</h2>';
+            
+            echo '<div class="swiper swiper-container more-products-slider ' . $slider_class . '" data-products-count="' . $products_count . '">';
+            echo '<div class="swiper-products swiper-wrapper">';
+            
+            foreach ($related_products as $related_product) {
+                echo '<div class="swiper-slide">';
+                
+                global $post, $product;
+                $post = get_post($related_product->ID);
+                $product = wc_get_product($related_product->ID);
+                setup_postdata($post);
+                
+                wc_get_template_part('content', 'product');
+                
+                wp_reset_postdata();
+                
+                echo '</div>';
+            }
+            
+            echo '</div>'; // .swiper-wrapper
+            
+            // Only show navigation and pagination if 6 or more products
+            if ($products_count >= 6) {
+                echo '<div class="mt-6 gap-2 flex w-full h-6 relative items-center content-center justify-center">';
+                echo '<div class="small-swiper-button-prev">';
+                echo '<svg class="text-black w-[24px] h-[24px] hover:text-main transition-all duration-200 scale-100 hover:scale-95 transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 19L8 12L15 5" stroke="inherit" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                echo '</div>';
+                echo '<div class="swiper-pagination"></div>';
+                echo '<div class="small-swiper-button-next">';
+                echo '<svg class="text-black w-[24px] h-[24px] hover:text-main transition-all duration-200 scale-100 hover:scale-95 transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 5L16 12L9 19" stroke="inherit" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                echo '</div>';
+                echo '</div>';
+            }
+            
+            echo '</div>'; // .swiper-container
+            echo '</div>'; // .container
+            echo '</section>';
+        }
+
+        // Free Sample Section
+        if ($free_sample && !empty($free_sample['sample_heading'])) {
+            echo '<section class="free-sample-block">';
+            echo '<div class="container">';
+            echo '<div class="free-sample-content">';
+            
+            if (!empty($free_sample['sample_image'])) {
+                echo '<div class="sample-image">';
+                echo wp_get_attachment_image($free_sample['sample_image']['ID'], 'medium_large', false, [
+                    'class' => 'sample-featured-image',
+                    'alt' => esc_attr($free_sample['sample_heading'])
+                ]);
+                echo '</div>';
+            }
+            
+            echo '<div class="sample-text">';
+            if (!empty($free_sample['sample_heading'])) {
+                echo '<h2>' . esc_html($free_sample['sample_heading']) . '</h2>';
+            }
+            
+            if (!empty($free_sample['sample_description'])) {
+                echo '<div class="sample-description">';
+                echo wp_kses_post($free_sample['sample_description']);
+                echo '</div>';
+            }
+            echo '</div>'; // .sample-text
+            
+            echo '</div>'; // .free-sample-content
+            echo '</div>'; // .container
+            echo '</section>';
+        }
+        
+        echo '</div>'; // .product-additional-sections
+    }
+}, 15); // Priority 15 to ensure it comes after tabs
+
+
+

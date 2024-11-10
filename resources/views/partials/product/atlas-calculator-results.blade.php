@@ -6,6 +6,6 @@
     <div id="atlas-calculator-results" class="atlas-calculator-section hidden">
         <h2>Включени материали в цената:</h2>
         <div id="atlas-results"></div>
-        <div id="atlas-final-price"></div>
+     
     </div>
 </section>

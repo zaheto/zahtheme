@@ -23,17 +23,17 @@
 
 .products .product,
 .swiper-products .product {
-  @apply relative rounded-md flex flex-col content-start items-center justify-start bg-white  mt-0 pt-0 transition-all duration-200 hover:transition-all hover:duration-200 hover:shadow-xl hover:z-20 before:hidden md:before:block md:before:content-[''] before:bg-white before:shadow-xl before:invisible before:absolute before:left-0 before:opacity-0 before:w-full before:h-[calc(100%+50px)] hover:before:visible hover:before:opacity-100;
+  @apply relative min-h-full rounded-md flex flex-col bg-white  mt-0 pt-0 transition-all duration-200 hover:transition-all hover:duration-200 hover:shadow-xl hover:z-20 ;
 }
 
 .products .product .product-loop--container,
 .swiper-products .product .product-loop--container {
-  @apply relative flex flex-col justify-start items-center w-full ;
+  @apply relative flex min-h-full flex-col flex-1 w-full justify-between ;
 }
 
 .products .product .product-loop-title-container,
 .swiper-products .product .product-loop-title-container {
-  @apply flex gap-1  items-start justify-start flex-col w-full;
+  @apply flex gap-1  items-start  flex-col w-full;
 }
 
 .products .product .product-loop-title-container h2,
@@ -62,13 +62,9 @@
 
 .products .product .button,
 .swiper-products .product .button {
-  @apply absolute left-4 right-4 -bottom-[40px] border-none bg-main text-white hover:bg-black py-2 px-6 opacity-0 invisible whitespace-nowrap transition-all duration-200 hover:transition-all hover:duration-200;
+  @apply w-full border-none bg-main/20 text-main hover:bg-main hover:text-white py-1.5 px-2 whitespace-nowrap transition-all duration-200 ;
 }
 
-.products .product:hover .button,
-.swiper-products .product:hover .button {
-  @apply md:opacity-100 md:visible transition-all duration-200 ;
-}
 
 .woocommerce-cart .products.columns-2  {
   @apply block;
@@ -96,6 +92,14 @@
   }
 }
 
+.product-additional-sections .product-list-builder {
+  @apply py-16;
+}
+
+.product-additional-sections .product-list-builder h2 {
+  @apply text-black uppercase font-black text-22 md:text-32 xl:text-40 text-center mb-2 md:mb-6 relative  inline-block mx-auto;
+}
+
 .cross-sells,
 .related.products,
 .upsells.products {
@@ -104,7 +108,7 @@
     @apply pb-8;
   }
   > h2 {
-    @apply text-black uppercase  text-22 md:text-32 xl:text-36 text-center mb-2 md:mb-6 relative before:absolute before:content-[''] before:block before:left-0 before:right-0 before:-top-2 pt-2 before:h-[4px] before:bg-blue-300 inline-block mx-auto;
+    @apply text-black uppercase font-black text-22 md:text-32 xl:text-40 text-center mb-2 md:mb-6 relative  inline-block mx-auto;
   }
 
   .products {
@@ -134,17 +138,52 @@
 }
 
 
-.more-products-slider {
-  .swiper-button-prev,
-  .swiper-button-next {
-    @apply hidden md:flex;
-  }
+// .product-list-builder{
+//   .swiper-button-prev,
+//   .swiper-button-next {
+//     @apply hidden md:flex;
+//   }
+// }
+
+.products.is-grid .swiper-wrapper,
+.product-list-builder .is-grid .swiper-wrapper,
+.products.is-grid  {
+  @apply grid gap-4 w-full;
+}
+
+.products.is-grid .swiper-slide {
+  @apply w-full mr-0;
+}
+
+.products.is-grid[data-products-count="4"] .swiper-wrapper,
+.product-list-builder .is-grid[data-products-count="4"] .swiper-wrapper,
+.products.is-grid.products.columns-4 {
+  @apply grid-cols-4;
+}
+
+.products.is-grid[data-products-count="5"] .swiper-wrapper,
+.product-list-builder .is-grid[data-products-count="5"] .swiper-wrapper,
+.products.is-grid.columns-5   {
+  @apply grid-cols-5;
 }
 
 
+.products.is-grid .swiper-pagination,
+.products.is-grid .small-swiper-button-prev,
+.products.is-grid .small-swiper-button-next {
+  @apply hidden;
+}
 
+.products.is-grid .swiper-slide .product {
+  @apply w-full;
+}
 
+.product-list-builder .is-grid .product-list-builder--pagination {
+  @apply mt-6 gap-2 hidden w-full h-6 relative items-center content-center justify-center;
+}
 
-
+.product-list-builder .is-slider .product-list-builder--pagination {
+  @apply flex items-center justify-center;
+}
 
 

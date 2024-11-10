@@ -7,10 +7,25 @@
   @apply opacity-60 cursor-wait;
 }
 
+.product-subheading {
+  @apply flex items-center gap-6;
+}
+
+.product-subheading .product-balloon-text {
+  @apply bg-third text-white text-14 font-medium rounded-md px-2 py-0.5;
+}
+
+.product-subheading .sku_wrapper {
+  @apply text-14 text-[#6C6C6C];
+}
+
+.product-subheading .sku_wrapper span {
+  @apply text-black;
+}
 
 .inside-product--top-wrap {
   .product-details-wrapper {
-    @apply flex flex-col xl:flex-row w-full items-start relative pb-0 gap-1 md:gap-10;
+    @apply flex flex-col md:flex-row w-full items-start relative pb-0 gap-1 md:gap-10;
   }
 
 
@@ -22,23 +37,16 @@
     @apply absolute left-0 top-4 text-14  px-3 py-1 ;
   }
 
-  .woocommerce-product-gallery {
-    @apply w-full xl:w-1/2 xl:max-w-[800px] relative min-w-0 block md:flex flex-col items-center;
-    .flex-viewport {
-      @apply mb-4 overflow-hidden text-center;
-    }
-    .woocommerce-product-gallery__wrapper {
-      @apply text-center;
-    }
-
-  }
 
   .summary {
     @apply w-full xl:w-1/2;
+    p.stock {
+      @apply hidden;
+    }
   }
 
   .product_title {
-    @apply text-28 xl:text-h2 tracking-normal font-semibold mb-4;
+    @apply text-28 xl:text-32 tracking-normal font-bold mb-4;
   }
 
   .woocommerce-product-details__short-description {
@@ -87,7 +95,7 @@
 }
 
 .inside-product--buy-buttons .quantity {
-  @apply w-[88px];
+  @apply w-[88px] ;
 }
 
 .woocommerce-variation-add-to-cart-disabled > button.btn {
@@ -117,8 +125,7 @@
   }
 }
 
-.product_meta .sku_wrapper
-.woocommerce-product-gallery__image {
+.product_meta .sku_wrapper {
   @apply float-left m-2;
 }
 
@@ -144,9 +151,44 @@
 }
 
 .woocommerce-Tabs-panel {
-  @apply bg-gray rounded-xl px-8 md:px-[120px] py-8 md:py-14 my-10;
+  @apply bg-gray rounded-xl px-8 md:px-[60px] py-8 md:py-14 my-10 flex gap-10;
 }
 
+.woocommerce-Tabs-panel .inside-description p {
+  @apply leading-5;
+}
+
+.woocommerce-Tabs-panel .inside-description ul {
+  @apply leading-5 list-disc ml-4 mb-6;
+}
+
+.woocommerce-Tabs-panel .inside-description ul li {
+  @apply leading-5 py-2;
+}
+
+.inside-description {
+  @apply w-full;
+}
+
+.product-specifications {
+  @apply bg-white rounded-md p-6 w-full;
+}
+.product-specifications h3 {
+  @apply text-24 font-bold;
+}
+
+.specifications-table tr {
+  @apply odd:bg-gray;
+}
+
+.specifications-table th,
+.specifications-table td {
+  @apply text-left text-15 font-normal p-1;
+}
+
+.specifications-table td {
+  @apply font-bold;
+}
 
 .product-template-default .woocommerce-tabs .woocommerce-Tabs-panel--pwb_tab,
  .woocommerce-tabs .woocommerce-Tabs-panel--additional_information {
@@ -335,17 +377,12 @@
     @apply p-6 md:p-10 bg-white relative items-center;
   }
 
-  .product-thumbnails,
+  
   #header {
     @apply opacity-0 invisible hidden;
   }
 
-  .product-thumbnails .swiper-slide {
-    @apply shadow-md;
-    img {
-      @apply shadow-md;
-    }
-  }
+ 
 
   .summary.entry-summary {
     @apply py-6 md:py-0  md:px-0;
@@ -550,10 +587,139 @@ div.product table.variations select {
   }
 }
 
+
+.required-materials--toggle {
+  @apply flex flex-col gap-4;
+}
+
+.required-materials--toggle .required-materials--toggle-link {
+  @apply bg-third/10 text-third text-14 flex items-center justify-center py-3 rounded-md gap-2;
+}
+
+.required-materials--toggle .required-materials--toggle-link .toggle-icon {
+  @apply text-18 leading-[22px] w-[22px] h-[22px] flex items-center justify-center border border-third rounded-md;
+}
+
+#atlas-calculator-results {
+  @apply p-6 rounded-md border border-[#E2EAF0] bg-white  flex-col gap-4;
+}
+
+#atlas-calculator-results h2 {
+  @apply font-bold text-base;
+}
+
+
+#atlas-calculator-results ul  {
+  @apply w-full ;
+}
+
+#atlas-calculator-results ul li {
+  @apply w-full flex items-center justify-between text-14 px-2 py-2 odd:bg-gray/80;
+}
+
+#atlas-calculator-results ul li span {
+  @apply font-bold;
+}
+
+.fences-product {
+  @apply flex flex-col gap-2 mb-2;
+}
+
+#atlas-calculator-form {
+  @apply bg-gray p-6 rounded-md;
+}
+
+#atlas-calculator-form h2 {
+  @apply font-semibold text-base text-black/90;
+}
+
+#atlas-calculator-form .atlas-calculator-section {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-2;
+}
+
+#atlas-calculator-form .atlas-calculator-section .form-row {
+  @apply m-0 p-0;
+}
+
+#atlas-calculator-form .atlas-calculator-section select,
+#atlas-calculator-form .atlas-calculator-section input {
+  @apply border-transparent h-[50px] leading-[50px]
+}
+
+#atlas-calculator-form label {
+  @apply font-medium text-13 text-[#545454];
+}
+
+.predefined-sizes {
+  @apply mt-4;
+}
+
+.predefined-sizes ul {
+  @apply grid grid-cols-2 md:grid-cols-4 gap-2;
+}
+
+.predefined-sizes ul li {
+  @apply m-0 p-0
+}
+
 .predefined-sizes .main-product-sizes__item {
-  @apply border border-black/10 rounded-full flex py-1 px-2 w-1/4 text-13; 
+  @apply border border-third/10 text-third rounded-md flex items-center justify-center py-0.5 px-2 w-full text-13; 
 }
 
 .predefined-sizes .main-product-sizes__item.selected {
-  @apply bg-second bg-white;
+  @apply bg-third text-white;
+}
+
+.fence-information p {
+  @apply text-14  text-[#787878] mb-1;
+}
+
+.fpf-fields-config-wrapper {
+  @apply hidden;
+}
+
+.product-video-btn {
+
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #333;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+.product-video-btn:hover {
+    background: #eee;
+}
+.product-video-btn svg {
+    width: 20px;
+    height: 20px;
+}
+.modal-open {
+    overflow: hidden;
+}
+.gallery-video-btn-wrapper {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 10;
+}
+
+.free-sample-block .free-sample-content {
+  @apply gap-10 flex flex-col md:flex-row bg-third;
+}
+
+.free-sample-block .free-sample-content .sample-image {
+  @apply max-w-[420px] rounded-xl overflow-hidden
+}
+
+.free-sample-block .free-sample-content .sample-text {
+  @apply text-white;
+}
+
+.free-sample-block .free-sample-content .sample-text h2 {
+  @apply text-40 font-black text-white mb-4;
 }

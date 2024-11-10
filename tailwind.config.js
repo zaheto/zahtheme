@@ -41,9 +41,9 @@ const config = {
         },
         container: {
             center: true,
-            screens: {
-              '2xl': '1480px',
-          },
+          //   screens: {
+          //     '2xl': '1480px',
+          // },
         },
 
         zIndex: {
@@ -60,7 +60,6 @@ const config = {
           'third': '#0F4C81',
           'gray': '#F3F3F3',
           'box': '#F4F1EB',
-          'third': '#FEB93B',
           'detail': '#173945',
           'label': '#787878',
           'border': '#D7D7D7',

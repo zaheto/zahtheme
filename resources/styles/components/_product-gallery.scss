@@ -1,0 +1,185 @@
+/* Base gallery styles */
+.woocommerce-product-gallery {
+    @apply w-full md:w-1/2 md:max-w-[800px] relative;
+  }
+  
+  /* Main image slider */
+  .product-main-images {
+    @apply w-full relative mb-4 overflow-hidden;
+  }
+  
+  .product-main-images .swiper-wrapper {
+    @apply w-full;
+  }
+  
+  .product-main-images .swiper-slide {
+    @apply w-full relative cursor-zoom-in;
+  }
+  
+  .product-main-images .swiper-zoom-container {
+    @apply w-full h-full flex items-center justify-center;
+  }
+  
+  .product-main-images .swiper-zoom-container img {
+    @apply w-full h-auto object-contain max-w-full;
+  }
+  
+  /* Navigation buttons */
+  .product-main-images .swiper-button-next,
+  .product-main-images .swiper-button-prev {
+    @apply bg-white text-black opacity-70 hover:opacity-100 hover:bg-black hover:text-white transition-all duration-200 cursor-pointer;
+  }
+  
+  .product-main-images .swiper-button-next::after,
+  .product-main-images .swiper-button-prev::after {
+    @apply text-base;
+  }
+  
+  /* Thumbnail slider */
+  .product-thumbnails {
+    @apply w-full relative mt-4 px-8 max-w-full;
+  }
+  
+  .product-thumbnails .swiper-slide {
+    @apply max-w-[70px];
+    width: 70px !important;
+    height: 70px !important;
+  }
+  
+  .product-thumbnails .swiper-slide img {
+    @apply w-full h-auto object-cover opacity-60 cursor-pointer transition-opacity duration-200;
+  }
+  
+  .product-thumbnails .swiper-slide.swiper-slide-thumb-active img {
+    @apply opacity-100;
+  }
+  
+  /* Modal styles */
+  .gallery-modal {
+    @apply invisible opacity-0 transition-opacity duration-200;
+  }
+  
+  .gallery-modal.active {
+    @apply visible opacity-100;
+  }
+  
+  .gallery-modal .modal-overlay {
+    @apply bg-black bg-opacity-90;
+  }
+  
+  .gallery-modal .modal-content {
+    @apply p-4;
+  }
+  
+  .gallery-modal .modal-close {
+    @apply hover:text-gray transition-colors duration-200;
+  }
+  
+  .gallery-modal .modal-swiper .swiper-wrapper {
+    @apply h-full items-center;
+  }
+  
+  .gallery-modal .modal-swiper .swiper-slide {
+    @apply h-full flex items-center justify-center;
+  }
+  
+  .gallery-modal .modal-swiper  {
+    @apply h-full flex items-center justify-center;
+  }
+  
+  .gallery-modal .modal-swiper  img {
+    @apply max-w-[90vw] max-h-[85vh] w-auto h-auto object-contain;
+  }
+  
+  .gallery-modal .modal-swiper .swiper-button-next,
+  .gallery-modal .modal-swiper .swiper-button-prev {
+    @apply bg-white text-black opacity-100 hover:bg-black hover:text-white transition-all duration-200 cursor-pointer;
+  }
+  
+  .gallery-modal .modal-swiper .swiper-button-next::after,
+  .gallery-modal .modal-swiper .swiper-button-prev::after {
+    @apply text-base;
+  }
+  
+  /* Loader */
+  .swiper-lazy-preloader {
+    @apply w-[42px] h-[42px] absolute left-1/2 top-1/2 -ml-[21px] -mt-[21px] z-10;
+    border: 4px solid var(--swiper-preloader-color, var(--swiper-theme-color));
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: swiper-preloader-spin 1s infinite linear;
+    transform-origin: 50%;
+  }
+  
+  @keyframes swiper-preloader-spin {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 1279px) {
+
+  
+    .product-main-images .swiper-slide {
+      @apply max-h-[500px];
+    }
+  
+    .product-thumbnails .swiper-slide {
+      width: calc(25% - 6px) !important;
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .product-thumbnails {
+      @apply px-6;
+    }
+  
+    .product-thumbnails .swiper-slide {
+      width: calc(33.333% - 4px) !important;
+    }
+  
+    .product-main-images {
+      @apply overflow-visible pr-[10px];
+    }
+  
+    .product-main-images .swiper-wrapper {
+      @apply items-stretch;
+    }
+  
+    .product-main-images .swiper-slide {
+      @apply opacity-100 h-auto;
+    }
+  
+    .product-main-images .swiper-slide img {
+      @apply w-full h-auto object-cover;
+    }
+  }
+  
+  /* Prevent body scroll when modal is open */
+  body.modal-open {
+    @apply overflow-hidden;
+  }
+
+  /* Mobile-specific fixes */
+@media (max-width: 768px) {
+    .product-main-images {
+      @apply overflow-visible pr-[10px] w-full;
+      width: 100% !important; /* Force width */
+    }
+  
+    .product-main-images .swiper-wrapper {
+      @apply w-full items-stretch;
+      width: 100% !important; /* Force width */
+    }
+  
+    .product-main-images .swiper-slide {
+      @apply opacity-100 h-auto;
+      width: calc(100% - 10px) !important; /* Force correct width accounting for margin */
+      max-width: calc(100% - 10px) !important;
+    }
+  
+    .product-thumbnails {
+      @apply hidden; /* Hide thumbnails on mobile */
+    }
+  }

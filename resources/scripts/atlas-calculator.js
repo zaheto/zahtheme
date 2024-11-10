@@ -1,5 +1,5 @@
 jQuery(document).ready(function () {
-    console.log('Atlas Pricing Data:', atlas_pricing);
+    //console.log('Atlas Pricing Data:', atlas_pricing);
 
     // Add toggle functionality
     jQuery('.required-materials--toggle-link').on('click', function(e) {
@@ -53,8 +53,8 @@ jQuery(document).ready(function () {
         let panelHeight = parseFloat(heightInput.val());
         let numberOfPanels = parseInt(panelsInput.val());
 
-        console.log('Base price:', atlas_pricing.base_price);
-        console.log('Number of panels:', numberOfPanels);
+        //console.log('Base price:', atlas_pricing.base_price);
+        //console.log('Number of panels:', numberOfPanels);
 
         try {
             // Material calculations
@@ -97,11 +97,11 @@ jQuery(document).ready(function () {
             let dowelsPcs = numberOfPanels * 10 + F20 * numberOfPanels;
             let cornerPcs = F20 * numberOfPanels;
 
-            console.log('Starting price calculations:');
+            //console.log('Starting price calculations:');
             
             // Price Calculations
             let totalPrice = parseFloat(atlas_pricing.base_price) * numberOfPanels;
-            console.log('After base price:', totalPrice);
+            //console.log('After base price:', totalPrice);
 
             // Add essential components
             totalPrice += uProfileLeftLm * parseFloat(atlas_pricing.price_u_profile_left || 0);
@@ -126,15 +126,17 @@ jQuery(document).ready(function () {
 
             // Display materials
             jQuery('#atlas-results').html(`
-                <p>Blinds Profile: ${blindsProfilePcs.toFixed(2)} Pcs, ${blindsProfileLm.toFixed(2)} lm</p>
-                <p>U Profile Left: ${uProfileLeftPcs} Pcs, ${uProfileLeftLm.toFixed(3)} lm</p>
-                <p>U Profile Right: ${uProfileRightPcs} Pcs, ${uProfileRightLm.toFixed(3)} lm</p>
-                <p>Horizontal U Profile: ${horizontalUProfilePcs} Pcs, ${horizontalUProfileLm.toFixed(2)} lm</p>
-                <p>Reinforcing Profile: ${reinforcingProfilePcs} Pcs, ${reinforcingProfileLm.toFixed(3)} lm</p>
-                <p>Rivets: ${rivetsPcs} Pcs</p>
-                <p>Self-tapping Screws: ${selfTappingScrewPcs} Pcs</p>
-                <p>Dowels: ${dowelsPcs} Pcs</p>
-                <p>Corner: ${cornerPcs} Pcs</p>
+                <ul>
+                    <li>Профил Жалюзи: <span>${blindsProfilePcs.toFixed(2)} бр. / ${blindsProfileLm.toFixed(2)} лм</span></li>
+                    <li>Профил U отляво:  <span>${uProfileLeftPcs} бр. / ${uProfileLeftLm.toFixed(3)} лм</span></li>
+                    <li>Профил U отдясно:  <span>${uProfileRightPcs} бр. / ${uProfileRightLm.toFixed(3)} лм</span></li>
+                    <li>Хоризонтален профил U:  <span>${horizontalUProfilePcs} бр. / ${horizontalUProfileLm.toFixed(2)} лм</span></li>
+                    <li>Укрепващ профил:  <span>${reinforcingProfilePcs} бр. / ${reinforcingProfileLm.toFixed(3)} лм</span></li>
+                    <li>Заклепки:  <span>${rivetsPcs} бр.</span></li>
+                    <li>Самонарезни винтове:  <span>${selfTappingScrewPcs} бр.</span></li>
+                    <li>Тапи:  <span>${dowelsPcs} бр.</span></li>
+                    <li>Ъгъл:  <span>${cornerPcs} бр.</span></li>
+                </ul>
             `);
 
             jQuery('#atlas-final-price').html(`<p>Крайна цена: ${totalPrice.toFixed(2)} лв.</p>`);

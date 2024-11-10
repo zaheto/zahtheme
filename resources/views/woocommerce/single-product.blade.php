@@ -55,7 +55,7 @@ the readme will list any important changes.
     @if (has_term('atlas', 'product_tag', get_the_ID()))
     <script>
         var atlas_pricing = @json($atlas_pricing);
-        console.log('Initial Atlas Pricing:', atlas_pricing);
+        //console.log('Initial Atlas Pricing:', atlas_pricing);
     </script>
     @endif
 

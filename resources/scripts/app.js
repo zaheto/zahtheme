@@ -246,71 +246,144 @@ function displaySelectedOptions() {
   });
 
 
-  var moreProductsSLider = new Swiper(".more-products-slider", {
-    loop: false,
-    autoHeight: true, //enable auto height
-    keyboardControl: true,
-    keyboard: true,
-    slidesPerView: 2,
-    spaceBetween: 12,
+  // var moreProductsSLider = new Swiper(".more-products-slider", {
+  //   loop: false,
+  //   autoHeight: true, //enable auto height
+  //   keyboardControl: true,
+  //   keyboard: true,
+  //   slidesPerView: 2,
+  //   spaceBetween: 12,
 
-    breakpoints: {
-      760: {
-        slidesPerView: 2,
-        spaceBetween: 12,
-        pagination: {
-          el: '.swiper-pagination',
-          clickable: true,
-        }
-      },
-      768: {
-        slidesPerView: 3,
-        spaceBetween: 12,
-        pagination: {
-          el: '.swiper-pagination',
-          clickable: true,
-        }
-      },
-      1024: {
-        slidesPerView: 4,
-        spaceBetween: 12,
-        pagination: {
-          el: '.swiper-pagination',
-          clickable: true,
-        },
-        // Navigation arrows
-        navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
-        }
-      },
-      1280: {
-        spaceBetween: 16,
-        slidesPerView: 5,
-        pagination: {
-          el: '.swiper-pagination',
-          clickable: true,
-        },
-        // Navigation arrows
-        navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
-        }
-      },
-      1440: {
-        spaceBetween: 16,
-        slidesPerView: 6,
-        pagination: {
-          el: '.swiper-pagination',
-          clickable: true,
-        },
-        // Navigation arrows
-        navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
-        }
-      },
-    },
+  //   breakpoints: {
+  //     760: {
+  //       slidesPerView: 2,
+  //       spaceBetween: 12,
+  //       pagination: {
+  //         el: '.swiper-pagination',
+  //         clickable: true,
+  //       }
+  //     },
+  //     768: {
+  //       slidesPerView: 3,
+  //       spaceBetween: 12,
+  //       pagination: {
+  //         el: '.swiper-pagination',
+  //         clickable: true,
+  //       }
+  //     },
+  //     1024: {
+  //       slidesPerView: 4,
+  //       spaceBetween: 12,
+  //       pagination: {
+  //         el: '.swiper-pagination',
+  //         clickable: true,
+  //       },
+  //       // Navigation arrows
+  //       navigation: {
+  //         nextEl: '.swiper-button-next',
+  //         prevEl: '.swiper-button-prev',
+  //       }
+  //     },
+  //     1280: {
+  //       spaceBetween: 16,
+  //       slidesPerView: 5,
+  //       pagination: {
+  //         el: '.swiper-pagination',
+  //         clickable: true,
+  //       },
+  //       // Navigation arrows
+  //       navigation: {
+  //         nextEl: '.swiper-button-next',
+  //         prevEl: '.swiper-button-prev',
+  //       }
+  //     },
+  //     1440: {
+  //       spaceBetween: 16,
+  //       slidesPerView: 6,
+  //       pagination: {
+  //         el: '.swiper-pagination',
+  //         clickable: true,
+  //       },
+  //       // Navigation arrows
+  //       navigation: {
+  //         nextEl: '.swiper-button-next',
+  //         prevEl: '.swiper-button-prev',
+  //       }
+  //     },
+  //   },
+  // });
+
+  
+    $('.more-products-slider').each(function() {
+      const $slider = $(this);
+      const productsCount = parseInt($slider.data('products-count'));
+      
+      // Only initialize Swiper if 6 or more products
+      if (productsCount >= 6) {
+          new Swiper($slider[0], {
+              loop: false,
+              autoHeight: true,
+              keyboardControl: true,
+              keyboard: true,
+              slidesPerView: 2,
+              spaceBetween: 12,
+
+              breakpoints: {
+                  760: {
+                      slidesPerView: 2,
+                      spaceBetween: 12,
+                      pagination: {
+                          el: '.swiper-pagination',
+                          clickable: true,
+                      }
+                  },
+                  768: {
+                      slidesPerView: 3,
+                      spaceBetween: 12,
+                      pagination: {
+                          el: '.swiper-pagination',
+                          clickable: true,
+                      }
+                  },
+                  1024: {
+                      slidesPerView: 4,
+                      spaceBetween: 12,
+                      pagination: {
+                          el: '.swiper-pagination',
+                          clickable: true,
+                      },
+                      navigation: {
+                          nextEl: '.small-swiper-button-next',
+                          prevEl: '.small-swiper-button-prev',
+                      }
+                  },
+                  1280: {
+                      spaceBetween: 16,
+                      slidesPerView: 5,
+                      pagination: {
+                          el: '.swiper-pagination',
+                          clickable: true,
+                      },
+                      navigation: {
+                          nextEl: '.small-swiper-button-next',
+                          prevEl: '.small-swiper-button-prev',
+                      }
+                  },
+                  1440: {
+                      spaceBetween: 16,
+                      slidesPerView: 6,
+                      pagination: {
+                          el: '.swiper-pagination',
+                          clickable: true,
+                      },
+                      navigation: {
+                          nextEl: '.small-swiper-button-next',
+                          prevEl: '.small-swiper-button-prev',
+                      }
+                  },
+              },
+          });
+      }
   });
 
   // Initialize Swiper for smaller screens only
@@ -479,72 +552,6 @@ function displaySelectedOptions() {
   });
 
 
-
-  var galleryTop = new Swiper(".product-main-images", {
-    spaceBetween: 10,
-    loop: true,
-    keyboardControl: true,
-    keyboard: true,
-    navigation: {
-      nextEl: ".swiper-button-next",
-      prevEl: ".swiper-button-prev",
-    },
-    thumbs: {
-      swiper: galleryThumbs,
-    },
-  });
-
-  var swiperSlides = Array.from(galleryTop.slides);
-
-  swiperSlides.forEach(function(slide) {
-    openFullscreenSliderHandler(slide);
-    closeFullscreenSliderHandler(slide);
-  });
-
-  function openFullscreenSliderHandler(slide) {
-    var slideImage = slide.querySelector('img');
-
-    slideImage.addEventListener('click', function() {
-      var slideNumber = slide.dataset.swiperSlideIndex;
-      openFullscreenSwiper(slideNumber);
-    });
-  }
-
-  function openFullscreenSwiper(slideNumber) {
-    galleryTop.el.classList.add('fullscreen');
-    galleryTop.params.slidesPerView = 1;
-    galleryTop.update();
-    galleryTop.slideToLoop(parseInt(slideNumber, 10), 0);
-  }
-
-  function closeFullscreenSliderHandler(slide) {
-    var slideNumber = slide.dataset.swiperSlideIndex;
-    var backdrop = document.createElement('div');
-    var closeButton = document.createElement('div');
-
-    slide.appendChild(backdrop);
-    slide.appendChild(closeButton);
-    backdrop.classList.add('backdrop');
-    closeButton.classList.add('close-button');
-    closeButton.innerHTML = '×';
-
-    backdrop.addEventListener('click', function() {
-      closeFullscreenSwiper(slideNumber);
-    });
-
-    closeButton.addEventListener('click', function() {
-      closeFullscreenSwiper(slideNumber);
-    });
-  }
-
-  function closeFullscreenSwiper(slideNumber) {
-    galleryTop.el.classList.remove('fullscreen');
-    galleryTop.params.slidesPerView = 1;
-    galleryTop.update();
-    galleryTop.slideToLoop(parseInt(slideNumber, 10), 0);
-  }
-
-
   $('#desktop-menu').on('click', function(e) {
     e.preventDefault()
     $('.main-nav').toggleClass('active')
@@ -557,63 +564,6 @@ function displaySelectedOptions() {
     })
   }
 
-
-  // $(window).scroll(function() {
-
-  //     var scrollDistance = $(window).scrollTop();
-  //     var buySectionOffset = $('#buy-bottom').offset().top;
-
-  //     // Add 'scroll' class when scrolled more than 500px
-  //     if (scrollDistance > 500) {
-  //         $('#buy-scroll').addClass('scroll');
-  //     } else {
-  //         $('#buy-scroll').removeClass('scroll');
-  //     }
-
-  //     // Remove 'scroll' class when the #buy section is reached
-  //     if (scrollDistance >= buySectionOffset) {
-  //         $('#buy-scroll').removeClass('scroll');
-  //     }
-  // });
-
-
-
-    // Select all links with hashes
-    $('a[href*="#"]')
-        // Remove links that don't actually link to anything
-        .not('[href="#"]')
-        .not('[href="#0"]')
-        .click(function(event) {
-            // On-page links
-            if (
-                location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '')
-                &&
-                location.hostname == this.hostname
-            ) {
-                // Figure out element to scroll to
-                var target = $(this.hash);
-                target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
-                // Does a scroll target exist?
-                if (target.length) {
-                    // Only prevent default if animation is actually going to happen
-                    event.preventDefault();
-                    $('html, body').animate({
-                        scrollTop: target.offset().top
-                    }, 500, function() {
-                        // Callback after animation
-                        // Must change focus!
-                        var $target = $(target);
-                        $target.focus();
-                        if ($target.is(":focus")) { // Checking if the target was focused
-                            return false;
-                        } else {
-                            $target.attr('tabindex','-1'); // Adding tabindex for elements not focusable
-                            $target.focus(); // Set focus again
-                        };
-                    });
-                }
-            }
-        });
 
   $('.mobile-nav .dropdown-products').detach().insertAfter('.header .products a')
 
