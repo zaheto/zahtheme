@@ -2246,13 +2246,13 @@ add_action('woocommerce_after_single_product_summary', function() {
         // Related Products Section
         if ($related_products) {
             $products_count = count($related_products);
-            $slider_class = $products_count >= 6 ? 'is-slider' : 'is-grid';
+            $slider_class = $products_count >= 5 ? 'is-slider' : 'is-grid';
             
             echo '<section class="product-list-builder">';
-            echo '<div class="container flex flex-col items-center gap-6">';
+           
             echo '<h2>' . esc_html__('Connected Products', 'zah') . '</h2>';
             
-            echo '<div class="swiper swiper-container more-products-slider ' . $slider_class . '" data-products-count="' . $products_count . '">';
+            echo '<section class="connected-products"><div class="swiper swiper-container more-products-slider ' . $slider_class . '" data-products-count="' . $products_count . '">';
             echo '<div class="swiper-products swiper-wrapper">';
             
             foreach ($related_products as $related_product) {
@@ -2285,25 +2285,18 @@ add_action('woocommerce_after_single_product_summary', function() {
                 echo '</div>';
             }
             
-            echo '</div>'; // .swiper-container
-            echo '</div>'; // .container
+            echo '</div></section>'; // .swiper-container
+            
             echo '</section>';
         }
 
         // Free Sample Section
         if ($free_sample && !empty($free_sample['sample_heading'])) {
             echo '<section class="free-sample-block">';
-            echo '<div class="container">';
+           
             echo '<div class="free-sample-content">';
             
-            if (!empty($free_sample['sample_image'])) {
-                echo '<div class="sample-image">';
-                echo wp_get_attachment_image($free_sample['sample_image']['ID'], 'medium_large', false, [
-                    'class' => 'sample-featured-image',
-                    'alt' => esc_attr($free_sample['sample_heading'])
-                ]);
-                echo '</div>';
-            }
+            
             
             echo '<div class="sample-text">';
             if (!empty($free_sample['sample_heading'])) {
@@ -2316,15 +2309,22 @@ add_action('woocommerce_after_single_product_summary', function() {
                 echo '</div>';
             }
             echo '</div>'; // .sample-text
+
+            if (!empty($free_sample['sample_image'])) {
+                echo '<div class="sample-image">';
+                echo wp_get_attachment_image($free_sample['sample_image']['ID'], 'medium_large', false, [
+                    'class' => 'sample-featured-image',
+                    'alt' => esc_attr($free_sample['sample_heading'])
+                ]);
+                echo '</div>';
+            }
             
             echo '</div>'; // .free-sample-content
-            echo '</div>'; // .container
+    
             echo '</section>';
         }
         
         echo '</div>'; // .product-additional-sections
     }
 }, 15); // Priority 15 to ensure it comes after tabs
-
-
 

@@ -25,7 +25,8 @@
 
 .inside-product--top-wrap {
   .product-details-wrapper {
-    @apply flex flex-col md:flex-row w-full items-start relative pb-0 gap-1 md:gap-10;
+    //@apply flex flex-col lg:flex-row w-full items-start relative pb-0 gap-1 lg:gap-10;
+    @apply grid grid-cols-2 w-full relative pb-0 gap-1 lg:gap-10;
   }
 
 
@@ -39,7 +40,7 @@
 
 
   .summary {
-    @apply w-full xl:w-1/2;
+    @apply w-full;
     p.stock {
       @apply hidden;
     }
@@ -147,7 +148,7 @@
 }
 
 .woocommerce-tabs h2 {
-  @apply font-bold text-28 md:text-32 mb-4 pb-0 uppercase text-black;
+  @apply font-black text-28 md:text-40 mb-4 pb-0 uppercase text-black;
 }
 
 .woocommerce-Tabs-panel {
@@ -171,10 +172,10 @@
 }
 
 .product-specifications {
-  @apply bg-white rounded-md p-6 w-full;
+  @apply bg-white rounded-xl p-6 w-full;
 }
 .product-specifications h3 {
-  @apply text-24 font-bold;
+  @apply text-24 font-bold mb-2;
 }
 
 .specifications-table tr {
@@ -183,7 +184,7 @@
 
 .specifications-table th,
 .specifications-table td {
-  @apply text-left text-15 font-normal p-1;
+  @apply text-left text-15 leading-5 font-normal py-2 px-4;
 }
 
 .specifications-table td {
@@ -708,8 +709,12 @@ div.product table.variations select {
     z-index: 10;
 }
 
+.free-sample-block {
+  @apply mb-10
+}
+
 .free-sample-block .free-sample-content {
-  @apply gap-10 flex flex-col md:flex-row bg-third;
+  @apply gap-10 flex flex-col md:flex-row bg-third px-16 py-10 rounded-lg;
 }
 
 .free-sample-block .free-sample-content .sample-image {
@@ -720,6 +725,20 @@ div.product table.variations select {
   @apply text-white;
 }
 
+.free-sample-block .free-sample-content .sample-text p {
+  @apply text-white;
+}
+
+.free-sample-block .free-sample-content .sample-text ul {
+  @apply list-disc text-white pl-5;
+  li {
+    @apply text-white;
+    p {
+      @apply text-white;
+    }
+  }
+}
+
 .free-sample-block .free-sample-content .sample-text h2 {
-  @apply text-40 font-black text-white mb-4;
+  @apply text-40 font-black text-white mb-4 uppercase;
 }
