@@ -3,6 +3,10 @@
 // if you're using a bundler, first import:
 import Headroom from "headroom.js";
 
+// Import calculator
+import './calculator.js';
+
+
 //import Swiper from 'swiper';
 import Swiper from 'swiper/bundle';
 

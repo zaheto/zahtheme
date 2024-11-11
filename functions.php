@@ -1867,18 +1867,6 @@ add_action('woocommerce_after_add_to_cart_form', function() {
     }
 });
 
-// Enqueue the calculator script
-add_action('wp_enqueue_scripts', function() {
-    if (is_product() && has_term('atlas', 'product_tag')) {
-        wp_enqueue_script(
-            'atlas-calculator', 
-            get_stylesheet_directory_uri() . '/resources/scripts/atlas-calculator.js', 
-            ['jquery'], 
-            '1.0.0', 
-            true
-        );
-    }
-});
 
 
 // Remove default SKU location

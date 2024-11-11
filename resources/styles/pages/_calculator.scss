@@ -1,5 +1,20 @@
 .calculator {
-    @apply max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md;
+    .calculator-box {
+      @apply bg-third/30 rounded-lg p-8 mb-10;
+    }
+
+    .calculator-box .form-form {
+      @apply grid grid-cols-1 md:grid-cols-3 gap-2;
+    }
+
+    .calculator-box .form-form .input-normal,
+    .calculator-box .form-form .select-normal {
+      @apply w-full  h-[50px] leading-[50px] border border-black/10 rounded-md px-4;
+    }
+
+    .calculator-tab {
+      @apply bg-white p-6 rounded-xl border-none;
+    }
   
     .tabs {
       @apply flex mb-6 border-b;
@@ -58,3 +73,15 @@
       }
     }
   }
+
+.calculator-nav {
+  @apply bg-white rounded-md p-2 gap-2 flex mb-2;
+}
+
+.calculator-nav .tab-button  {
+  @apply bg-white rounded-md p-2 text-base font-bold text-black/80 hover:bg-third hover:text-white flex-1;
+}
+
+.calculator-nav .tab-button.active {
+  @apply bg-third text-white;
+}

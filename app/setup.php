@@ -117,6 +117,8 @@ add_action('after_setup_theme', function () {
         'style',
     ]);
 
+   
+
     /**
      * Enable selective refresh for widgets in customizer.
      *
@@ -205,3 +207,10 @@ add_action('widgets_init', function () {
 //     }
 // });
 
+add_action('wp_enqueue_scripts', function () {
+    bundle('app')->enqueue();
+    
+    if (is_page_template('views/template-calculator.blade.php')) {
+        bundle('calculator')->enqueue();
+    }
+}, 100);
