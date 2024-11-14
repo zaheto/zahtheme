@@ -3,9 +3,13 @@
 // if you're using a bundler, first import:
 import Headroom from "headroom.js";
 
-// Import calculator
-import './calculator.js';
-
+// In app.js
+// Import calculator only on calculator template page
+if (document.querySelector('.calculator-box')) {
+  import('./calculator.js');
+} else if (document.querySelector('#atlas-calculator-form')) {
+  import('./atlas-calculator.js');
+}
 
 //import Swiper from 'swiper';
 import Swiper from 'swiper/bundle';

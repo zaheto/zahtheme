@@ -90,6 +90,29 @@ function zah_enqueue_product_gallery_script() {
 add_action('wp_enqueue_scripts', 'zah_enqueue_product_gallery_script');
 
 
+function zah_enqueue_calculator_scripts() {
+    // For the calculator template page
+    if (is_page_template('template-calculator.blade.php')) {
+        wp_enqueue_script('zah-calculator', 
+            get_template_directory_uri() . '/resources/scripts/calculator.js', 
+            array('jquery'), 
+            null, 
+            true
+        );
+    }
+    
+    // For single product pages with atlas tag
+    if (is_product() && has_term('atlas', 'product_tag')) {
+        wp_enqueue_script('zah-atlas-calculator', 
+            get_template_directory_uri() . '/resources/scripts/atlas-calculator.js', 
+            array('jquery'), 
+            null, 
+            true
+        );
+    }
+}
+add_action('wp_enqueue_scripts', 'zah_enqueue_calculator_scripts');
+
 // function custom_enqueue_woocommerce_scripts() {
 //     if (function_exists('is_woocommerce')) {
 //         wp_enqueue_script('wc-add-to-cart');
