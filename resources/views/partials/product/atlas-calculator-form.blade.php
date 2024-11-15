@@ -1,3 +1,26 @@
+@php
+            // Retrieve the models from the options page
+            $models = get_field('models', 'option');
+            $predefined_sizes = [];
+
+            if ($models && is_array($models)) {
+                foreach ($models as $model) {
+                    $tag = $model['tag'];
+                    if ($tag && has_term($tag, 'product_tag', get_the_ID())) {
+                        $predefined_sizes = $model['predefined_sizes'];
+                        break;
+                    }
+                }
+            }
+
+            // Retrieve the panel heights from the product ACF module
+            $panel_heights = $atlasData['panel_height'] ?? [];
+
+            // Set default values for the form inputs
+            $default_width = $predefined_sizes[0]['width'] ?? '';
+            $default_height = $predefined_sizes[0]['height'] ?? '';
+        @endphp
+
 <section class="fences-product">
     <div id="atlas-calculator-form" class="atlas-calculator-section">
         <h2 class="mb-2">Въведете вашите индивидуални размери на оградата:</h2>
@@ -21,7 +44,14 @@
                 <label for="atlas-panel-height" class="font-normal">Височина на паното (m):</label>
                 <select id="atlas-panel-height" name="atlas-panel-height" required>
                     @foreach ($atlasData['panel_height'] as $height)
-                        <option value="{{ $height }}">{{ $height }}</option>
+                        @php
+                            $height = trim($height);
+                            // Get the first predefined size height for comparison
+                            $default_height = $predefined_sizes[0]['height'] ?? '';
+                        @endphp
+                        <option value="{{ $height }}" {{ $height == $default_height ? 'selected' : '' }}>
+                            {{ $height }}
+                        </option>
                     @endforeach
                 </select>
             </div>
@@ -40,19 +70,79 @@
             </div>
         </form>
     
-        <div class="predefined-sizes">
-            <h2>Или изберете някой от често поръчваните размери:</h2>
-            <ul>
-                <li><a href="#" class=" main-product-sizes__item selected" data-l="1.8" data-h="1.245">1.8(ш) x 1.245(в)</a></li>    
-                <li><a href="#" class=" main-product-sizes__item" data-l="1.8" data-h="1.045">1.8(ш) x 1.045(в)</a></li>    
-                <li><a href="#" class=" main-product-sizes__item" data-l="2.0" data-h="1.245">2.0(ш) x 1.245(в)</a></li>    
-                <li><a href="#" class=" main-product-sizes__item" data-l="2.0" data-h="1.545">2.0(ш) x 1.545(в)</a></li>    
-                <li><a href="#" class=" main-product-sizes__item" data-l="2.0" data-h="2.045">2.0(ш) x 2.045(в)</a></li>    
-                <li><a href="#" class=" main-product-sizes__item" data-l="1.0" data-h="2.045">1.0(ш) x 2.045(в)</a></li>    
-                <li><a href="#" class=" main-product-sizes__item" data-l="1.5" data-h="1.845">1.5(ш) x 1.845(в)</a></li>    
-                <li><a href="#" class=" main-product-sizes__item" data-l="1.8" data-h="1.845">1.8(ш) x 1.845(в)</a></li>    
-            </ul>
-        </div>
+        
+
+        @php
+        // Retrieve the models from the options page
+        $models = get_field('models', 'option');
+        $predefined_sizes = [];
+    
+        if ($models && is_array($models)) {
+            foreach ($models as $model) {
+                $tag = $model['tag'];
+                if ($tag && has_term($tag, 'product_tag', get_the_ID())) {
+                    $predefined_sizes = $model['predefined_sizes'];
+                    break;
+                }
+            }
+        }
+    @endphp
+    
+    <div class="predefined-sizes">
+        <h2>Или изберете някой от често поръчваните размери:</h2>
+        <ul>
+            @if ($predefined_sizes && is_array($predefined_sizes))
+                @foreach ($predefined_sizes as $index => $size)
+                    @php
+                        // Ensure height exists in panel_heights
+                        $is_height_valid = in_array($size['height'], $panel_heights);
+                        if (!$is_height_valid) continue; // Skip invalid heights
+                    @endphp
+                    <li>
+                        <a href="#" 
+                           class="main-product-sizes__item {{ $index === 0 ? 'selected' : '' }}"
+                           data-l="{{ $size['width'] }}"
+                           data-h="{{ $size['height'] }}"
+                           data-panels="{{ $size['number_of_panels'] }}">
+                            {{ $size['width'] }}(ш) x {{ $size['height'] }}(в)
+                            @if($size['number_of_panels'] > 1)
+                                - {{ $size['number_of_panels'] }} пана
+                            @endif
+                        </a>
+                    </li>
+                @endforeach
+            @else
+                <li>{{ __('No predefined sizes available', 'zah') }}</li>
+            @endif
+        </ul>
+    </div>
+    
+    <script>
+        jQuery(document).ready(function($) {
+            // Set default values for the form inputs
+            const firstPredefinedSize = $('.main-product-sizes__item').first();
+            const defaultWidth = firstPredefinedSize.data('l');
+            const defaultHeight = firstPredefinedSize.data('h');
+    
+            $('#atlas-panel-width').val(defaultWidth);
+            $('#atlas-panel-height').val(defaultHeight);
+    
+            // Handle click on predefined sizes
+            $('.main-product-sizes__item').on('click', function(e) {
+                e.preventDefault();
+                const width = $(this).data('l');
+                const height = $(this).data('h');
+    
+                // Update form inputs
+                $('#atlas-panel-width').val(width);
+                $('#atlas-panel-height').val(height);
+    
+                // Update selected class
+                $('.main-product-sizes__item').removeClass('selected');
+                $(this).addClass('selected');
+            });
+        });
+    </script>
         
     
     

@@ -66,16 +66,16 @@ jQuery(document).ready(function ($) {
                 .on('input change', () => this.calculateTerra());
         }
 
-        setupToggleButtons() {
-            $('.required-materials--toggle-link').on('click', function(e) {
-                e.preventDefault();
-                const resultsDiv = $(this).closest('.mt-8').find('[id$="calculator-results"]');
-                const toggleIcon = $(this).find('.toggle-icon');
-                resultsDiv.slideToggle(300, function() {
-                    toggleIcon.text($(this).is(':visible') ? '-' : '+');
-                });
-            });
-        }
+        // setupToggleButtons() {
+        //     $('.required-materials--toggle-link').on('click', function(e) {
+        //         e.preventDefault();
+        //         const resultsDiv = $(this).closest('.mt-8').find('[id$="calculator-results"]');
+        //         const toggleIcon = $(this).find('.toggle-icon');
+        //         resultsDiv.slideToggle(300, function() {
+        //             toggleIcon.text($(this).is(':visible') ? '-' : '+');
+        //         });
+        //     });
+        // }
 
         switchTab(model) {
             console.log('Switching to model:', model);

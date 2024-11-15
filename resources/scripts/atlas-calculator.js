@@ -1,38 +1,48 @@
-jQuery(document).ready(function () {
-    //console.log('Atlas Pricing Data:', atlas_pricing);
+jQuery(document).ready(function ($) {  // Pass $ as parameter
+    // Hide the results section by default
+    $('#atlas-calculator-results').hide();
 
-    // Add toggle functionality
-    jQuery('.required-materials--toggle-link').on('click', function(e) {
+    $('.required-materials--toggle-link').on('click', function(e) {
         e.preventDefault();
-        const resultsSection = jQuery('#atlas-calculator-results');
-        const toggleIcon = jQuery(this).find('.toggle-icon');
+        const resultsSection = $('#atlas-calculator-results');
+        const toggleIcon = $(this).find('.toggle-icon');
         
-        resultsSection.slideToggle(300, function() {
-            // After animation completes, update the icon
-            if (resultsSection.is(':visible')) {
-                toggleIcon.text('-');
-                jQuery(this).removeClass('hidden');
-            } else {
+        if (resultsSection.is(':visible')) {
+            resultsSection.slideUp(300, function() {
+                resultsSection.addClass('hidden').css('display', '');
                 toggleIcon.text('+');
-                jQuery(this).addClass('hidden');
-            }
-        });
+            });
+        } else {
+            resultsSection.removeClass('hidden').slideDown(300, function() {
+                toggleIcon.text('-');
+            });
+        }
     });
 
     // Get price elements
-    const priceElement = jQuery('.price');
-    const addToCartButton = jQuery('button.single_add_to_cart_button');
+    const priceElement = $('.price');
+    const addToCartButton = $('button.single_add_to_cart_button');
 
     // Input elements
-    const widthInput = jQuery('#atlas-panel-width');
-    const heightInput = jQuery('#atlas-panel-height');
-    const panelsInput = jQuery('#atlas-number-of-panels');
+    const widthInput = $('#atlas-panel-width');
+    const heightInput = $('#atlas-panel-height');
+    const panelsInput = $('#atlas-number-of-panels');
 
-    // Set default values
-    widthInput.val(1.8);
-    heightInput.find('option:first').prop('selected', true);
-    panelsInput.val(1);
+    // Get the selected predefined size
+    const selectedPredefinedSize = $('.main-product-sizes__item.selected');
+    
+    if (selectedPredefinedSize.length) {
+        const width = selectedPredefinedSize.data('l');
+        const height = selectedPredefinedSize.data('h');
+        const panels = selectedPredefinedSize.data('panels') || 1;
+        
+        // Set initial values
+        widthInput.val(width);
+        heightInput.val(height).trigger('change');
+        panelsInput.val(panels);
+    }
 
+    // Rest of the code remains the same but replace jQuery with $ 
     // Function to check if all inputs have valid values
     function areInputsValid() {
         const width = parseFloat(widthInput.val());
@@ -52,9 +62,6 @@ jQuery(document).ready(function () {
         let panelWidth = parseFloat(widthInput.val());
         let panelHeight = parseFloat(heightInput.val());
         let numberOfPanels = parseInt(panelsInput.val());
-
-        //console.log('Base price:', atlas_pricing.base_price);
-        //console.log('Number of panels:', numberOfPanels);
 
         try {
             // Material calculations
@@ -97,11 +104,8 @@ jQuery(document).ready(function () {
             let dowelsPcs = numberOfPanels * 10 + F20 * numberOfPanels;
             let cornerPcs = F20 * numberOfPanels;
 
-            //console.log('Starting price calculations:');
-            
             // Price Calculations
             let totalPrice = parseFloat(atlas_pricing.base_price) * numberOfPanels;
-            //console.log('After base price:', totalPrice);
 
             // Add essential components
             totalPrice += uProfileLeftLm * parseFloat(atlas_pricing.price_u_profile_left || 0);
@@ -109,37 +113,41 @@ jQuery(document).ready(function () {
             totalPrice += horizontalUProfileLm * parseFloat(atlas_pricing.price_u_horizontal_panel || 0);
             totalPrice += reinforcingProfileLm * parseFloat(atlas_pricing.price_reinforcing_profile || 0);
             totalPrice += rivetsPcs * parseFloat(atlas_pricing.price_rivets || 0);
+            totalPrice += selfTappingScrewPcs * parseFloat(atlas_pricing.price_self_tapping_screw || 0);
+            totalPrice += dowelsPcs * parseFloat(atlas_pricing.price_dowels || 0);
+            totalPrice += cornerPcs * parseFloat(atlas_pricing.price_corners || 0);
+
             // Update displayed price
             priceElement.html(`<span class="woocommerce-Price-amount amount"> 
                 <bdi>Крайна цена: ${totalPrice.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
             </span>`);
 
-              // When updating the results, check if they should be visible
-                const resultsSection = jQuery('#atlas-calculator-results');
-                if (!resultsSection.hasClass('hidden')) {
-                    resultsSection.show();
-                }
+            // When updating the results, check if they should be visible
+            const resultsSection = $('#atlas-calculator-results');
+            if (!resultsSection.hasClass('hidden')) {
+                resultsSection.show();
+            }
 
             // Update add to cart button data and hidden input
             addToCartButton.attr('data-calculated-price', totalPrice.toFixed(2));
-            jQuery('#calculated_price').val(totalPrice.toFixed(2));
+            $('#calculated_price').val(totalPrice.toFixed(2));
 
             // Display materials
-            jQuery('#atlas-results').html(`
+            $('#atlas-results').html(`
                 <ul>
                     <li>Профил Жалюзи: <span>${blindsProfilePcs.toFixed(2)} бр. / ${blindsProfileLm.toFixed(2)} лм</span></li>
-                    <li>Профил U отляво:  <span>${uProfileLeftPcs} бр. / ${uProfileLeftLm.toFixed(3)} лм</span></li>
-                    <li>Профил U отдясно:  <span>${uProfileRightPcs} бр. / ${uProfileRightLm.toFixed(3)} лм</span></li>
-                    <li>Хоризонтален профил U:  <span>${horizontalUProfilePcs} бр. / ${horizontalUProfileLm.toFixed(2)} лм</span></li>
-                    <li>Укрепващ профил:  <span>${reinforcingProfilePcs} бр. / ${reinforcingProfileLm.toFixed(3)} лм</span></li>
-                    <li>Заклепки:  <span>${rivetsPcs} бр.</span></li>
-                    <li>Самонарезни винтове:  <span>${selfTappingScrewPcs} бр.</span></li>
-                    <li>Тапи:  <span>${dowelsPcs} бр.</span></li>
-                    <li>Ъгъл:  <span>${cornerPcs} бр.</span></li>
+                    <li>Профил U отляво: <span>${uProfileLeftPcs} бр. / ${uProfileLeftLm.toFixed(3)} лм</span></li>
+                    <li>Профил U отдясно: <span>${uProfileRightPcs} бр. / ${uProfileRightLm.toFixed(3)} лм</span></li>
+                    <li>Хоризонтален профил U: <span>${horizontalUProfilePcs} бр. / ${horizontalUProfileLm.toFixed(2)} лм</span></li>
+                    <li>Укрепващ профил: <span>${reinforcingProfilePcs} бр. / ${reinforcingProfileLm.toFixed(3)} лм</span></li>
+                    <li>Заклепки: <span>${rivetsPcs} бр.</span></li>
+                    <li>Самонарезни винтове: <span>${selfTappingScrewPcs} бр.</span></li>
+                    <li>Тапи: <span>${dowelsPcs} бр.</span></li>
+                    <li>Ъгъл: <span>${cornerPcs} бр.</span></li>
                 </ul>
             `);
 
-            jQuery('#atlas-final-price').html(`<p>Крайна цена: ${totalPrice.toFixed(2)} лв.</p>`);
+            $('#atlas-final-price').html(`<p>Крайна цена: ${totalPrice.toFixed(2)} лв.</p>`);
 
         } catch (error) {
             console.error("An error occurred during calculations: ", error);
@@ -152,7 +160,7 @@ jQuery(document).ready(function () {
     panelsInput.on('input', calculatePrice);
 
     // Enable/disable add to cart button based on valid inputs
-    jQuery('input, select').on('input change', function() {
+    $('input, select').on('input change', function() {
         if (areInputsValid()) {
             addToCartButton.prop('disabled', false);
         } else {
@@ -161,28 +169,28 @@ jQuery(document).ready(function () {
     });
 
     // Updated predefined sizes click handler
-    jQuery('.main-product-sizes__item').on('click', function(e) {
+    $('.main-product-sizes__item').on('click', function(e) {
         e.preventDefault();
         
         // Remove selected class from all items
-        jQuery('.main-product-sizes__item').removeClass('selected');
+        $('.main-product-sizes__item').removeClass('selected');
         // Add selected class to clicked item
-        jQuery(this).addClass('selected');
+        $(this).addClass('selected');
         
-        // Get the width and height from data attributes
-        const width = jQuery(this).data('l');
-        const height = jQuery(this).data('h');
+        // Get values from the clicked item
+        const width = $(this).data('l');
+        const height = $(this).data('h');
+        const panels = $(this).data('panels') || 1;
         
         // Update form inputs
         widthInput.val(width);
-        
-        // Find and select the matching height option
-        heightInput.val(height);
+        heightInput.val(height).trigger('change');
+        panelsInput.val(panels);
         
         // Trigger calculation
         calculatePrice();
     });
 
-    // Trigger initial calculation with default values
+    // Trigger initial calculation
     calculatePrice();
 });
