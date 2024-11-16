@@ -105,17 +105,36 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
             let cornerPcs = F20 * numberOfPanels;
 
             // Price Calculations
-            let totalPrice = parseFloat(atlas_pricing.base_price) * numberOfPanels;
+            let totalPrice = parseFloat(atlas_pricing.base_price) * blindsProfileLm;
+            //console.log('Base Price:', atlas_pricing.base_price, 'Blinds Profile Lm:', blindsProfileLm, 'Subtotal:', parseFloat(atlas_pricing.base_price) * blindsProfileLm);
 
-            // Add essential components
+
+           // Add essential components
             totalPrice += uProfileLeftLm * parseFloat(atlas_pricing.price_u_profile_left || 0);
+            //console.log('uProfileLeftLm:', uProfileLeftLm, 'Price U Profile Left:', atlas_pricing.price_u_profile_left, 'Subtotal:', uProfileLeftLm * parseFloat(atlas_pricing.price_u_profile_left || 0));
+
             totalPrice += uProfileRightLm * parseFloat(atlas_pricing.price_u_profile_right || 0);
+            //console.log('uProfileRightLm:', uProfileRightLm, 'Price U Profile Right:', atlas_pricing.price_u_profile_right, 'Subtotal:', uProfileRightLm * parseFloat(atlas_pricing.price_u_profile_right || 0));
+
             totalPrice += horizontalUProfileLm * parseFloat(atlas_pricing.price_u_horizontal_panel || 0);
+            //console.log('horizontalUProfileLm:', horizontalUProfileLm, 'Price U Horizontal Panel:', atlas_pricing.price_u_horizontal_panel, 'Subtotal:', horizontalUProfileLm * parseFloat(atlas_pricing.price_u_horizontal_panel || 0));
+
             totalPrice += reinforcingProfileLm * parseFloat(atlas_pricing.price_reinforcing_profile || 0);
+            //console.log('reinforcingProfileLm:', reinforcingProfileLm, 'Price Reinforcing Profile:', atlas_pricing.price_reinforcing_profile, 'Subtotal:', reinforcingProfileLm * parseFloat(atlas_pricing.price_reinforcing_profile || 0));
+
             totalPrice += rivetsPcs * parseFloat(atlas_pricing.price_rivets || 0);
+            //console.log('rivetsPcs:', rivetsPcs, 'Price Rivets:', atlas_pricing.price_rivets, 'Subtotal:', rivetsPcs * parseFloat(atlas_pricing.price_rivets || 0));
+
             totalPrice += selfTappingScrewPcs * parseFloat(atlas_pricing.price_self_tapping_screw || 0);
+            //console.log('selfTappingScrewPcs:', selfTappingScrewPcs, 'Price Self Tapping Screw:', atlas_pricing.price_self_tapping_screw, 'Subtotal:', selfTappingScrewPcs * parseFloat(atlas_pricing.price_self_tapping_screw || 0));
+
             totalPrice += dowelsPcs * parseFloat(atlas_pricing.price_dowels || 0);
+            //console.log('dowelsPcs:', dowelsPcs, 'Price Dowels:', atlas_pricing.price_dowels, 'Subtotal:', dowelsPcs * parseFloat(atlas_pricing.price_dowels || 0));
+
             totalPrice += cornerPcs * parseFloat(atlas_pricing.price_corners || 0);
+            //console.log('cornerPcs:', cornerPcs, 'Price Corners:', atlas_pricing.price_corners, 'Subtotal:', cornerPcs * parseFloat(atlas_pricing.price_corners || 0));
+
+            //console.log('Total Price:', totalPrice);
 
             // Update displayed price
             priceElement.html(`<span class="woocommerce-Price-amount amount"> 

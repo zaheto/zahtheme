@@ -59,7 +59,7 @@ the readme will list any important changes.
     <script>
         var atlas_pricing = @json($atlas_pricing);
         
-        console.log('Initial Atlas Pricing:', atlas_pricing);
+        //console.log('Initial Atlas Pricing:', atlas_pricing);
     </script>
     @endif
 

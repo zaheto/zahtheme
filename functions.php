@@ -2425,46 +2425,6 @@ add_action('woocommerce_checkout_create_order_line_item', function($item, $cart_
 }, 10, 4);
 
 
-// Display predefined size and price for Atlas products in the product loop
-add_action('woocommerce_after_shop_loop_item_title', function() {
-    global $product;
-
-    if (has_term('atlas', 'product_tag', $product->get_id())) {
-        // Retrieve predefined sizes
-        $predefined_sizes = get_field('predefined_sizes', $product->get_id());
-
-        if ($predefined_sizes && is_array($predefined_sizes) && count($predefined_sizes) > 0) {
-            // Get the first predefined size
-            $first_size = $predefined_sizes[0];
-
-            // Calculate the price based on the predefined size
-            $width = isset($first_size['width']) ? floatval($first_size['width']) : 0;
-            $height = isset($first_size['height']) ? floatval($first_size['height']) : 0;
-            $number_of_panels = isset($first_size['number_of_panels']) ? intval($first_size['number_of_panels']) : 0;
-
-            // Retrieve the required materials' prices
-            $price_panels_lin_meter = get_field('price_panels_lin_meter', $product->get_id());
-            $price_u_profile_left = get_field('price_u_profile_left', $product->get_id());
-            $price_u_profile_right = get_field('price_u_profile_right', $product->get_id());
-            $price_u_horizontal_panel = get_field('price_u_horizontal_panel', $product->get_id());
-            $price_reinforcing_profile = get_field('price_reinforcing_profile', $product->get_id());
-            $price_rivets = get_field('price_rivets', $product->get_id());
-            $price_self_tapping_screw = get_field('price_self_tapping_screw', $product->get_id());
-            $price_dowels = get_field('price_dowels', $product->get_id());
-            $price_corners = get_field('price_corners', $product->get_id());
-
-            // Calculate the total price
-            $total_price = ($width * $price_panels_lin_meter) + $price_u_profile_left + $price_u_profile_right + $price_u_horizontal_panel + $price_reinforcing_profile + $price_rivets + $price_self_tapping_screw + $price_dowels + $price_corners;
-
-            // Display the predefined size and price
-            echo '<div class="predefined-size">';
-            echo '<p>' . __('Predefined Size:', 'zah') . ' ' . $width . 'm x ' . $height . 'm (' . $number_of_panels . ' ' . __('panels', 'zah') . ')</p>';
-            echo '<p>' . __('Price:', 'zah') . ' ' . wc_price($total_price) . '</p>';
-            echo '</div>';
-        }
-    }
-});
-
 if( function_exists('acf_add_options_page') ) {
     acf_add_options_page(array(
         'page_title'    => 'Fence Product Settings',
@@ -2475,52 +2435,141 @@ if( function_exists('acf_add_options_page') ) {
     ));
 }
 
-// Display predefined size and price for Atlas products in the product loop
 add_action('woocommerce_after_shop_loop_item_title', function() {
     global $product;
-
-    // Retrieve the models from the options page
+    
     $models = get_field('models', 'option');
+    
+    if (!$models || !is_array($models)) return;
 
-    if ($models && is_array($models)) {
-        foreach ($models as $model) {
-            $tag = $model['tag'];
-            $predefined_sizes = $model['predefined_sizes'];
+    foreach ($models as $model) {
+        $tag = $model['tag'];
+        $predefined_sizes = $model['predefined_sizes'];
 
-            if ($tag && $predefined_sizes && has_term($tag, 'product_tag', $product->get_id())) {
-                if (is_array($predefined_sizes) && count($predefined_sizes) > 0) {
-                    // Get the first predefined size
-                    $first_size = $predefined_sizes[0];
+        if ($tag && $predefined_sizes && has_term($tag, 'product_tag', $product->get_id())) {
+            if (is_array($predefined_sizes) && count($predefined_sizes) > 0) {
+                $first_size = $predefined_sizes[0];
+                
+                // Get dimensions
+                $width = isset($first_size['width']) ? floatval($first_size['width']) : 0;
+                $height = isset($first_size['height']) ? floatval($first_size['height']) : 0;
+                $panels = isset($first_size['number_of_panels']) ? intval($first_size['number_of_panels']) : 0;
 
-                    // Calculate the price based on the predefined size
-                    $width = isset($first_size['width']) ? floatval($first_size['width']) : 0;
-                    $height = isset($first_size['height']) ? floatval($first_size['height']) : 0;
-                    $number_of_panels = isset($first_size['number_of_panels']) ? intval($first_size['number_of_panels']) : 0;
+                // Format height to exactly 3 decimal places without rounding
+                $formatted_height = substr(number_format($height, 4, '.', ''), 0, -1);
 
-                    // Retrieve the required materials' prices, defaulting to 0 if not set
-                    $price_panels_lin_meter = floatval(get_field('price_panels_lin_meter', $product->get_id()) ?: 0);
-                    $price_u_profile_left = floatval(get_field('price_u_profile_left', $product->get_id()) ?: 0);
-                    $price_u_profile_right = floatval(get_field('price_u_profile_right', $product->get_id()) ?: 0);
-                    $price_u_horizontal_panel = floatval(get_field('price_u_horizontal_panel', $product->get_id()) ?: 0);
-                    $price_reinforcing_profile = floatval(get_field('price_reinforcing_profile', $product->get_id()) ?: 0);
-                    $price_rivets = floatval(get_field('price_rivets', $product->get_id()) ?: 0);
-                    $price_self_tapping_screw = floatval(get_field('price_self_tapping_screw', $product->get_id()) ?: 0);
-                    $price_dowels = floatval(get_field('price_dowels', $product->get_id()) ?: 0);
-                    $price_corners = floatval(get_field('price_corners', $product->get_id()) ?: 0);
+                // Get prices
+                $prices = [
+                    'base_price' => floatval(get_field('price_panels_lin_meter', $product->get_id()) ?: 0),
+                    'u_profile_left' => floatval(get_field('price_u_profile_left', $product->get_id()) ?: 0),
+                    'u_profile_right' => floatval(get_field('price_u_profile_right', $product->get_id()) ?: 0),
+                    'u_horizontal_panel' => floatval(get_field('price_u_horizontal_panel', $product->get_id()) ?: 0),
+                    'reinforcing_profile' => floatval(get_field('price_reinforcing_profile', $product->get_id()) ?: 0),
+                    'rivets' => floatval(get_field('price_rivets', $product->get_id()) ?: 0),
+                    'self_tapping_screw' => floatval(get_field('price_self_tapping_screw', $product->get_id()) ?: 0),
+                    'dowels' => floatval(get_field('price_dowels', $product->get_id()) ?: 0),
+                    'corners' => floatval(get_field('price_corners', $product->get_id()) ?: 0)
+                ];
 
-                    // Calculate the total price
-                    $total_price = ($width * $price_panels_lin_meter) + $price_u_profile_left + $price_u_profile_right + $price_u_horizontal_panel + $price_reinforcing_profile + $price_rivets + $price_self_tapping_screw + $price_dowels + $price_corners;
-
-                    // Display the predefined size and price
-                    echo '<div class="predefined-size">';
-                    echo '<p>' . __('Predefined Size:', 'zah') . ' ' . $width . 'm x ' . $height . 'm (' . $number_of_panels . ' ' . __('panels', 'zah') . ')</p>';
-                    echo '<p>' . __('Price:', 'zah') . ' ' . wc_price($total_price) . '</p>';
-                    echo '</div>';
+                // Calculate materials (matching JavaScript calculator)
+                $blindsProfilePcs = max(($height - 0.045) / 0.1 * $panels, 0);
+                $blindsProfileLm = max(($width - 0.01) * $blindsProfilePcs, 0);
+                
+                $uProfileLeftPcs = $panels;
+                $uProfileLeftLm = $height * $panels;
+                
+                $uProfileRightPcs = $panels;
+                $uProfileRightLm = $height * $panels;
+                
+                $horizontalUProfilePcs = $panels;
+                $horizontalUProfileLm = $width * $panels;
+                
+                // Calculate F20 factor
+                $F20 = 0;
+                if ($width > 1.29 && $width < 2.1) {
+                    $F20 = 1;
+                } elseif ($width > 2.09) {
+                    $F20 = 2;
                 }
+                
+                $reinforcingProfilePcs = $F20;
+                $reinforcingProfileLm = $height * $F20 * $panels;
+                
+                // Calculate rivets
+                $rivetsPcs = 0;
+                if ($panels > 0) {
+                    $innerCalculation = 0;
+                    if ($F20 == 0) {
+                        $innerCalculation = ($blindsProfilePcs / $panels + 1) * 4 * $panels;
+                    } elseif ($F20 == 1) {
+                        $innerCalculation = ($blindsProfilePcs / $panels + 1) * 5 * $panels;
+                    } elseif ($F20 == 2) {
+                        $innerCalculation = ($blindsProfilePcs / $panels + 1) * 6 * $panels;
+                    }
+                    $rivetsPcs = ceil(($innerCalculation + ($F20 * 2)) / $panels / 100) * 100 * $panels;
+                }
+                
+                $selfTappingScrewPcs = $panels * 10;
+                $dowelsPcs = $panels * 10 + $F20 * $panels;
+                $cornerPcs = $F20 * $panels;
+
+                // Calculate total price
+                $total_price = 
+                    ($blindsProfileLm * $prices['base_price']) +
+                    ($uProfileLeftLm * $prices['u_profile_left']) +
+                    ($uProfileRightLm * $prices['u_profile_right']) +
+                    ($horizontalUProfileLm * $prices['u_horizontal_panel']) +
+                    ($reinforcingProfileLm * $prices['reinforcing_profile']) +
+                    ($rivetsPcs * $prices['rivets']) +
+                    ($selfTappingScrewPcs * $prices['self_tapping_screw']) +
+                    ($dowelsPcs * $prices['dowels']) +
+                    ($cornerPcs * $prices['corners']);
+
+                // Display results
+                echo '<div class="predefined-size">';
+                echo '<p class"fence-price">' . sprintf(__('%s', 'zah'), wc_price($total_price)) . '</p>';
+                echo '<span class="fence-data">' . __('Panel price:', 'zah') . ' ' . 
+                number_format($width, 2) . '(ш) x ' . 
+                $formatted_height . '(в)' . '</span>';
+                
+                
+                // Optional debug information
+                // if (WP_DEBUG) {
+                //     echo '<ul class="calculation-details">';
+                //     echo '<li>' . sprintf(__('Blinds Profile: %s pcs / %s lm', 'zah'), 
+                //         number_format($blindsProfilePcs, 2), 
+                //         number_format($blindsProfileLm, 2)) . '</li>';
+                //     echo '<li>' . sprintf(__('U Profile Left: %s pcs / %s lm', 'zah'), 
+                //         $uProfileLeftPcs, 
+                //         number_format($uProfileLeftLm, 3)) . '</li>';
+                //     echo '<li>' . sprintf(__('U Profile Right: %s pcs / %s lm', 'zah'), 
+                //         $uProfileRightPcs, 
+                //         number_format($uProfileRightLm, 3)) . '</li>';
+                //     echo '<li>' . sprintf(__('Horizontal U Profile: %s pcs / %s lm', 'zah'), 
+                //         $horizontalUProfilePcs, 
+                //         number_format($horizontalUProfileLm, 2)) . '</li>';
+                //     echo '<li>' . sprintf(__('Reinforcing Profile: %s pcs / %s lm', 'zah'), 
+                //         $reinforcingProfilePcs, 
+                //         number_format($reinforcingProfileLm, 3)) . '</li>';
+                //     echo '<li>' . sprintf(__('Rivets: %s pcs', 'zah'), $rivetsPcs) . '</li>';
+                //     echo '<li>' . sprintf(__('Self Tapping Screws: %s pcs', 'zah'), $selfTappingScrewPcs) . '</li>';
+                //     echo '<li>' . sprintf(__('Dowels: %s pcs', 'zah'), $dowelsPcs) . '</li>';
+                //     echo '<li>' . sprintf(__('Corners: %s pcs', 'zah'), $cornerPcs) . '</li>';
+                //     echo '</ul>';
+                // }
+                
+                echo '</div>';
             }
         }
     }
 });
+
+add_filter('woocommerce_get_price_html', function($price, $product) {
+    if (has_term(['atlas', 'sigma'], 'product_tag', $product->get_id())) {
+        return ''; // Return an empty string to hide the price
+    }
+    return $price;
+}, 10, 2);
 
 // Populate the height field with values from the product
 add_filter('acf/load_field/key=field_67364f8510685', 'populate_height_field');

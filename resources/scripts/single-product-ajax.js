@@ -21,6 +21,30 @@ document.addEventListener('DOMContentLoaded', function() {
             if (atc_elem.value) {
                 formData.append('add-to-cart', atc_elem.value);
             }
+            
+            // Handle Atlas product data
+            if (parent_elem.classList.contains('product-tag-atlas')) {
+                // Get hidden input values instead of form elements
+                var calculatedPrice = document.getElementById('calculated_price').value;
+                var panelWidth = document.getElementById('atlas-panel-width').value;
+                var panelHeight = document.getElementById('atlas-panel-height').value;
+                var numberOfPanels = document.getElementById('atlas-number-of-panels').value;
+
+                // Only append if values exist
+                if (calculatedPrice) formData.append('calculated_price', calculatedPrice);
+                if (panelWidth) formData.append('atlas-panel-width', panelWidth);
+                if (panelHeight) formData.append('atlas-panel-height', panelHeight);
+                if (numberOfPanels) formData.append('atlas-number-of-panels', numberOfPanels);
+
+                // Debug output
+                console.log('Atlas Data:', {
+                    price: calculatedPrice,
+                    width: panelWidth,
+                    height: panelHeight,
+                    panels: numberOfPanels
+                });
+            }
+
             atc_elem.classList.remove('added');
             atc_elem.classList.remove('not-added');
             atc_elem.classList.add('loading');
@@ -28,22 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var wce_add_cart = new Event('adding_to_cart');
             document.body.dispatchEvent(wce_add_cart);
 
-             // Check if the product has the "atlas" tag
-            if (parent_elem.classList.contains('product-tag-atlas')) {
-                // Add width, height, and number of panels to the form data
-                var panelWidthElem = cart_form.querySelector('#atlas-panel-width');
-                var panelHeightElem = cart_form.querySelector('#atlas-panel-height');
-                var numberOfPanelsElem = cart_form.querySelector('#atlas-number-of-panels');
-
-                if (panelWidthElem && panelHeightElem && numberOfPanelsElem) {
-                    var panelWidth = panelWidthElem.value;
-                    var panelHeight = panelHeightElem.value;
-                    var numberOfPanels = numberOfPanelsElem.value;
-                    formData.append('atlas-panel-width', panelWidth);
-                    formData.append('atlas-panel-height', panelHeight);
-                    formData.append('atlas-number-of-panels', numberOfPanels);
-                }
-            }
+            
 
             fetch(wc_add_to_cart_params.wc_ajax_url.toString().replace('%%endpoint%%', 'zah_pdp_ajax_atc'), {
                 method: 'POST',
