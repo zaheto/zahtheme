@@ -29,7 +29,7 @@ the readme will list any important changes.
 
             // Move this inside the loop to ensure we have the correct post ID
             $product = wc_get_product(get_the_ID());
-            $models = ['atlas', 'sigma']; // Add other models here as needed
+            $models = ['atlas', 'sigma', 'gamma', 'piramida']; // Add other models here as needed
             foreach ($models as $model) {
                 if (has_term($model, 'product_tag', get_the_ID())) {
                     ${"{$model}_pricing"} = [
@@ -37,12 +37,16 @@ the readme will list any important changes.
                         'price_u_profile_left' => get_field('price_u_profile_left', get_the_ID()) ?: 0,
                         'price_u_profile_right' => get_field('price_u_profile_right', get_the_ID()) ?: 0,
                         'price_u_horizontal_panel' => get_field('price_u_horizontal_panel', get_the_ID()) ?: 0,
-                        'price_reinforcing_profile' => get_field('price_reinforcing_profile', get_the_ID()) ?: 0,
                         'price_rivets' => get_field('price_rivets', get_the_ID()) ?: 0,
                         'price_self_tapping_screw' => get_field('price_self_tapping_screw', get_the_ID()) ?: 0,
                         'price_dowels' => get_field('price_dowels', get_the_ID()) ?: 0,
-                        'price_corners' => get_field('price_corners', get_the_ID()) ?: 0
                     ];
+
+                    // Conditionally include fields for models other than piramida
+                    if ($model !== 'piramida') {
+                        ${"{$model}_pricing"}['price_reinforcing_profile'] = get_field('price_reinforcing_profile', get_the_ID()) ?: 0;
+                        ${"{$model}_pricing"}['price_corners'] = get_field('price_corners', get_the_ID()) ?: 0;
+                    }
 
                     ${"{$model}_data"} = [
                         'pricing' => ${"{$model}_pricing"},

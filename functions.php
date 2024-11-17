@@ -118,6 +118,22 @@ function zah_enqueue_calculator_scripts() {
                 true
             );
         }
+        if (has_term('gamma', 'product_tag')) {
+            wp_enqueue_script('zah-gamma-calculator', 
+                get_template_directory_uri() . '/resources/scripts/gamma-calculator.js', 
+                array('jquery'), 
+                null, 
+                true
+            );
+        }
+        if (has_term('piramida', 'product_tag')) {
+            wp_enqueue_script('zah-piramida-calculator', 
+                get_template_directory_uri() . '/resources/scripts/piramida-calculator.js', 
+                array('jquery'), 
+                null, 
+                true
+            );
+        }
     }
 
 }
@@ -2267,7 +2283,7 @@ add_action('woocommerce_after_single_product_summary', function() {
 
 // Change "Add to Cart" button text and URL for Atlas products on the archive page
 add_filter('woocommerce_loop_add_to_cart_link', function($button, $product) {
-    if (has_term(['atlas', 'sigma'], 'product_tag', $product->get_id())) {
+    if (has_term(['atlas', 'sigma', 'gamma', 'piramida'], 'product_tag', $product->get_id())) {
         $product_url = get_permalink($product->get_id());
         $button_text = __('Calculate', 'zah');
         $button = sprintf('<a href="%s" class="button">%s</a>', esc_url($product_url), esc_html($button_text));
@@ -2277,7 +2293,7 @@ add_filter('woocommerce_loop_add_to_cart_link', function($button, $product) {
 
 // Hook the calculator form after product title
 add_action('woocommerce_single_product_summary', function() {
-    $models = ['atlas', 'sigma']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida']; // Add other models here as needed
     foreach ($models as $model) {
         if (has_term($model, 'product_tag') && function_exists('get_field')) {
             $pricing = [
@@ -2306,7 +2322,7 @@ add_action('woocommerce_single_product_summary', function() {
 
 // Hook the calculator results after product meta
 add_action('woocommerce_after_add_to_cart_form', function() {
-    $models = ['atlas', 'sigma']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida']; // Add other models here as needed
     foreach ($models as $model) {
         if (has_term($model, 'product_tag')) {
             echo view("partials.product.{$model}-calculator-results")->render();
@@ -2316,7 +2332,7 @@ add_action('woocommerce_after_add_to_cart_form', function() {
 
 // Modify the price before adding to cart
 add_filter('woocommerce_add_cart_item_data', function ($cart_item_data, $product_id) {
-    $models = ['atlas', 'sigma']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida']; // Add other models here as needed
     foreach ($models as $model) {
         if (has_term($model, 'product_tag', $product_id)) {
             // Get values from POST data
@@ -2345,7 +2361,7 @@ add_filter('woocommerce_add_cart_item_data', function ($cart_item_data, $product
 
 // Add the calculated price to the add to cart form
 add_action('woocommerce_before_add_to_cart_button', function() {
-    $models = ['atlas', 'sigma']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida']; // Add other models here as needed
     foreach ($models as $model) {
         if (has_term($model, 'product_tag')) {
             ?>
@@ -2390,7 +2406,7 @@ add_action('woocommerce_before_add_to_cart_button', function() {
 
 // Display width, height, and number of panels in the mini cart
 add_filter('woocommerce_get_item_data', function($item_data, $cart_item) {
-    $models = ['atlas', 'sigma']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida']; // Add other models here as needed
     foreach ($models as $model) {
         if (isset($cart_item["{$model}_panel_width"])) {
             $item_data[] = [
@@ -2415,7 +2431,7 @@ add_filter('woocommerce_get_item_data', function($item_data, $cart_item) {
 }, 10, 2);
 
 add_filter('woocommerce_get_cart_item_from_session', function($cart_item, $values) {
-    $models = ['atlas', 'sigma']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida']; // Add other models here as needed
     foreach ($models as $model) {
         if (isset($values['custom_price'])) {
             $cart_item['custom_price'] = $values['custom_price'];
@@ -2436,7 +2452,7 @@ add_filter('woocommerce_get_cart_item_from_session', function($cart_item, $value
 
 // Save the custom data to the order items
 add_action('woocommerce_checkout_create_order_line_item', function($item, $cart_item_key, $values, $order) {
-    $models = ['atlas', 'sigma']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida']; // Add other models here as needed
     foreach ($models as $model) {
         if (isset($values["{$model}_panel_width"])) {
             $item->add_meta_data(__('Panel Width', 'zah'), $values["{$model}_panel_width"] . ' m');
@@ -2452,7 +2468,7 @@ add_action('woocommerce_checkout_create_order_line_item', function($item, $cart_
 
 
 add_filter('woocommerce_get_price_html', function($price, $product) {
-    if (has_term(['atlas', 'sigma'], 'product_tag', $product->get_id())) {
+    if (has_term(['atlas', 'sigma', 'gamma', 'piramida'], 'product_tag', $product->get_id())) {
         return ''; // Return an empty string to hide the price
     }
     return $price;
@@ -2472,7 +2488,7 @@ function populate_height_field($field) {
             [
                 'taxonomy' => 'product_tag',
                 'field' => 'slug',
-                'terms' => ['atlas', 'sigma'],
+                'terms' => ['atlas', 'sigma', 'gamma', 'piramida'],
             ],
         ],
         'posts_per_page' => 6, // Assuming the heights are the same for all "Atlas" and "Sigma" products
@@ -2542,15 +2558,19 @@ if( function_exists('acf_add_options_page') ) {
 add_action('woocommerce_after_shop_loop_item_title', function() {
     global $product;
 
-    // Check if product has atlas or sigma tag
+    // Check if product has atlas, sigma, gamma, or piramida tag
     $has_atlas = has_term('atlas', 'product_tag', $product->get_id());
     $has_sigma = has_term('sigma', 'product_tag', $product->get_id());
+    $has_gamma = has_term('gamma', 'product_tag', $product->get_id());
+    $has_piramida = has_term('piramida', 'product_tag', $product->get_id());
 
     error_log('Product ID: ' . $product->get_id());
     error_log('Has Atlas tag: ' . ($has_atlas ? 'yes' : 'no'));
     error_log('Has Sigma tag: ' . ($has_sigma ? 'yes' : 'no'));
+    error_log('Has Gamma tag: ' . ($has_gamma ? 'yes' : 'no'));
+    error_log('Has Piramida tag: ' . ($has_piramida ? 'yes' : 'no'));
 
-    if (!$has_atlas && !$has_sigma) return;
+    if (!$has_atlas && !$has_sigma && !$has_gamma && !$has_piramida) return;
 
     $models = get_field('models', 'option');
     error_log('Models data: ' . print_r($models, true));
@@ -2565,7 +2585,11 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
 
         error_log('Processing model tag_id: ' . $tag_id . ', slug: ' . $tag_slug);
 
-        if (($has_sigma && $tag_slug === 'sigma') || ($has_atlas && $tag_slug === 'atlas')) {
+        if (($has_sigma && $tag_slug === 'sigma') || 
+            ($has_atlas && $tag_slug === 'atlas') || 
+            ($has_gamma && $tag_slug === 'gamma') || 
+            ($has_piramida && $tag_slug === 'piramida')) {
+
             $predefined_sizes = $model['predefined_sizes'];
             error_log('Predefined sizes for ' . $tag_slug . ': ' . print_r($predefined_sizes, true));
 
@@ -2583,9 +2607,15 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
                 if ($tag_slug === 'atlas') {
                     $blindsProfilePcs = max(($height - 0.045) / 0.1 * $panels, 0);
                     error_log('Using ATLAS formula');
-                } else { // Sigma
+                } elseif ($tag_slug === 'sigma') {
                     $blindsProfilePcs = max(($height - 0.06) / 0.08 * $panels, 0);
                     error_log('Using SIGMA formula');
+                } elseif ($tag_slug === 'gamma') {
+                    $blindsProfilePcs = max(($height - 0.05) / 0.16 * $panels, 0);
+                    error_log('Using GAMMA formula');
+                } elseif ($tag_slug === 'piramida') {
+                    $blindsProfilePcs = max(($height - 0.06) / 0.065 * $panels, 0);
+                    error_log('Using PIRAMIDA formula');
                 }
 
                 $blindsProfileLm = max(($width - 0.01) * $blindsProfilePcs, 0);

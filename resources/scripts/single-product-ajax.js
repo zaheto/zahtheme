@@ -64,6 +64,48 @@ document.addEventListener('DOMContentLoaded', function() {
                 formData.append('sigma_number_of_panels', numberOfPanels);
             }
 
+            // Handle gamma product data
+            if (parent_elem.classList.contains('product-tag-gamma')) {
+                // Get values from the actual form inputs, not hidden fields
+                var calculatedPrice = document.getElementById('calculated_price').value;
+                var panelWidth = document.querySelector('#gamma-panel-width').value;
+                var panelHeight = document.querySelector('#gamma-panel-height').value;
+                var numberOfPanels = document.querySelector('#gamma-number-of-panels').value;
+
+                // Convert and validate values
+                calculatedPrice = parseFloat(calculatedPrice) || 0;
+                panelWidth = parseFloat(panelWidth) || 0;
+                panelHeight = parseFloat(panelHeight) || 0;
+                numberOfPanels = parseInt(numberOfPanels) || 0;
+
+                // Append to formData with correct names matching PHP expectations
+                formData.append('custom_price', calculatedPrice.toFixed(2));
+                formData.append('gamma_panel_width', panelWidth.toFixed(2));
+                formData.append('gamma_panel_height', panelHeight.toFixed(2));
+                formData.append('gamma_number_of_panels', numberOfPanels);
+            }
+
+            // Handle piramida product data
+            if (parent_elem.classList.contains('product-tag-piramida')) {
+                // Get values from the actual form inputs, not hidden fields
+                var calculatedPrice = document.getElementById('calculated_price').value;
+                var panelWidth = document.querySelector('#piramida-panel-width').value;
+                var panelHeight = document.querySelector('#piramida-panel-height').value;
+                var numberOfPanels = document.querySelector('#piramida-number-of-panels').value;
+
+                // Convert and validate values
+                calculatedPrice = parseFloat(calculatedPrice) || 0;
+                panelWidth = parseFloat(panelWidth) || 0;
+                panelHeight = parseFloat(panelHeight) || 0;
+                numberOfPanels = parseInt(numberOfPanels) || 0;
+
+                // Append to formData with correct names matching PHP expectations
+                formData.append('custom_price', calculatedPrice.toFixed(2));
+                formData.append('piramida_panel_width', panelWidth.toFixed(2));
+                formData.append('piramida_panel_height', panelHeight.toFixed(2));
+                formData.append('piramida_number_of_panels', numberOfPanels);
+            }
+
             fetch(wc_add_to_cart_params.wc_ajax_url.toString().replace('%%endpoint%%', 'zah_pdp_ajax_atc'), {
                 method: 'POST',
                 body: formData,
