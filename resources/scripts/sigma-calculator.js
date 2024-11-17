@@ -1,10 +1,10 @@
 jQuery(document).ready(function ($) {  // Pass $ as parameter
     // Hide the results section by default
-    $('#atlas-calculator-results').hide();
+    $('#sigma-calculator-results').hide();
 
     $('.required-materials--toggle-link').on('click', function(e) {
         e.preventDefault();
-        const resultsSection = $('#atlas-calculator-results');
+        const resultsSection = $('#sigma-calculator-results');
         const toggleIcon = $(this).find('.toggle-icon');
         
         if (resultsSection.is(':visible')) {
@@ -24,9 +24,9 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
     const addToCartButton = $('button.single_add_to_cart_button');
 
     // Input elements
-    const widthInput = $('#atlas-panel-width');
-    const heightInput = $('#atlas-panel-height');
-    const panelsInput = $('#atlas-number-of-panels');
+    const widthInput = $('#sigma-panel-width');
+    const heightInput = $('#sigma-panel-height');
+    const panelsInput = $('#sigma-number-of-panels');
 
     // Get the selected predefined size
     const selectedPredefinedSize = $('.main-product-sizes__item.selected');
@@ -72,7 +72,7 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
             const formattedHeight = (Math.floor(panelHeight * 1000) / 1000).toFixed(3);
             
             // Material calculations
-            let blindsProfilePcs = Math.max((panelHeight - 0.045) / 0.1 * numberOfPanels, 0);
+            let blindsProfilePcs = Math.max((panelHeight - 0.06) / 0.08 * numberOfPanels, 0);
             let blindsProfileLm = Math.max((panelWidth - 0.01) * blindsProfilePcs, 0);
 
             let uProfileLeftPcs = numberOfPanels;
@@ -112,34 +112,34 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
             let cornerPcs = F20 * numberOfPanels;
 
             // Price Calculations
-            let totalPrice = parseFloat(atlas_pricing.base_price) * blindsProfileLm;
-            //console.log('Base Price:', atlas_pricing.base_price, 'Blinds Profile Lm:', blindsProfileLm, 'Subtotal:', parseFloat(atlas_pricing.base_price) * blindsProfileLm);
+            let totalPrice = parseFloat(sigma_pricing.base_price) * blindsProfileLm;
+            //console.log('Base Price:', sigma_pricing.base_price, 'Blinds Profile Lm:', blindsProfileLm, 'Subtotal:', parseFloat(sigma_pricing.base_price) * blindsProfileLm);
 
 
            // Add essential components
-            totalPrice += uProfileLeftLm * parseFloat(atlas_pricing.price_u_profile_left || 0);
-            //console.log('uProfileLeftLm:', uProfileLeftLm, 'Price U Profile Left:', atlas_pricing.price_u_profile_left, 'Subtotal:', uProfileLeftLm * parseFloat(atlas_pricing.price_u_profile_left || 0));
+            totalPrice += uProfileLeftLm * parseFloat(sigma_pricing.price_u_profile_left || 0);
+            //console.log('uProfileLeftLm:', uProfileLeftLm, 'Price U Profile Left:', sigma_pricing.price_u_profile_left, 'Subtotal:', uProfileLeftLm * parseFloat(sigma_pricing.price_u_profile_left || 0));
 
-            totalPrice += uProfileRightLm * parseFloat(atlas_pricing.price_u_profile_right || 0);
-            //console.log('uProfileRightLm:', uProfileRightLm, 'Price U Profile Right:', atlas_pricing.price_u_profile_right, 'Subtotal:', uProfileRightLm * parseFloat(atlas_pricing.price_u_profile_right || 0));
+            totalPrice += uProfileRightLm * parseFloat(sigma_pricing.price_u_profile_right || 0);
+            //console.log('uProfileRightLm:', uProfileRightLm, 'Price U Profile Right:', sigma_pricing.price_u_profile_right, 'Subtotal:', uProfileRightLm * parseFloat(sigma_pricing.price_u_profile_right || 0));
 
-            totalPrice += horizontalUProfileLm * parseFloat(atlas_pricing.price_u_horizontal_panel || 0);
-            //console.log('horizontalUProfileLm:', horizontalUProfileLm, 'Price U Horizontal Panel:', atlas_pricing.price_u_horizontal_panel, 'Subtotal:', horizontalUProfileLm * parseFloat(atlas_pricing.price_u_horizontal_panel || 0));
+            totalPrice += horizontalUProfileLm * parseFloat(sigma_pricing.price_u_horizontal_panel || 0);
+            //console.log('horizontalUProfileLm:', horizontalUProfileLm, 'Price U Horizontal Panel:', sigma_pricing.price_u_horizontal_panel, 'Subtotal:', horizontalUProfileLm * parseFloat(sigma_pricing.price_u_horizontal_panel || 0));
 
-            totalPrice += reinforcingProfileLm * parseFloat(atlas_pricing.price_reinforcing_profile || 0);
-            //console.log('reinforcingProfileLm:', reinforcingProfileLm, 'Price Reinforcing Profile:', atlas_pricing.price_reinforcing_profile, 'Subtotal:', reinforcingProfileLm * parseFloat(atlas_pricing.price_reinforcing_profile || 0));
+            totalPrice += reinforcingProfileLm * parseFloat(sigma_pricing.price_reinforcing_profile || 0);
+            //console.log('reinforcingProfileLm:', reinforcingProfileLm, 'Price Reinforcing Profile:', sigma_pricing.price_reinforcing_profile, 'Subtotal:', reinforcingProfileLm * parseFloat(sigma_pricing.price_reinforcing_profile || 0));
 
-            totalPrice += rivetsPcs * parseFloat(atlas_pricing.price_rivets || 0);
-            //console.log('rivetsPcs:', rivetsPcs, 'Price Rivets:', atlas_pricing.price_rivets, 'Subtotal:', rivetsPcs * parseFloat(atlas_pricing.price_rivets || 0));
+            totalPrice += rivetsPcs * parseFloat(sigma_pricing.price_rivets || 0);
+            //console.log('rivetsPcs:', rivetsPcs, 'Price Rivets:', sigma_pricing.price_rivets, 'Subtotal:', rivetsPcs * parseFloat(sigma_pricing.price_rivets || 0));
 
-            totalPrice += selfTappingScrewPcs * parseFloat(atlas_pricing.price_self_tapping_screw || 0);
-            //console.log('selfTappingScrewPcs:', selfTappingScrewPcs, 'Price Self Tapping Screw:', atlas_pricing.price_self_tapping_screw, 'Subtotal:', selfTappingScrewPcs * parseFloat(atlas_pricing.price_self_tapping_screw || 0));
+            totalPrice += selfTappingScrewPcs * parseFloat(sigma_pricing.price_self_tapping_screw || 0);
+            //console.log('selfTappingScrewPcs:', selfTappingScrewPcs, 'Price Self Tapping Screw:', sigma_pricing.price_self_tapping_screw, 'Subtotal:', selfTappingScrewPcs * parseFloat(sigma_pricing.price_self_tapping_screw || 0));
 
-            totalPrice += dowelsPcs * parseFloat(atlas_pricing.price_dowels || 0);
-            //console.log('dowelsPcs:', dowelsPcs, 'Price Dowels:', atlas_pricing.price_dowels, 'Subtotal:', dowelsPcs * parseFloat(atlas_pricing.price_dowels || 0));
+            totalPrice += dowelsPcs * parseFloat(sigma_pricing.price_dowels || 0);
+            //console.log('dowelsPcs:', dowelsPcs, 'Price Dowels:', sigma_pricing.price_dowels, 'Subtotal:', dowelsPcs * parseFloat(sigma_pricing.price_dowels || 0));
 
-            totalPrice += cornerPcs * parseFloat(atlas_pricing.price_corners || 0);
-            //console.log('cornerPcs:', cornerPcs, 'Price Corners:', atlas_pricing.price_corners, 'Subtotal:', cornerPcs * parseFloat(atlas_pricing.price_corners || 0));
+            totalPrice += cornerPcs * parseFloat(sigma_pricing.price_corners || 0);
+            //console.log('cornerPcs:', cornerPcs, 'Price Corners:', sigma_pricing.price_corners, 'Subtotal:', cornerPcs * parseFloat(sigma_pricing.price_corners || 0));
 
             //console.log('Total Price:', totalPrice);
 
@@ -150,9 +150,9 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
 
             // Update hidden fields with specific formatting
             $('#calculated_price').val(totalPrice.toFixed(2));
-            $('#atlas_panel_width').val(formattedWidth);  // Will be like "1.80"
-            $('#atlas_panel_height').val(formattedHeight); // Will be like "1.245"
-            $('#atlas_number_of_panels').val(numberOfPanels);
+            $('#sigma_panel_width').val(formattedWidth);  // Will be like "1.80"
+            $('#sigma_panel_height').val(formattedHeight); // Will be like "1.245"
+            $('#sigma_number_of_panels').val(numberOfPanels);
 
             // Update button attributes with same formatting
             addToCartButton.attr('data-calculated-price', totalPrice.toFixed(2));
@@ -168,15 +168,15 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
                 panels: numberOfPanels,
                 hiddenFields: {
                     calculated_price: $('#calculated_price').val(),
-                    atlas_panel_width: $('#atlas_panel_width').val(),
-                    atlas_panel_height: $('#atlas_panel_height').val(),
-                    atlas_number_of_panels: $('#atlas_number_of_panels').val()
+                    sigma_panel_width: $('#sigma_panel_width').val(),
+                    sigma_panel_height: $('#sigma_panel_height').val(),
+                    sigma_number_of_panels: $('#sigma_number_of_panels').val()
                 }
             });
 
 
             // When updating the results, check if they should be visible
-            const resultsSection = $('#atlas-calculator-results');
+            const resultsSection = $('#sigma-calculator-results');
             if (!resultsSection.hasClass('hidden')) {
                 resultsSection.show();
             }
@@ -186,7 +186,7 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
             $('#calculated_price').val(totalPrice.toFixed(2));
 
             // Display materials
-            $('#atlas-results').html(`
+            $('#sigma-results').html(`
                 <ul>
                     <li>Профил Жалюзи: <span>${blindsProfilePcs.toFixed(2)} бр. / ${blindsProfileLm.toFixed(2)} лм</span></li>
                     <li>Профил U отляво: <span>${uProfileLeftPcs} бр. / ${uProfileLeftLm.toFixed(3)} лм</span></li>
@@ -200,7 +200,7 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
                 </ul>
             `);
 
-            $('#atlas-final-price').html(`<p>Крайна цена: ${totalPrice.toFixed(2)} лв.</p>`);
+            $('#sigma-final-price').html(`<p>Крайна цена: ${totalPrice.toFixed(2)} лв.</p>`);
 
         } catch (error) {
             console.error("An error occurred during calculations: ", error);

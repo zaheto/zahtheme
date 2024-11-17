@@ -21,38 +21,48 @@ document.addEventListener('DOMContentLoaded', function() {
             if (atc_elem.value) {
                 formData.append('add-to-cart', atc_elem.value);
             }
-            
+
             // Handle Atlas product data
             if (parent_elem.classList.contains('product-tag-atlas')) {
-                // Get hidden input values instead of form elements
+                // Get values from the actual form inputs, not hidden fields
                 var calculatedPrice = document.getElementById('calculated_price').value;
-                var panelWidth = document.getElementById('atlas-panel-width').value;
-                var panelHeight = document.getElementById('atlas-panel-height').value;
-                var numberOfPanels = document.getElementById('atlas-number-of-panels').value;
+                var panelWidth = document.querySelector('#atlas-panel-width').value;
+                var panelHeight = document.querySelector('#atlas-panel-height').value;
+                var numberOfPanels = document.querySelector('#atlas-number-of-panels').value;
 
-                // Only append if values exist
-                if (calculatedPrice) formData.append('calculated_price', calculatedPrice);
-                if (panelWidth) formData.append('atlas-panel-width', panelWidth);
-                if (panelHeight) formData.append('atlas-panel-height', panelHeight);
-                if (numberOfPanels) formData.append('atlas-number-of-panels', numberOfPanels);
+                // Convert and validate values
+                calculatedPrice = parseFloat(calculatedPrice) || 0;
+                panelWidth = parseFloat(panelWidth) || 0;
+                panelHeight = parseFloat(panelHeight) || 0;
+                numberOfPanels = parseInt(numberOfPanels) || 0;
 
-                // Debug output
-                console.log('Atlas Data:', {
-                    price: calculatedPrice,
-                    width: panelWidth,
-                    height: panelHeight,
-                    panels: numberOfPanels
-                });
+                // Append to formData with correct names matching PHP expectations
+                formData.append('custom_price', calculatedPrice.toFixed(2));
+                formData.append('atlas_panel_width', panelWidth.toFixed(2));
+                formData.append('atlas_panel_height', panelHeight.toFixed(2));
+                formData.append('atlas_number_of_panels', numberOfPanels);
             }
 
-            atc_elem.classList.remove('added');
-            atc_elem.classList.remove('not-added');
-            atc_elem.classList.add('loading');
+            // Handle Sigma product data
+            if (parent_elem.classList.contains('product-tag-sigma')) {
+                // Get values from the actual form inputs, not hidden fields
+                var calculatedPrice = document.getElementById('calculated_price').value;
+                var panelWidth = document.querySelector('#sigma-panel-width').value;
+                var panelHeight = document.querySelector('#sigma-panel-height').value;
+                var numberOfPanels = document.querySelector('#sigma-number-of-panels').value;
 
-            var wce_add_cart = new Event('adding_to_cart');
-            document.body.dispatchEvent(wce_add_cart);
+                // Convert and validate values
+                calculatedPrice = parseFloat(calculatedPrice) || 0;
+                panelWidth = parseFloat(panelWidth) || 0;
+                panelHeight = parseFloat(panelHeight) || 0;
+                numberOfPanels = parseInt(numberOfPanels) || 0;
 
-            
+                // Append to formData with correct names matching PHP expectations
+                formData.append('custom_price', calculatedPrice.toFixed(2));
+                formData.append('sigma_panel_width', panelWidth.toFixed(2));
+                formData.append('sigma_panel_height', panelHeight.toFixed(2));
+                formData.append('sigma_number_of_panels', numberOfPanels);
+            }
 
             fetch(wc_add_to_cart_params.wc_ajax_url.toString().replace('%%endpoint%%', 'zah_pdp_ajax_atc'), {
                 method: 'POST',

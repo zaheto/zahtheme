@@ -100,16 +100,26 @@ function zah_enqueue_calculator_scripts() {
             true
         );
     }
-    
-    // For single product pages with atlas tag
-    if (is_product() && has_term('atlas', 'product_tag')) {
-        wp_enqueue_script('zah-atlas-calculator', 
-            get_template_directory_uri() . '/resources/scripts/atlas-calculator.js', 
-            array('jquery'), 
-            null, 
-            true
-        );
+
+    if (is_product()) {
+        if (has_term('atlas', 'product_tag')) {
+            wp_enqueue_script('zah-atlas-calculator', 
+                get_template_directory_uri() . '/resources/scripts/atlas-calculator.js', 
+                array('jquery'), 
+                null, 
+                true
+            );
+        }
+        if (has_term('sigma', 'product_tag')) {
+            wp_enqueue_script('zah-sigma-calculator', 
+                get_template_directory_uri() . '/resources/scripts/sigma-calculator.js', 
+                array('jquery'), 
+                null, 
+                true
+            );
+        }
     }
+
 }
 add_action('wp_enqueue_scripts', 'zah_enqueue_calculator_scripts');
 
@@ -1808,61 +1818,6 @@ function ds_change_sale_text() {
 return '<span class="onsale">Промоция</span>';
 }
 
-
-
-// Prevent add to cart if price hasn't been calculated
-// add_filter('woocommerce_add_to_cart_validation', function($passed, $product_id) {
-//     if (has_term('atlas', 'product_tag', $product_id) && empty($_POST['calculated_price'])) {
-//         wc_add_notice('Моля, използвайте калкулатора, преди да добавите в количката.', 'error');
-//         return false;
-//     }
-//     return $passed;
-// }, 10, 2);
-
-// Change "Add to Cart" button text and URL for Atlas products on the archive page
-add_filter('woocommerce_loop_add_to_cart_link', function($button, $product) {
-    if (has_term('atlas', 'product_tag', $product->get_id())) {
-        $product_url = get_permalink($product->get_id());
-        $button_text = __('Calculate', 'zah');
-        $button = sprintf('<a href="%s" class="button">%s</a>', esc_url($product_url), esc_html($button_text));
-    }
-    return $button;
-}, 10, 2);
-
-
-// Hook the calculator form after product title
-add_action('woocommerce_single_product_summary', function() {
-    if (has_term('atlas', 'product_tag') && function_exists('get_field')) {
-        $atlas_pricing = [
-            'price_panels_lin_meter' => get_field('price_panels_lin_meter'),
-            'price_u_profile_left' => get_field('price_u_profile_left'),
-            'price_u_profile_right' => get_field('price_u_profile_right'),
-            'price_u_horizontal_panel' => get_field('price_u_horizontal_panel'),
-            'price_reinforcing_profile' => get_field('price_reinforcing_profile'),
-            'price_rivets' => get_field('price_rivets'),
-            'price_self_tapping_screw' => get_field('price_self_tapping_screw'),
-            'price_dowels' => get_field('price_dowels'),
-            'price_corners' => get_field('price_corners')
-        ];
-
-        $atlas_data = [
-            'pricing' => $atlas_pricing,
-            'panel_height' => explode("\r\n", get_field('panel_height')),
-            'width_min' => get_field('width_min'),
-            'width_max' => get_field('width_max')
-        ];
-
-        echo view('partials.product.atlas-calculator-form', ['atlasData' => $atlas_data])->render();
-    }
-}, 6); // After title (5), before price (10)
-
-// Hook the calculator results after product meta
-add_action('woocommerce_after_add_to_cart_form', function() {
-    if (has_term('atlas', 'product_tag')) {
-        echo view('partials.product.atlas-calculator-results')->render();
-    }
-});
-
 // Remove default SKU location
 remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40);
 
@@ -2310,259 +2265,191 @@ add_action('woocommerce_after_single_product_summary', function() {
 //-------------------- custom calculator pass to cart -------------------------
 
 
+// Change "Add to Cart" button text and URL for Atlas products on the archive page
+add_filter('woocommerce_loop_add_to_cart_link', function($button, $product) {
+    if (has_term(['atlas', 'sigma'], 'product_tag', $product->get_id())) {
+        $product_url = get_permalink($product->get_id());
+        $button_text = __('Calculate', 'zah');
+        $button = sprintf('<a href="%s" class="button">%s</a>', esc_url($product_url), esc_html($button_text));
+    }
+    return $button;
+}, 10, 2);
 
+// Hook the calculator form after product title
+add_action('woocommerce_single_product_summary', function() {
+    $models = ['atlas', 'sigma']; // Add other models here as needed
+    foreach ($models as $model) {
+        if (has_term($model, 'product_tag') && function_exists('get_field')) {
+            $pricing = [
+               // 'price_panels_lin_meter' => get_field('price_panels_lin_meter'),
+                'price_u_profile_left' => get_field('price_u_profile_left'),
+                'price_u_profile_right' => get_field('price_u_profile_right'),
+                'price_u_horizontal_panel' => get_field('price_u_horizontal_panel'),
+                'price_reinforcing_profile' => get_field('price_reinforcing_profile'),
+                'price_rivets' => get_field('price_rivets'),
+                'price_self_tapping_screw' => get_field('price_self_tapping_screw'),
+                'price_dowels' => get_field('price_dowels'),
+                'price_corners' => get_field('price_corners')
+            ];
+
+            $data = [
+                'pricing' => $pricing,
+                'panel_height' => explode("\r\n", get_field('panel_height')),
+                'width_min' => get_field('width_min'),
+                'width_max' => get_field('width_max')
+            ];
+
+            echo view("partials.product.{$model}-calculator-form", ["{$model}Data" => $data])->render();
+        }
+    }
+}, 6); // After title (5), before price (10)
+
+// Hook the calculator results after product meta
+add_action('woocommerce_after_add_to_cart_form', function() {
+    $models = ['atlas', 'sigma']; // Add other models here as needed
+    foreach ($models as $model) {
+        if (has_term($model, 'product_tag')) {
+            echo view("partials.product.{$model}-calculator-results")->render();
+        }
+    }
+});
 
 // Modify the price before adding to cart
 add_filter('woocommerce_add_cart_item_data', function ($cart_item_data, $product_id) {
-    if (isset($_POST['calculated_price']) && has_term('atlas', 'product_tag', $product_id)) {
-        $cart_item_data['custom_price'] = floatval($_POST['calculated_price']);
-        $cart_item_data['atlas_panel_width'] = isset($_POST['atlas-panel-width']) ? floatval($_POST['atlas-panel-width']) : 0;
-        $cart_item_data['atlas_panel_height'] = isset($_POST['atlas-panel-height']) ? floatval($_POST['atlas-panel-height']) : 0;
-        $cart_item_data['atlas_number_of_panels'] = isset($_POST['atlas-number-of-panels']) ? intval($_POST['atlas-number-of-panels']) : 0;
+    $models = ['atlas', 'sigma']; // Add other models here as needed
+    foreach ($models as $model) {
+        if (has_term($model, 'product_tag', $product_id)) {
+            // Get values from POST data
+            $calculated_price = isset($_POST['calculated_price']) ? floatval($_POST['calculated_price']) : 0;
+            $panel_width = isset($_POST["{$model}_panel_width"]) ? floatval($_POST["{$model}_panel_width"]) : 0;
+            $panel_height = isset($_POST["{$model}_panel_height"]) ? floatval($_POST["{$model}_panel_height"]) : 0;
+            $number_of_panels = isset($_POST["{$model}_number_of_panels"]) ? intval($_POST["{$model}_number_of_panels"]) : 0;
+
+            // Debug log
+            error_log('POST Data Received: ' . print_r($_POST, true));
+            
+            // Only add if we have valid data
+            if ($calculated_price > 0) {
+                $cart_item_data['custom_price'] = $calculated_price;
+                $cart_item_data["{$model}_panel_width"] = $panel_width;
+                $cart_item_data["{$model}_panel_height"] = $panel_height;
+                $cart_item_data["{$model}_number_of_panels"] = $number_of_panels;
+                
+                // Debug log
+                error_log('Cart Item Data Set: ' . print_r($cart_item_data, true));
+            }
+        }
     }
     return $cart_item_data;
 }, 10, 2);
 
-// Apply the custom price
-add_action('woocommerce_before_calculate_totals', function($cart) {
-    if (is_admin() && !defined('DOING_AJAX')) {
-        return;
-    }
-
-    foreach ($cart->get_cart() as $cart_item) {
-        if (isset($cart_item['custom_price'])) {
-            $cart_item['data']->set_price($cart_item['custom_price']);
-        }
-    }
-}, 10, 1);
-
 // Add the calculated price to the add to cart form
 add_action('woocommerce_before_add_to_cart_button', function() {
-    if (has_term('atlas', 'product_tag')) {
-        echo '<input type="hidden" name="calculated_price" id="calculated_price" value="">';
-        echo '<input type="hidden" name="atlas-panel-width" id="atlas-panel-width" value="">';
-        echo '<input type="hidden" name="atlas-panel-height" id="atlas-panel-height" value="">';
-        echo '<input type="hidden" name="atlas-number-of-panels" id="atlas-number-of-panels" value="">';
-        ?>
-        <script>
-            jQuery(document).ready(function($) {
-                $('#atlas-calculate').on('click', function() {
-                    let calculatedPrice = $('.single_add_to_cart_button').attr('data-calculated-price');
-                    let panelWidth = $('#atlas-panel-width').val();
-                    let panelHeight = $('#atlas-panel-height').val();
-                    let numberOfPanels = $('#atlas-number-of-panels').val();
-                    
-                    $('#calculated_price').val(calculatedPrice);
-                    $('#atlas-panel-width').val(panelWidth);
-                    $('#atlas-panel-height').val(panelHeight);
-                    $('#atlas-number-of-panels').val(numberOfPanels);
+    $models = ['atlas', 'sigma']; // Add other models here as needed
+    foreach ($models as $model) {
+        if (has_term($model, 'product_tag')) {
+            ?>
+            <input type="hidden" name="calculated_price" id="calculated_price" value="">
+            <input type="hidden" name="<?php echo $model; ?>_panel_width" id="<?php echo $model; ?>_panel_width" value="">
+            <input type="hidden" name="<?php echo $model; ?>_panel_height" id="<?php echo $model; ?>_panel_height" value="">
+            <input type="hidden" name="<?php echo $model; ?>_number_of_panels" id="<?php echo $model; ?>_number_of_panels" value="">
+            <script>
+                jQuery(document).ready(function($) {
+                    $('#<?php echo $model; ?>-calculate').on('click', function() {
+                        // Get values
+                        let calculatedPrice = $('.single_add_to_cart_button').attr('data-calculated-price');
+                        let panelWidth = $('#<?php echo $model; ?>-panel-width').val();
+                        let panelHeight = $('#<?php echo $model; ?>-panel-height').val();
+                        let numberOfPanels = $('#<?php echo $model; ?>-number-of-panels').val();
+                        
+                        // Convert to numbers
+                        calculatedPrice = parseFloat(calculatedPrice) || 0;
+                        panelWidth = parseFloat(panelWidth) || 0;
+                        panelHeight = parseFloat(panelHeight) || 0;
+                        numberOfPanels = parseInt(numberOfPanels) || 0;
+                        
+                        // Update hidden fields with formatted values
+                        $('#calculated_price').val(calculatedPrice.toFixed(2));
+                        $('#<?php echo $model; ?>_panel_width').val(panelWidth.toFixed(2));
+                        $('#<?php echo $model; ?>_panel_height').val(panelHeight.toFixed(2));
+                        $('#<?php echo $model; ?>_number_of_panels').val(numberOfPanels);
+                        
+                        console.log('Values set:', {
+                            price: calculatedPrice,
+                            width: panelWidth,
+                            height: panelHeight,
+                            panels: numberOfPanels
+                        });
+                    });
                 });
-            });
-        </script>
-        <?php
+            </script>
+            <?php
+        }
     }
 });
 
 // Display width, height, and number of panels in the mini cart
 add_filter('woocommerce_get_item_data', function($item_data, $cart_item) {
-    if (isset($cart_item['atlas_panel_width'])) {
-        $item_data[] = [
-            'key' => __('Panel Width', 'zah'),
-            'value' => wc_clean($cart_item['atlas_panel_width']) . ' m',
-        ];
-    }
-    if (isset($cart_item['atlas_panel_height'])) {
-        $item_data[] = [
-            'key' => __('Panel Height', 'zah'),
-            'value' => wc_clean($cart_item['atlas_panel_height']) . ' m',
-        ];
-    }
-    if (isset($cart_item['atlas_number_of_panels'])) {
-        $item_data[] = [
-            'key' => __('Number of Panels', 'zah'),
-            'value' => wc_clean($cart_item['atlas_number_of_panels']),
-        ];
+    $models = ['atlas', 'sigma']; // Add other models here as needed
+    foreach ($models as $model) {
+        if (isset($cart_item["{$model}_panel_width"])) {
+            $item_data[] = [
+                'key' => __('Panel Width', 'zah'),
+                'value' => wc_clean($cart_item["{$model}_panel_width"]) . ' m',
+            ];
+        }
+        if (isset($cart_item["{$model}_panel_height"])) {
+            $item_data[] = [
+                'key' => __('Panel Height', 'zah'),
+                'value' => wc_clean($cart_item["{$model}_panel_height"]) . ' m',
+            ];
+        }
+        if (isset($cart_item["{$model}_number_of_panels"])) {
+            $item_data[] = [
+                'key' => __('Number of Panels', 'zah'),
+                'value' => wc_clean($cart_item["{$model}_number_of_panels"]),
+            ];
+        }
     }
     return $item_data;
 }, 10, 2);
 
-// Save the calculated price in the session
-add_filter('woocommerce_add_cart_item', function($cart_item) {
-    if (isset($cart_item['custom_price'])) {
-        $cart_item['data']->set_price($cart_item['custom_price']);
-    }
-    return $cart_item;
-}, 10, 1);
-
 add_filter('woocommerce_get_cart_item_from_session', function($cart_item, $values) {
-    if (isset($values['custom_price'])) {
-        $cart_item['custom_price'] = $values['custom_price'];
-        $cart_item['data']->set_price($values['custom_price']);
-    }
-    if (isset($values['atlas_panel_width'])) {
-        $cart_item['atlas_panel_width'] = $values['atlas_panel_width'];
-    }
-    if (isset($values['atlas_panel_height'])) {
-        $cart_item['atlas_panel_height'] = $values['atlas_panel_height'];
-    }
-    if (isset($values['atlas_number_of_panels'])) {
-        $cart_item['atlas_number_of_panels'] = $values['atlas_number_of_panels'];
+    $models = ['atlas', 'sigma']; // Add other models here as needed
+    foreach ($models as $model) {
+        if (isset($values['custom_price'])) {
+            $cart_item['custom_price'] = $values['custom_price'];
+            $cart_item['data']->set_price($values['custom_price']);
+        }
+        if (isset($values["{$model}_panel_width"])) {
+            $cart_item["{$model}_panel_width"] = $values["{$model}_panel_width"];
+        }
+        if (isset($values["{$model}_panel_height"])) {
+            $cart_item["{$model}_panel_height"] = $values["{$model}_panel_height"];
+        }
+        if (isset($values["{$model}_number_of_panels"])) {
+            $cart_item["{$model}_number_of_panels"] = $values["{$model}_number_of_panels"];
+        }
     }
     return $cart_item;
 }, 10, 2);
 
 // Save the custom data to the order items
 add_action('woocommerce_checkout_create_order_line_item', function($item, $cart_item_key, $values, $order) {
-    if (isset($values['atlas_panel_width'])) {
-        $item->add_meta_data(__('Panel Width', 'zah'), $values['atlas_panel_width'] . ' m');
-    }
-    if (isset($values['atlas_panel_height'])) {
-        $item->add_meta_data(__('Panel Height', 'zah'), $values['atlas_panel_height'] . ' m');
-    }
-    if (isset($values['atlas_number_of_panels'])) {
-        $item->add_meta_data(__('Number of Panels', 'zah'), $values['atlas_number_of_panels']);
+    $models = ['atlas', 'sigma']; // Add other models here as needed
+    foreach ($models as $model) {
+        if (isset($values["{$model}_panel_width"])) {
+            $item->add_meta_data(__('Panel Width', 'zah'), $values["{$model}_panel_width"] . ' m');
+        }
+        if (isset($values["{$model}_panel_height"])) {
+            $item->add_meta_data(__('Panel Height', 'zah'), $values["{$model}_panel_height"] . ' m');
+        }
+        if (isset($values["{$model}_number_of_panels"])) {
+            $item->add_meta_data(__('Number of Panels', 'zah'), $values["{$model}_number_of_panels"]);
+        }
     }
 }, 10, 4);
 
-
-if( function_exists('acf_add_options_page') ) {
-    acf_add_options_page(array(
-        'page_title'    => 'Fence Product Settings',
-        'menu_title'    => 'Fence Settings',
-        'menu_slug'     => 'fence-settings',
-        'capability'    => 'edit_posts',
-        'redirect'      => false
-    ));
-}
-
-add_action('woocommerce_after_shop_loop_item_title', function() {
-    global $product;
-    
-    $models = get_field('models', 'option');
-    
-    if (!$models || !is_array($models)) return;
-
-    foreach ($models as $model) {
-        $tag = $model['tag'];
-        $predefined_sizes = $model['predefined_sizes'];
-
-        if ($tag && $predefined_sizes && has_term($tag, 'product_tag', $product->get_id())) {
-            if (is_array($predefined_sizes) && count($predefined_sizes) > 0) {
-                $first_size = $predefined_sizes[0];
-                
-                // Get dimensions
-                $width = isset($first_size['width']) ? floatval($first_size['width']) : 0;
-                $height = isset($first_size['height']) ? floatval($first_size['height']) : 0;
-                $panels = isset($first_size['number_of_panels']) ? intval($first_size['number_of_panels']) : 0;
-
-                // Format height to exactly 3 decimal places without rounding
-                $formatted_height = substr(number_format($height, 4, '.', ''), 0, -1);
-
-                // Get prices
-                $prices = [
-                    'base_price' => floatval(get_field('price_panels_lin_meter', $product->get_id()) ?: 0),
-                    'u_profile_left' => floatval(get_field('price_u_profile_left', $product->get_id()) ?: 0),
-                    'u_profile_right' => floatval(get_field('price_u_profile_right', $product->get_id()) ?: 0),
-                    'u_horizontal_panel' => floatval(get_field('price_u_horizontal_panel', $product->get_id()) ?: 0),
-                    'reinforcing_profile' => floatval(get_field('price_reinforcing_profile', $product->get_id()) ?: 0),
-                    'rivets' => floatval(get_field('price_rivets', $product->get_id()) ?: 0),
-                    'self_tapping_screw' => floatval(get_field('price_self_tapping_screw', $product->get_id()) ?: 0),
-                    'dowels' => floatval(get_field('price_dowels', $product->get_id()) ?: 0),
-                    'corners' => floatval(get_field('price_corners', $product->get_id()) ?: 0)
-                ];
-
-                // Calculate materials (matching JavaScript calculator)
-                $blindsProfilePcs = max(($height - 0.045) / 0.1 * $panels, 0);
-                $blindsProfileLm = max(($width - 0.01) * $blindsProfilePcs, 0);
-                
-                $uProfileLeftPcs = $panels;
-                $uProfileLeftLm = $height * $panels;
-                
-                $uProfileRightPcs = $panels;
-                $uProfileRightLm = $height * $panels;
-                
-                $horizontalUProfilePcs = $panels;
-                $horizontalUProfileLm = $width * $panels;
-                
-                // Calculate F20 factor
-                $F20 = 0;
-                if ($width > 1.29 && $width < 2.1) {
-                    $F20 = 1;
-                } elseif ($width > 2.09) {
-                    $F20 = 2;
-                }
-                
-                $reinforcingProfilePcs = $F20;
-                $reinforcingProfileLm = $height * $F20 * $panels;
-                
-                // Calculate rivets
-                $rivetsPcs = 0;
-                if ($panels > 0) {
-                    $innerCalculation = 0;
-                    if ($F20 == 0) {
-                        $innerCalculation = ($blindsProfilePcs / $panels + 1) * 4 * $panels;
-                    } elseif ($F20 == 1) {
-                        $innerCalculation = ($blindsProfilePcs / $panels + 1) * 5 * $panels;
-                    } elseif ($F20 == 2) {
-                        $innerCalculation = ($blindsProfilePcs / $panels + 1) * 6 * $panels;
-                    }
-                    $rivetsPcs = ceil(($innerCalculation + ($F20 * 2)) / $panels / 100) * 100 * $panels;
-                }
-                
-                $selfTappingScrewPcs = $panels * 10;
-                $dowelsPcs = $panels * 10 + $F20 * $panels;
-                $cornerPcs = $F20 * $panels;
-
-                // Calculate total price
-                $total_price = 
-                    ($blindsProfileLm * $prices['base_price']) +
-                    ($uProfileLeftLm * $prices['u_profile_left']) +
-                    ($uProfileRightLm * $prices['u_profile_right']) +
-                    ($horizontalUProfileLm * $prices['u_horizontal_panel']) +
-                    ($reinforcingProfileLm * $prices['reinforcing_profile']) +
-                    ($rivetsPcs * $prices['rivets']) +
-                    ($selfTappingScrewPcs * $prices['self_tapping_screw']) +
-                    ($dowelsPcs * $prices['dowels']) +
-                    ($cornerPcs * $prices['corners']);
-
-                // Display results
-                echo '<div class="predefined-size">';
-                echo '<p class"fence-price">' . sprintf(__('%s', 'zah'), wc_price($total_price)) . '</p>';
-                echo '<span class="fence-data">' . __('Panel price:', 'zah') . ' ' . 
-                number_format($width, 2) . '(ш) x ' . 
-                $formatted_height . '(в)' . '</span>';
-                
-                
-                // Optional debug information
-                // if (WP_DEBUG) {
-                //     echo '<ul class="calculation-details">';
-                //     echo '<li>' . sprintf(__('Blinds Profile: %s pcs / %s lm', 'zah'), 
-                //         number_format($blindsProfilePcs, 2), 
-                //         number_format($blindsProfileLm, 2)) . '</li>';
-                //     echo '<li>' . sprintf(__('U Profile Left: %s pcs / %s lm', 'zah'), 
-                //         $uProfileLeftPcs, 
-                //         number_format($uProfileLeftLm, 3)) . '</li>';
-                //     echo '<li>' . sprintf(__('U Profile Right: %s pcs / %s lm', 'zah'), 
-                //         $uProfileRightPcs, 
-                //         number_format($uProfileRightLm, 3)) . '</li>';
-                //     echo '<li>' . sprintf(__('Horizontal U Profile: %s pcs / %s lm', 'zah'), 
-                //         $horizontalUProfilePcs, 
-                //         number_format($horizontalUProfileLm, 2)) . '</li>';
-                //     echo '<li>' . sprintf(__('Reinforcing Profile: %s pcs / %s lm', 'zah'), 
-                //         $reinforcingProfilePcs, 
-                //         number_format($reinforcingProfileLm, 3)) . '</li>';
-                //     echo '<li>' . sprintf(__('Rivets: %s pcs', 'zah'), $rivetsPcs) . '</li>';
-                //     echo '<li>' . sprintf(__('Self Tapping Screws: %s pcs', 'zah'), $selfTappingScrewPcs) . '</li>';
-                //     echo '<li>' . sprintf(__('Dowels: %s pcs', 'zah'), $dowelsPcs) . '</li>';
-                //     echo '<li>' . sprintf(__('Corners: %s pcs', 'zah'), $cornerPcs) . '</li>';
-                //     echo '</ul>';
-                // }
-                
-                echo '</div>';
-            }
-        }
-    }
-});
 
 add_filter('woocommerce_get_price_html', function($price, $product) {
     if (has_term(['atlas', 'sigma'], 'product_tag', $product->get_id())) {
@@ -2571,23 +2458,24 @@ add_filter('woocommerce_get_price_html', function($price, $product) {
     return $price;
 }, 10, 2);
 
+
 // Populate the height field with values from the product
 add_filter('acf/load_field/key=field_67364f8510685', 'populate_height_field');
 function populate_height_field($field) {
     // Reset the choices
     $field['choices'] = [];
 
-    // Query for products with the "Atlas" tag
+    // Query for products with the "Atlas" or "Sigma" tag
     $args = [
         'post_type' => 'product',
         'tax_query' => [
             [
                 'taxonomy' => 'product_tag',
                 'field' => 'slug',
-                'terms' => 'atlas',
+                'terms' => ['atlas', 'sigma'],
             ],
         ],
-        'posts_per_page' => 1, // Assuming the heights are the same for all "Atlas" products
+        'posts_per_page' => 6, // Assuming the heights are the same for all "Atlas" and "Sigma" products
     ];
     $query = new WP_Query($args);
 
@@ -2612,3 +2500,155 @@ function populate_height_field($field) {
 
     return $field;
 }
+
+// Apply the custom price
+add_action('woocommerce_before_calculate_totals', function($cart) {
+    if (is_admin() && !defined('DOING_AJAX')) {
+        return;
+    }
+
+    foreach ($cart->get_cart() as $cart_item) {
+        if (isset($cart_item['custom_price'])) {
+            $cart_item['data']->set_price($cart_item['custom_price']);
+        }
+    }
+}, 10, 1);
+
+// Save the calculated price in the session
+add_filter('woocommerce_add_cart_item', function($cart_item) {
+    if (isset($cart_item['custom_price'])) {
+        $cart_item['data']->set_price($cart_item['custom_price']);
+    }
+    return $cart_item;
+}, 10, 1);
+
+add_action('woocommerce_add_to_cart', function($cart_item_key, $product_id, $quantity, $variation_id, $variation, $cart_item_data) {
+    error_log('Add to Cart Event:');
+    error_log('POST Data: ' . print_r($_POST, true));
+    error_log('Cart Item Data: ' . print_r($cart_item_data, true));
+}, 10, 6);
+
+
+if( function_exists('acf_add_options_page') ) {
+    acf_add_options_page(array(
+        'page_title'    => 'Fence Product Settings',
+        'menu_title'    => 'Fence Settings',
+        'menu_slug'     => 'fence-settings',
+        'capability'    => 'edit_posts',
+        'redirect'      => false
+    ));
+}
+
+add_action('woocommerce_after_shop_loop_item_title', function() {
+    global $product;
+
+    // Check if product has atlas or sigma tag
+    $has_atlas = has_term('atlas', 'product_tag', $product->get_id());
+    $has_sigma = has_term('sigma', 'product_tag', $product->get_id());
+
+    error_log('Product ID: ' . $product->get_id());
+    error_log('Has Atlas tag: ' . ($has_atlas ? 'yes' : 'no'));
+    error_log('Has Sigma tag: ' . ($has_sigma ? 'yes' : 'no'));
+
+    if (!$has_atlas && !$has_sigma) return;
+
+    $models = get_field('models', 'option');
+    error_log('Models data: ' . print_r($models, true));
+
+    if (!$models || !is_array($models)) return;
+
+    foreach ($models as $model) {
+        // Get tag info
+        $tag_id = isset($model['tag'][0]) ? $model['tag'][0] : null;
+        $term = get_term($tag_id, 'product_tag');
+        $tag_slug = $term ? $term->slug : '';
+
+        error_log('Processing model tag_id: ' . $tag_id . ', slug: ' . $tag_slug);
+
+        if (($has_sigma && $tag_slug === 'sigma') || ($has_atlas && $tag_slug === 'atlas')) {
+            $predefined_sizes = $model['predefined_sizes'];
+            error_log('Predefined sizes for ' . $tag_slug . ': ' . print_r($predefined_sizes, true));
+
+            if (is_array($predefined_sizes) && count($predefined_sizes) > 0) {
+                $first_size = $predefined_sizes[0]; // Use the first predefined size for simplicity
+
+                // Get dimensions
+                $width = isset($first_size['width']) ? floatval($first_size['width']) : 0;
+                $height = isset($first_size['height']) ? floatval($first_size['height']) : 0;
+                $panels = isset($first_size['number_of_panels']) ? intval($first_size['number_of_panels']) : 0;
+
+                error_log('Selected predefined size - Width: ' . $width . ', Height: ' . $height . ', Panels: ' . $panels);
+
+                // Calculate blinds profile based on the model
+                if ($tag_slug === 'atlas') {
+                    $blindsProfilePcs = max(($height - 0.045) / 0.1 * $panels, 0);
+                    error_log('Using ATLAS formula');
+                } else { // Sigma
+                    $blindsProfilePcs = max(($height - 0.06) / 0.08 * $panels, 0);
+                    error_log('Using SIGMA formula');
+                }
+
+                $blindsProfileLm = max(($width - 0.01) * $blindsProfilePcs, 0);
+
+                // Debug blinds profile
+                error_log('Blinds Profile Pcs: ' . $blindsProfilePcs);
+                error_log('Blinds Profile Lm: ' . $blindsProfileLm);
+
+                // Retrieve pricing fields
+                $prices = [
+                    'base_price' => $product->get_regular_price() ?: 0,
+                    'u_profile_left' => floatval(get_field('price_u_profile_left', $product->get_id()) ?: 0),
+                    'u_profile_right' => floatval(get_field('price_u_profile_right', $product->get_id()) ?: 0),
+                    'u_horizontal_panel' => floatval(get_field('price_u_horizontal_panel', $product->get_id()) ?: 0),
+                    'reinforcing_profile' => floatval(get_field('price_reinforcing_profile', $product->get_id()) ?: 0),
+                    'rivets' => floatval(get_field('price_rivets', $product->get_id()) ?: 0),
+                    'self_tapping_screw' => floatval(get_field('price_self_tapping_screw', $product->get_id()) ?: 0),
+                ];
+
+                error_log('Prices: ' . print_r($prices, true));
+
+                // Additional calculations for profiles and other components
+                $uProfileLeftLm = $height * $panels;
+                $uProfileRightLm = $height * $panels;
+                $horizontalUProfileLm = $width * $panels;
+                $reinforcingProfileLm = $height * $panels;
+                $rivetsQty = 100; // Assuming constant
+                $selfTappingScrewQty = 10; // Assuming constant
+
+                // Debug calculated quantities
+                error_log('U Profile Left Lm: ' . $uProfileLeftLm);
+                error_log('U Profile Right Lm: ' . $uProfileRightLm);
+                error_log('Horizontal U Profile Lm: ' . $horizontalUProfileLm);
+                error_log('Reinforcing Profile Lm: ' . $reinforcingProfileLm);
+                error_log('Rivets Qty: ' . $rivetsQty);
+                error_log('Self-Tapping Screws Qty: ' . $selfTappingScrewQty);
+
+                // Calculate total price components
+                $price_components = [
+                    'blinds_profile' => $blindsProfileLm * $prices['base_price'],
+                    'u_profile_left' => $uProfileLeftLm * $prices['u_profile_left'],
+                    'u_profile_right' => $uProfileRightLm * $prices['u_profile_right'],
+                    'horizontal_profile' => $horizontalUProfileLm * $prices['u_horizontal_panel'],
+                    'reinforcing_profile' => $reinforcingProfileLm * $prices['reinforcing_profile'],
+                    'rivets' => $rivetsQty * $prices['rivets'],
+                    'screws' => $selfTappingScrewQty * $prices['self_tapping_screw'],
+                ];
+
+                error_log('Price Components: ' . print_r($price_components, true));
+
+                // Calculate the total price
+                $total_price = array_sum($price_components);
+                error_log('Total Price: ' . $total_price);
+
+                // Display the calculated predefined size and price
+                echo '<div class="predefined-size">';
+                echo '<p class="fence-price">' . sprintf(__('%s', 'zah'), wc_price($total_price)) . '</p>';
+                echo '<span class="fence-data">' . __('Panel price for:', 'zah') . ' ' .
+                     number_format($width, 2) . '(ш) x ' . number_format($height, 3) . '(в)' . '</span>';
+                echo '</div>';
+
+                break;
+            }
+        }
+    }
+});
