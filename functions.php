@@ -134,6 +134,14 @@ function zah_enqueue_calculator_scripts() {
                 true
             );
         }
+        if (has_term('terra', 'product_tag')) {
+            wp_enqueue_script('zah-terra-calculator', 
+                get_template_directory_uri() . '/resources/scripts/terra-calculator.js', 
+                array('jquery'), 
+                null, 
+                true
+            );
+        }
     }
 
 }
@@ -373,29 +381,20 @@ function njengah_display_stock_availability( $availability, $_product ) {
     return $availability;
 }
 
-
 //Product page breadcrumb
 function zah_breadcumb() {
     static $displayed = false;
     if (!$displayed && function_exists('yoast_breadcrumb')) {
         $displayed = true;
         yoast_breadcrumb('<p id="breadcrumbs">', '</p>');
+        error_log('Breadcrumb displayed.');
+    } else {
+        error_log('Breadcrumb not displayed. Function exists: ' . (function_exists('yoast_breadcrumb') ? 'yes' : 'no'));
     }
 }
-// function zah_breadcumb() {
-//     // Check if breadcrumb is already displayed
-//     if ( function_exists('yoast_breadcrumb') && !did_action('woocommerce_breadcrumb') ) {
-//         yoast_breadcrumb( '<p id="breadcrumbs">','</p>' );
-//     }
-// }
 
-//Product page form
-// add_action( 'woocommerce_single_product_summary', 'zah_quick_order_form' );
-// function zah_quick_order_form() {
-//   echo '<div class="quick-form-product"><h5 >БЪРЗА ПОРЪЧКА С ЕДИН КЛИК</h5>';
-//   echo do_shortcode( '[contact-form-7 id="269" title="Product Quick Order"]' );
-//   echo '</div>';
-// }
+// Hook the breadcrumb function to an appropriate action
+add_action('woocommerce_before_main_content', 'zah_breadcumb', 5);
 
 //Product loop open main container
 add_action( 'woocommerce_before_shop_loop_item', 'zah_product_loop_main_container_open' );
@@ -1859,14 +1858,14 @@ function custom_product_subheading() {
     
     // Add SKU
     if ($product->get_sku()) {
-        echo '<span class="sku_wrapper">' . esc_html__('SKU:', 'woocommerce') . ' <span class="sku">' . esc_html($product->get_sku()) . '</span></span>';
+        echo '<span class="sku_wrapper">' . esc_html__('SKU:', 'zah') . ' <span class="sku">' . esc_html($product->get_sku()) . '</span></span>';
     }
 
     // Add stock status
     if ($product->is_in_stock()) {
-        echo '<span class="stock in-stock">' . __('In stock', 'woocommerce') . '</span>';
+        echo '<span class="stock in-stock">' . __('In stock', 'zah') . '</span>';
     } else {
-        echo '<span class="stock out-of-stock">' . __('Out of stock', 'woocommerce') . '</span>';
+        echo '<span class="stock out-of-stock">' . __('Out of stock', 'zah') . '</span>';
     }
     
     echo '</div>';
@@ -2003,80 +2002,6 @@ add_action('woocommerce_before_shop_loop_item_title', function() {
     echo zah_get_product_badges($product);
 }, 7);
 
-// Add custom styles
-add_action('wp_head', function() {
-    ?>
-    <style>
-        .product-badges {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            pointer-events: none;
-        }
-
-        .product-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            line-height: 1.2;
-        }
-
-        .product-badge.sale {
-            background-color: #ff4747;
-            color: #fff;
-        }
-
-        .product-badge.new {
-            background-color: #00c853;
-            color: #fff;
-        }
-
-        .product-badge.out-of-stock {
-            background-color: #757575;
-            color: #fff;
-        }
-
-        /* Shop/Archive page specific styles */
-        .products .product .product-badges {
-            top: 10px;
-            left: 10px;
-        }
-
-        /* Hide badges in modal */
-        #gallery-modal .product-badges {
-            display: none;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .product-badges {
-                top: 10px;
-                left: 10px;
-            }
-
-            .product-badge {
-                padding: 4px 8px;
-                font-size: 11px;
-            }
-        }
-
-        /* Remove old sale flash styling */
-        .onsale {
-            display: none !important;
-        }
-    </style>
-    <?php
-});
-
 
 /**
  * Add video modal functionality for product pages
@@ -2149,8 +2074,11 @@ add_filter('woocommerce_product_tabs', function($tabs) {
         $video_id = get_field('archive_video', $product->get_id());
         if ($video_id) {
             echo '<div class="description-video-wrapper mt-4">';
-            echo '<button class="product-video-btn" data-video="' . esc_attr($video_id) . '">';
-            echo '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>';
+            echo '<button class="product-video-btn-desiption" data-video="' . esc_attr($video_id) . '">';
+            echo '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0.666748 9.99993V5.84659C0.666748 0.689928 4.31841 -1.42174 8.78675 1.1566L12.3917 3.23326L15.9967 5.30993C20.4651 7.88826 20.4651 12.1116 15.9967 14.6899L12.3917 16.7666L8.78675 18.8433C4.31841 21.4216 0.666748 19.3099 0.666748 14.1533V9.99993Z" fill="white"/>
+</svg>
+';
             echo esc_html__('Watch Video', 'zah');
             echo '</button>';
             echo '</div>';
@@ -2283,7 +2211,7 @@ add_action('woocommerce_after_single_product_summary', function() {
 
 // Change "Add to Cart" button text and URL for Atlas products on the archive page
 add_filter('woocommerce_loop_add_to_cart_link', function($button, $product) {
-    if (has_term(['atlas', 'sigma', 'gamma', 'piramida'], 'product_tag', $product->get_id())) {
+    if (has_term(['atlas', 'sigma', 'gamma', 'piramida', 'terra'], 'product_tag', $product->get_id())) {
         $product_url = get_permalink($product->get_id());
         $button_text = __('Calculate', 'zah');
         $button = sprintf('<a href="%s" class="button">%s</a>', esc_url($product_url), esc_html($button_text));
@@ -2293,7 +2221,7 @@ add_filter('woocommerce_loop_add_to_cart_link', function($button, $product) {
 
 // Hook the calculator form after product title
 add_action('woocommerce_single_product_summary', function() {
-    $models = ['atlas', 'sigma', 'gamma', 'piramida']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra']; // Add other models here as needed
     foreach ($models as $model) {
         if (has_term($model, 'product_tag') && function_exists('get_field')) {
             $pricing = [
@@ -2322,7 +2250,7 @@ add_action('woocommerce_single_product_summary', function() {
 
 // Hook the calculator results after product meta
 add_action('woocommerce_after_add_to_cart_form', function() {
-    $models = ['atlas', 'sigma', 'gamma', 'piramida']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra']; // Add other models here as needed
     foreach ($models as $model) {
         if (has_term($model, 'product_tag')) {
             echo view("partials.product.{$model}-calculator-results")->render();
@@ -2332,7 +2260,7 @@ add_action('woocommerce_after_add_to_cart_form', function() {
 
 // Modify the price before adding to cart
 add_filter('woocommerce_add_cart_item_data', function ($cart_item_data, $product_id) {
-    $models = ['atlas', 'sigma', 'gamma', 'piramida']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra']; // Add other models here as needed
     foreach ($models as $model) {
         if (has_term($model, 'product_tag', $product_id)) {
             // Get values from POST data
@@ -2361,7 +2289,7 @@ add_filter('woocommerce_add_cart_item_data', function ($cart_item_data, $product
 
 // Add the calculated price to the add to cart form
 add_action('woocommerce_before_add_to_cart_button', function() {
-    $models = ['atlas', 'sigma', 'gamma', 'piramida']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra']; // Add other models here as needed
     foreach ($models as $model) {
         if (has_term($model, 'product_tag')) {
             ?>
@@ -2406,7 +2334,7 @@ add_action('woocommerce_before_add_to_cart_button', function() {
 
 // Display width, height, and number of panels in the mini cart
 add_filter('woocommerce_get_item_data', function($item_data, $cart_item) {
-    $models = ['atlas', 'sigma', 'gamma', 'piramida']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra']; // Add other models here as needed
     foreach ($models as $model) {
         if (isset($cart_item["{$model}_panel_width"])) {
             $item_data[] = [
@@ -2431,7 +2359,7 @@ add_filter('woocommerce_get_item_data', function($item_data, $cart_item) {
 }, 10, 2);
 
 add_filter('woocommerce_get_cart_item_from_session', function($cart_item, $values) {
-    $models = ['atlas', 'sigma', 'gamma', 'piramida']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra']; // Add other models here as needed
     foreach ($models as $model) {
         if (isset($values['custom_price'])) {
             $cart_item['custom_price'] = $values['custom_price'];
@@ -2452,7 +2380,7 @@ add_filter('woocommerce_get_cart_item_from_session', function($cart_item, $value
 
 // Save the custom data to the order items
 add_action('woocommerce_checkout_create_order_line_item', function($item, $cart_item_key, $values, $order) {
-    $models = ['atlas', 'sigma', 'gamma', 'piramida']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra']; // Add other models here as needed
     foreach ($models as $model) {
         if (isset($values["{$model}_panel_width"])) {
             $item->add_meta_data(__('Panel Width', 'zah'), $values["{$model}_panel_width"] . ' m');
@@ -2468,7 +2396,7 @@ add_action('woocommerce_checkout_create_order_line_item', function($item, $cart_
 
 
 add_filter('woocommerce_get_price_html', function($price, $product) {
-    if (has_term(['atlas', 'sigma', 'gamma', 'piramida'], 'product_tag', $product->get_id())) {
+    if (has_term(['atlas', 'sigma', 'gamma', 'piramida', 'terra'], 'product_tag', $product->get_id())) {
         return ''; // Return an empty string to hide the price
     }
     return $price;
@@ -2488,7 +2416,7 @@ function populate_height_field($field) {
             [
                 'taxonomy' => 'product_tag',
                 'field' => 'slug',
-                'terms' => ['atlas', 'sigma', 'gamma', 'piramida'],
+                'terms' => ['atlas', 'sigma', 'gamma', 'piramida', 'terra'],
             ],
         ],
         'posts_per_page' => 6, // Assuming the heights are the same for all "Atlas" and "Sigma" products
@@ -2673,7 +2601,7 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
                 // Display the calculated predefined size and price
                 echo '<div class="predefined-size">';
                 echo '<p class="fence-price">' . sprintf(__('%s', 'zah'), wc_price($total_price)) . '</p>';
-                echo '<span class="fence-data">' . __('Panel price for:', 'zah') . ' ' .
+                echo '<span class="fence-data">' . __('Panel price for', 'zah') . ' ' .
                      number_format($width, 2) . '(ш) x ' . number_format($height, 3) . '(в)' . '</span>';
                 echo '</div>';
 

@@ -10,24 +10,27 @@ $video_id = get_field('archive_video', $product->get_id());
 <section class="woocommerce-product-gallery">
   {!! zah_get_product_badges($product) !!}
   
-  @if($video_id)
-    <div class="gallery-video-btn-wrapper">
-        <button class="product-video-btn" data-video="{{ esc_attr($video_id) }}">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polygon points="10 8 16 12 10 16 10 8"></polygon>
-            </svg>
-            {{ __('Video', 'zah') }}
-        </button>
-    </div>
-  @endif
+  
   
   <!-- Main Image Slider -->
   <div class="swiper product-main-images">
     <div class="swiper-wrapper">
+      @if($video_id)
+        <div class="gallery-video-btn-wrapper">
+          <button class="product-video-btn" data-video="{{ esc_attr($video_id) }}">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0.666748 9.99993V5.84659C0.666748 0.689928 4.31841 -1.42174 8.78675 1.1566L12.3917 3.23326L15.9967 5.30993C20.4651 7.88826 20.4651 12.1116 15.9967 14.6899L12.3917 16.7666L8.78675 18.8433C4.31841 21.4216 0.666748 19.3099 0.666748 14.1533V9.99993Z" fill="white"/>
+              </svg>
+              
+            {{ __('Video', 'zah') }}
+        </button>
+        </div>
+      @endif
+
       <!-- Main product image -->
       <div class="swiper-slide">
         <div class="swiper-zoom-container">
+  
           {!! wp_get_attachment_image($post_thumbnail_id, 'full', false, [
               'class' => 'product-main-image',
               'data-zoom' => wp_get_attachment_image_url($post_thumbnail_id, 'full')

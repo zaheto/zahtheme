@@ -1,10 +1,14 @@
 .product-template-default .site-main > div.product {
-  @apply max-w-[1280px] mx-auto mt-0 mb-0 flex flex-wrap;
+  @apply  mx-auto mt-0 mb-0 flex flex-wrap;
 }
 
 .ajax_add_to_cart.loading,
 .single_add_to_cart_button.loading {
   @apply opacity-60 cursor-wait;
+}
+
+#breadcrumbs {
+@apply px-0 py-2 m-0;
 }
 
 .product-subheading {
@@ -26,7 +30,7 @@
 .inside-product--top-wrap {
   .product-details-wrapper {
     //@apply flex flex-col lg:flex-row w-full items-start relative pb-0 gap-1 lg:gap-10;
-    @apply grid grid-cols-2 w-full relative pb-0 gap-1 lg:gap-10;
+    @apply grid grid-cols-1 lg:grid-cols-2 w-full relative pb-0 gap-1 lg:gap-10;
   }
 
 
@@ -136,11 +140,11 @@
 }
 
 .woocommerce-tabs {
-  @apply bg-white py-0 relative m-0;
+  @apply bg-white py-0 relative m-0 w-full;
 }
 
 .woocommerce-tabs .tabs.wc-tabs {
-  @apply hidden;
+  @apply hidden w-full;
 }
 
 .woocommerce-tabs .tabs.wc-tabs li a {
@@ -152,7 +156,7 @@
 }
 
 .woocommerce-Tabs-panel {
-  @apply bg-gray rounded-xl px-8 md:px-[60px] py-8 md:py-14 my-10 flex gap-10;
+  @apply bg-gray rounded-xl px-8 md:px-[60px] py-8 md:py-14 my-10 flex flex-col lg:flex-row gap-10 w-full;
 }
 
 .woocommerce-Tabs-panel .inside-description p {
@@ -601,24 +605,44 @@ div.product table.variations select {
   @apply text-18 leading-[22px] w-[22px] h-[22px] flex items-center justify-center border border-third rounded-md;
 }
 
-#atlas-calculator-results {
+#atlas-calculator-results,
+#gamma-calculator-results,
+#piramida-calculator-results,
+#sigma-calculator-results,
+#terra-calculator-results {
   @apply p-6 rounded-md border border-[#E2EAF0] bg-white  flex-col gap-4;
 }
 
-#atlas-calculator-results h2 {
+#atlas-calculator-results h2,
+#gamma-calculator-results h2,
+#piramida-calculator-results h2,
+#sigma-calculator-results h2,
+#terra-calculator-results h2 {
   @apply font-bold text-base;
 }
 
 
-#atlas-calculator-results ul  {
+#atlas-calculator-results ul,
+#gamma-calculator-results ul,
+#piramida-calculator-results ul,
+#sigma-calculator-results ul,
+#terra-calculator-results ul {
   @apply w-full ;
 }
 
-#atlas-calculator-results ul li {
+#atlas-calculator-results ul li,
+#gamma-calculator-results ul li,
+#piramida-calculator-results ul li,
+#sigma-calculator-results ul li,
+#terra-calculator-results ul li {
   @apply w-full flex items-center justify-between text-14 px-2 py-2 odd:bg-gray/80;
 }
 
-#atlas-calculator-results ul li span {
+#atlas-calculator-results ul li span,
+#gamma-calculator-results ul li span,
+#piramida-calculator-results ul li span,
+#sigma-calculator-results ul li span,
+#terra-calculator-results ul li span {
   @apply font-bold;
 }
 
@@ -626,19 +650,35 @@ div.product table.variations select {
   @apply flex flex-col gap-2 mb-2;
 }
 
-#atlas-calculator-form {
+#atlas-calculator-form,
+#gamma-calculator-form,
+#piramida-calculator-form,
+#sigma-calculator-form,
+#terra-calculator-form {
   @apply bg-gray p-6 rounded-md;
 }
 
-#atlas-calculator-form h2 {
+#atlas-calculator-form h2,
+#gamma-calculator-form h2,
+#piramida-calculator-form h2,
+#sigma-calculator-form h2,
+#terra-calculator-form h2 {
   @apply font-semibold text-base text-black/90;
 }
 
-#atlas-calculator-form .atlas-calculator-section {
-  @apply grid grid-cols-1 md:grid-cols-3 gap-2;
+#atlas-calculator-form .atlas-calculator-section,
+#gamma-calculator-form .gamma-calculator-section,
+#piramida-calculator-form .piramida-calculator-section,
+#sigma-calculator-form .sigma-calculator-section,
+#terra-calculator-form .terra-calculator-section {
+  @apply grid grid-cols-1 lg:grid-cols-3 gap-2;
 }
 
-#atlas-calculator-form .atlas-calculator-section .form-row {
+#atlas-calculator-form .atlas-calculator-section .form-row,
+#gamma-calculator-form .gamma-calculator-section .form-row,
+#piramida-calculator-form .piramida-calculator-section .form-row,
+#sigma-calculator-form .sigma-calculator-section .form-row,
+#terra-calculator-form .terra-calculator-section .form-row {
   @apply m-0 p-0;
 }
 
@@ -648,6 +688,42 @@ div.product table.variations select {
 }
 
 #atlas-calculator-form label {
+  @apply font-medium text-13 text-[#545454];
+}
+
+#gamma-calculator-form .gamma-calculator-section select,
+#gamma-calculator-form .gamma-calculator-section input {
+  @apply border-transparent h-[50px] leading-[50px]
+}
+
+#gamma-calculator-form label {
+  @apply font-medium text-13 text-[#545454];
+}
+
+#piramida-calculator-form .piramida-calculator-section select,
+#piramida-calculator-form .piramida-calculator-section input {
+  @apply border-transparent h-[50px] leading-[50px]
+}
+
+#piramida-calculator-form label {
+  @apply font-medium text-13 text-[#545454];
+}
+
+#sigma-calculator-form .sigma-calculator-section select,
+#sigma-calculator-form .sigma-calculator-section input {
+  @apply border-transparent h-[50px] leading-[50px]
+}
+
+#sigma-calculator-form label {
+  @apply font-medium text-13 text-[#545454];
+}
+
+#terra-calculator-form .terra-calculator-section select,
+#terra-calculator-form .terra-calculator-section input {
+  @apply border-transparent h-[50px] leading-[50px]
+}
+
+#terra-calculator-form label {
   @apply font-medium text-13 text-[#545454];
 }
 
@@ -679,22 +755,14 @@ div.product table.variations select {
   @apply hidden;
 }
 
-.product-video-btn {
+.product-video-btn-desiption {
+  @apply bg-second text-white inline-flex gap-2 px-4 py-2 rounded-md  text-base font-semibold items-center mt-1 whitespace-nowrap;
+}
 
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: #f8f8f8;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    color: #333;
-    font-weight: 500;
-    transition: all 0.2s;
+.product-video-btn {
+  @apply bg-second hover:text-main text-white inline-flex  gap-2 px-3 py-1 rounded-l-md  text-base font-semibold items-center;
 }
-.product-video-btn:hover {
-    background: #eee;
-}
+
 .product-video-btn svg {
     width: 20px;
     height: 20px;
@@ -703,10 +771,7 @@ div.product table.variations select {
     overflow: hidden;
 }
 .gallery-video-btn-wrapper {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    z-index: 10;
+  @apply absolute right-0 bottom-8 z-10;
 }
 
 .free-sample-block {
@@ -714,11 +779,15 @@ div.product table.variations select {
 }
 
 .free-sample-block .free-sample-content {
-  @apply gap-10 flex flex-col md:flex-row bg-third px-16 py-10 rounded-lg;
+  @apply gap-8 md:first-line:gap-20 flex flex-col lg:flex-row bg-third px-4 lg:px-16 py-4 lg:py-10 rounded-lg;
 }
 
 .free-sample-block .free-sample-content .sample-image {
-  @apply max-w-[420px] rounded-xl overflow-hidden
+  @apply max-w-[420px] w-full rounded-xl overflow-hidden;
+}
+
+.free-sample-block .free-sample-content .sample-image img {
+  @apply  h-full block object-cover;
 }
 
 .free-sample-block .free-sample-content .sample-text {
@@ -741,4 +810,8 @@ div.product table.variations select {
 
 .free-sample-block .free-sample-content .sample-text h2 {
   @apply text-40 font-black text-white mb-4 uppercase;
+}
+
+.product-main-images {
+  @apply shadow-lg rounded-lg;
 }

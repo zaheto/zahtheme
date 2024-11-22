@@ -18,3 +18,43 @@
 .products .product .product-out-of-stock {
   @apply absolute top-2 left-1/2 -translate-x-1/2 z-10 ;
 }
+
+/* .product-badges styles */
+.product-badges {
+  @apply absolute top-4 left-4 z-10 flex flex-col gap-1 pointer-events-none;
+}
+
+/* .product-badge base styles */
+.product-badge {
+  @apply inline-flex items-center justify-center px-2.5 py-1.5 rounded-md text-xs font-semibold uppercase leading-tight;
+}
+
+/* Sale badge variant */
+.product-badge.sale {
+  @apply bg-main text-white;
+}
+
+/* New badge variant */
+.product-badge.new {
+  @apply bg-third text-white;
+}
+
+/* Out of Stock badge variant */
+.product-badge.out-of-stock {
+  @apply bg-gray text-black;
+}
+
+/* Shop/Archive page specific styles */
+.products .product .product-badges {
+  @apply top-2.5 left-2.5;
+}
+
+/* Hide badges in modal */
+#gallery-modal .product-badges {
+  @apply hidden;
+}
+
+/* Remove old sale flash styling */
+.onsale {
+  @apply hidden;
+}

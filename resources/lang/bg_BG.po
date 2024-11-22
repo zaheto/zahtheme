@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: Zah Theme 10.x-dev\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/theme/zah\n"
 "POT-Creation-Date: 2024-05-17T07:30:24+00:00\n"
-"PO-Revision-Date: 2024-11-10 15:21+0200\n"
+"PO-Revision-Date: 2024-11-18 07:10+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg_BG\n"
@@ -156,10 +156,34 @@ msgid "Enter Coupon Code"
 msgstr "Въведи промо код"
 
 msgid "In stock"
-msgstr "Наличено"
+msgstr "Налично"
 
 msgid "Out of stock"
 msgstr "Изчерпано"
 
 msgid "Connected Products"
 msgstr "Свързани продукти"
+
+msgid "Watch Video"
+msgstr "Видео инструкции"
+
+msgid "Calculate"
+msgstr "Калкулирай"
+
+msgid "Panel Width"
+msgstr "Ширина на паното"
+
+msgid "Panel Height"
+msgstr "Височина на паното"
+
+msgid "Number of Panels"
+msgstr "Брой пана"
+
+msgid "Panel price for"
+msgstr "Цена за пано"
+
+msgid "New"
+msgstr "Ново"
+
+msgid "SKU"
+msgstr "Aрт. №"

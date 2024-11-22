@@ -161,7 +161,7 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
             addToCartButton.attr('data-panels', numberOfPanels);
 
             // Debug log
-            console.log('Calculator Values Updated:', {
+            console.log('Calculator Values Updated sigma:', {
                 price: totalPrice.toFixed(2),
                 width: formattedWidth,
                 height: formattedHeight,

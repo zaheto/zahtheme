@@ -1,5 +1,5 @@
 .announce-bar {
-  @apply overflow-x-hidden relative bg-main flex;
+  @apply overflow-x-hidden relative bg-second flex;
 }
 
 .announce-bar ul {
@@ -19,7 +19,7 @@
 }
 
 .header .inner-header {
-  @apply py-3 flex items-center container;
+  @apply py-4 flex items-center container;
 }
 
 .header .inner-header .header-left {
@@ -58,6 +58,16 @@
   @apply hidden lg:flex flex-wrap w-full border-t relative z-100;
 }
 
+
+.navbar {
+  @apply w-full
+}
+
+.navbar ul {
+  @apply w-full
+}
+
+
 .navbar ul li {
   @apply static;
 }
@@ -76,6 +86,10 @@
 
 .navbar ul li:hover .sub-menu {
   @apply visible opacity-100 transition-all duration-200 py-2;
+}
+
+.navbar .header-main-nav {
+  @apply justify-center w-full;
 }
 
 .navbar .header-main-nav .menu-item.menu-item-has-children,
@@ -125,7 +139,11 @@
 }
 
 .search-box {
-  @apply flex-auto hidden invisible lg:visible opacity-0 lg:opacity-100 lg:flex lg:w-full absolute lg:relative top-[54px] lg:top-auto -left-5 lg:left-auto -right-5 lg:right-auto bg-black/50 lg:bg-white/20 lg:rounded-full py-2 px-6 lg:px-0 lg:py-0 z-20 shadow-md lg:shadow-none;
+  @apply flex-auto hidden lg:flex relative  bg-transparent duration-200 transition-all;
+}
+
+.headroom--not-top .search-box {
+  @apply left-10 duration-200 transition-all;
 }
 
 .search-box.active {
@@ -133,18 +151,22 @@
 }
 
 .search-box .aws-container {
-  @apply w-full rounded-full bg-white lg:bg-transparent border-transparent lg:border lg:border-black/10 m-1;
+  @apply w-full min-w-[280px] rounded-md bg-white border border-black/10 m-1;
 }
 
 .search-box .aws-container .aws-search-form .aws-form-btn {
-  @apply rounded-full border-none bg-main w-[38px] min-w-[38px] h-[38px] mt-[3px] mr-[3px];
+  @apply border-none bg-main w-[38px] min-w-[38px] h-[38px] mt-[3px] mr-[3px] text-white;
+  border-radius: 5px!important;
 }
+
+
+
 .search-box .aws-search-result .aws_result_image img {
-  @apply w-[70px] bg-main;
+  @apply w-[70px] bg-main text-white;
 }
 
 .aws-container .aws-search-form .aws-search-field {
-  @apply text-14 pl-6 border-none;
+  @apply text-13 pl-2 border-none;
 }
 
 .header-white .aws-search-form .aws-search-field {
@@ -240,7 +262,7 @@
 }
 
 .header-info--wrap a {
-  @apply text-white text-15 font-semibold -mt-1 whitespace-nowrap;
+  @apply text-white text-15 font-semibold  whitespace-nowrap;
 }
 
 .header .header-right {
@@ -283,7 +305,7 @@
   }
 
   .aws-container .aws-search-form .aws-search-btn_icon {
-    @apply text-black;
+    @apply text-white;
   }
 
   .navbar ul.header-right-nav li a  {
@@ -309,7 +331,7 @@
 
 
 .header-white {
-  @apply bg-white shadow-md;
+  @apply bg-white border-b border-black/10;
 
   .main-nav {
     @apply  border-black/10 bg-white;
@@ -328,7 +350,7 @@
   }
 
   .aws-container .aws-search-form .aws-search-btn_icon {
-    @apply text-black;
+    @apply text-white;
   }
 
   .navbar ul.header-right-nav li a  {
@@ -376,14 +398,6 @@
 .header-2 {
   .main-nav .container {
     @apply flex flex-col lg:flex-row justify-center;
-  }
-
-  .search-box {
-    @apply flex-auto hidden invisible opacity-0 lg:opacity-100 lg:flex lg:w-full absolute top-[54px] lg:top-[82px] -left-5 -right-5 bg-white py-2 px-6 lg:px-0 lg:py-0 z-[200] shadow-md lg:shadow-none;
-  }
-
-  .search-box.active {
-    @apply visible opacity-100 flex;
   }
 
   .header-center {

@@ -11,7 +11,7 @@
 
 @php do_action('before_footer_content'); @endphp
 
-<footer class="footer footer-white">
+<footer class="footer footer-black">
   @include('partials.footers.footer2')
 </footer>
 @endif

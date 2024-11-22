@@ -4,7 +4,7 @@ body {
 }
 
 body {
-  @apply pt-[86px] lg:pt-[155px] overflow-x-hidden overflow-y-auto;
+  @apply pt-[86px] lg:pt-[156px] overflow-x-hidden overflow-y-auto;
 
   &.disable-scroll {
     @apply overflow-hidden;

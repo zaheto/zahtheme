@@ -29,7 +29,7 @@ the readme will list any important changes.
 
             // Move this inside the loop to ensure we have the correct post ID
             $product = wc_get_product(get_the_ID());
-            $models = ['atlas', 'sigma', 'gamma', 'piramida']; // Add other models here as needed
+            $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra']; // Add other models here as needed
             foreach ($models as $model) {
                 if (has_term($model, 'product_tag', get_the_ID())) {
                     ${"{$model}_pricing"} = [
@@ -47,6 +47,12 @@ the readme will list any important changes.
                         ${"{$model}_pricing"}['price_reinforcing_profile'] = get_field('price_reinforcing_profile', get_the_ID()) ?: 0;
                         ${"{$model}_pricing"}['price_corners'] = get_field('price_corners', get_the_ID()) ?: 0;
                     }
+
+                    if ($model === 'terra') {
+                        ${"{$model}_pricing"}['price_base_distance'] = get_field('price_base_distance', get_the_ID()) ?: 0;
+                        ${"{$model}_pricing"}['price_cassette_distance'] = get_field('price_cassette_distance', get_the_ID()) ?: 0;
+                    }
+
 
                     ${"{$model}_data"} = [
                         'pricing' => ${"{$model}_pricing"},

@@ -121,7 +121,7 @@ jQuery(document).ready(function ($) {
             addToCartButton.attr('data-panels', numberOfPanels);
 
             // Debug log
-            console.log('Calculator Values Updated:', {
+            console.log('Calculator Values Updated piramida:', {
                 price: totalPrice.toFixed(2),
                 width: formattedWidth,
                 height: formattedHeight,
