@@ -8,13 +8,36 @@ do_action( 'zah_before_header' );
     @php do_action( 'zah_announce_bar' ); @endphp
 
     @if(get_field('announce_bar_header', 'option'))
-      <section class="announce-bar">
+      <section class="announce-bar2">
         <div class="container">
-          <ul>
+          <div class="accounce-bar2-inner">
+            @if(get_field('social_links', 'option'))
+          <ul class="annonce-social flex items-center content-end gap-4">
+              @foreach(get_field('social_links', 'option') as $item)
+              <li><a href="{{ $item['link']['url'] }}" target="{{ $item['link']['target'] }}" class="mx-1 flex"><img src="{{ $item['icon'] }}" alt=""></a></li>
+              @endforeach
+          </ul>
+          @endif
+          <ul class="announce-text">
               @foreach(get_field('announce_bar_header', 'option') as $item)
               <li>{!! $item['annonce_text'] !!}</li>
               @endforeach
           </ul>
+          @if (has_nav_menu('announce_bar_menu'))
+
+            <nav class="navbar">
+              {!!
+                wp_nav_menu(array(
+                    'theme_location'    => 'announce_bar_menu',
+                    'container'         => 'div',
+                    'depth'				      => "3",
+                    'menu_class'        => 'nav announce-bar-menu',
+                ));
+              !!}
+            </nav>
+
+            @endif
+          </div>
         </div>
       </section>
     @endif

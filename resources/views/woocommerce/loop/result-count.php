@@ -12,9 +12,9 @@
  * happen. When this occurs the version of the template file will be bumped and
  * the readme will list any important changes.
  *
- * @see         https://docs.woocommerce.com/document/template-structure/
+ * @see         https://woocommerce.com/document/template-structure/
  * @package     WooCommerce\Templates
- * @version     3.7.0
+ * @version     9.4.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <section class="filterby-top flex flex-col lg:flex-row items-center justify-between py-2 ">
-	<a href="javascript:;" id="toggleFilters" class="flex w-full lg:hidden rounded-md bg-main text-white font-bold text-base uppercase items-center content-center justify-center py-4 mb-4">
+	<a href="javascript:;" id="toggleFilters" class="flex w-full lg:w-auto  rounded-md bg-main text-white font-bold text-base uppercase items-center content-center justify-center py-4 mb-4">
   <?php _e('Filters','zah'); ?>
 	</a>
 <p class="woocommerce-result-count hidden lg:flex text-14 text-black/40 mb-0">
@@ -31,13 +31,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	if ( 1 === intval( $total ) ) {
 		_e( 'Showing the single result', 'woocommerce' );
 	} elseif ( $total <= $per_page || -1 === $per_page ) {
-		/* translators: %d: total results */
-		printf( _n( 'Showing all %d result', 'Showing all %d results', $total, 'woocommerce' ), $total );
+		$orderedby_placeholder = empty( $orderedby ) ? '%2$s' : '<span class="screen-reader-text">%2$s</span>';
+		/* translators: 1: total results 2: sorted by */
+		printf( _n( 'Showing all %1$d result', 'Showing all %1$d results', $total, 'woocommerce' ) . $orderedby_placeholder, $total, esc_html( $orderedby ) );
 	} else {
-		$first = ( $per_page * $current ) - $per_page + 1;
-		$last  = min( $total, $per_page * $current );
-		/* translators: 1: first result 2: last result 3: total results */
-		printf( _nx( 'Showing %1$d&ndash;%2$d of %3$d result', 'Showing %1$d&ndash;%2$d of %3$d results', $total, 'with first and last result', 'woocommerce' ), $first, $last, $total );
+		$first                 = ( $per_page * $current ) - $per_page + 1;
+		$last                  = min( $total, $per_page * $current );
+		$orderedby_placeholder = empty( $orderedby ) ? '%4$s' : '<span class="screen-reader-text">%4$s</span>';
+		/* translators: 1: first result 2: last result 3: total results 4: sorted by */
+		printf( _nx( 'Showing %1$d&ndash;%2$d of %3$d result', 'Showing %1$d&ndash;%2$d of %3$d results', $total, 'with first and last result', 'woocommerce' ) . $orderedby_placeholder, $first, $last, $total, esc_html( $orderedby ) );
 	}
 	// phpcs:enable WordPress.Security
 	?>

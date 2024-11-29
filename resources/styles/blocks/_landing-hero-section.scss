@@ -159,7 +159,7 @@
   .content {
     @apply max-w-[900px] flex flex-col items-center content-center gap-4 px-4;
     .landing-title {
-      @apply text-center;
+      @apply text-center text-h3 md:text-h1;
     }
 
     .description {

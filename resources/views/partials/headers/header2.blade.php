@@ -1,3 +1,7 @@
+@php
+    $phone_second = get_field('footer_phone_second', 'options');
+@endphp
+
 <div class="inner-header ">
   
         <div class="header-left">
@@ -25,9 +29,17 @@
             <div class="header-info--wrap">
               
 
-                <a href="call:{{ get_field('footer_phone', 'options') }}">
-                    {{ get_field('footer_phone', 'options') }}
-                </a>
+                <div class="flex items-center gap-2">
+                    <a href="call:{{ get_field('footer_phone', 'options') }}">
+                      {{ get_field('footer_phone', 'options') }}
+                    </a>
+
+                    @if(!empty($phone_second))
+                      <a href="tel:{{ $phone_second }}">
+                          {{ $phone_second }}
+                      </a>
+                  @endif
+                </div>
 
             </div>
           </div>

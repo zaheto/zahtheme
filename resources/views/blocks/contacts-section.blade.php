@@ -11,8 +11,10 @@
   <div class="container">
     <div class="flex flex-col md:flex-row justify-between items-center py-4 md:py-10">
       <div class="content">
-        <h2 class="text-black text-h2 mb-4">{{ $heading_contacts }}</h2>
-        {!! $text_contacts  !!}
+        <h2 class="text-black text-h3 md:text-h1 text-center mb-4 w-full font-black uppercase">{{ $heading_contacts }}</h2>
+        <div class="w-full">
+          {!! $text_contacts  !!}
+        </div>
       </div>
       @if(!empty($image_contacts))
       <div class="contacts-image">
@@ -38,6 +40,7 @@
   </div>
 
   <div class="contact-form bg-black w-full">
+    <h3 class="text-24 md:text-h3 text-center font-bold text-white">Изпратете запитване на:  </h3>
     <div class="container flex items-center">
       @if (!empty($contactFormShortcode))
         {!! do_shortcode($contactFormShortcode) !!}

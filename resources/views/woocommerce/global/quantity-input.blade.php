@@ -1,4 +1,5 @@
 {{--
+/**
  * Product quantity inputs
  *
  * This template can be overridden by copying it to yourtheme/woocommerce/global/quantity-input.php.
@@ -9,9 +10,13 @@
  * happen. When this occurs the version of the template file will be bumped and
  * the readme will list any important changes.
  *
- * @see     https://docs.woocommerce.com/document/template-structure/
- * @package WooCommerce/Templates
- * @version 3.4.0
+ * @see     https://woocommerce.com/document/template-structure/
+ * @package WooCommerce\Templates
+ * @version 9.4.0
+ *
+ * @var bool   $readonly If the input should be set to readonly mode.
+ * @var string $type     The input type attribute.
+ */
 --}}
 
 @php if ( !defined( 'ABSPATH' ) ) { exit; } @endphp

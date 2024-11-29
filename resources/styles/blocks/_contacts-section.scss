@@ -11,6 +11,8 @@
     @apply flex-1 py-4 md:py-10 pr-0 md:pr-6  flex flex-col content-center items-start justify-center m-auto;
   }
 
+
+
   .contact-form {
     @apply py-10;
     .wpcf7 {
@@ -22,6 +24,18 @@
         @apply flex flex-col md:flex-row w-full gap-4 mb-4;
         .cell {
           @apply w-full flex-col md:flex-row;
+          label {
+            @apply block text-white;
+          }
+          input {
+            @apply w-full h-10 leading-10 text-base;
+          }
+          textarea {
+            @apply w-full max-h-[180px];
+          }
+          br {
+            @apply hidden;
+          }
           p {
             @apply w-full flex flex-col mb-0;
             label {

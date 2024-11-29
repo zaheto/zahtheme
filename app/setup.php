@@ -68,6 +68,7 @@ add_action('after_setup_theme', function () {
     register_nav_menus([
         'main_menu' => __('Main navigation', 'sage'),
         'second_menu_right' => __('Header second navigation ', 'sage'),
+        'announce_bar_menu' => __('Announcebar Menu ', 'sage'),
         'footer_pages1' => __('Footer Problems', 'sage'),
         'footer_pages2' => __('Footer Categories', 'sage'),
         'footer_pages5' => __('Footer Categories2', 'sage'),

@@ -18,6 +18,56 @@
   @apply underline;
 }
 
+.announce-bar2 {
+  @apply overflow-x-hidden relative bg-second flex;
+}
+
+.announce-bar2 .accounce-bar2-inner {
+  @apply flex  py-1 gap-24 relative top-0 md:top-auto w-full items-center content-center justify-between;
+}
+
+.announce-text {
+  @apply flex items-center justify-center animate-marquee md:animate-none whitespace-nowrap;
+}
+
+.announce-bar2 ul {
+  @apply flex whitespace-nowrap p-0 gap-1 relative items-center ;
+}
+
+.announce-bar2 ul li {
+  @apply flex items-start m-0 text-13 text-white;
+}
+
+.announce-bar2 .announce-text,
+.announce-bar2 .navbar,
+.announce-bar2 .annonce-social  {
+  @apply w-full md:w-1/3;
+}
+
+.announce-bar2 .annonce-social {
+  @apply hidden md:flex justify-start;
+}
+
+.announce-bar2 .navbar {
+  @apply hidden md:flex justify-end;
+}
+
+.announce-bar2 .navbar ul {
+  @apply w-full
+}
+
+.announce-bar2 .navbar ul li a {
+  @apply text-13 text-white no-underline font-medium py-0 px-2;
+}
+
+.announce-bar2 ul li p {
+  @apply m-0 text-white text-13;
+}
+
+.announce-bar2 ul li a {
+  @apply underline;
+}
+
 .header .inner-header {
   @apply py-4 flex items-center container;
 }

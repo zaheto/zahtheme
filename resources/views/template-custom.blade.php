@@ -5,11 +5,10 @@
 @extends('layouts.app')
 
 @section('content')
-  <div class="py-8 md:py-12">
-    <div class="container mx-auto px-4">
-      <div class="max-w-3xl mx-auto">
-        <x-fence-calculator :model="'atlas'" :showTabs="true" />
-      </div>
+  @while(have_posts()) @php(the_post())
+    <div class="py-10 max-w-[980px] flex flex-col content-center items-start justify-center m-auto">
+    @include('partials.page-header')
+    @include('partials.content-page')
     </div>
-  </div>
+  @endwhile
 @endsection

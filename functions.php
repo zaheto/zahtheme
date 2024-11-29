@@ -91,6 +91,25 @@ add_action('wp_enqueue_scripts', 'zah_enqueue_product_gallery_script');
 
 
 function zah_enqueue_calculator_scripts() {
+     // Log all the conditions
+     //error_log('Debug conditions:');
+     //error_log('is_product_category: ' . (is_product_category() ? 'true' : 'false'));
+     //error_log('is_product_tag: ' . (is_product_tag() ? 'true' : 'false'));
+     //error_log('is_post_type_archive: ' . (is_post_type_archive('product') ? 'true' : 'false'));
+     // Add debug output to page
+    add_action('wp_footer', function() {
+        if (is_product_category()) {
+            echo '<script>console.log("This is a product category page");</script>';
+        } else {
+            echo '<script>console.log("This is NOT a product category page");</script>';
+        }
+    });
+
+    // Check if script file exists
+    $script_path = get_template_directory() . '/resources/scripts/subcategories-slider.js';
+    //error_log('Script path: ' . $script_path);
+    //error_log('Script exists: ' . (file_exists($script_path) ? 'true' : 'false'));
+
     // For the calculator template page
     if (is_page_template('template-calculator.blade.php')) {
         wp_enqueue_script('zah-calculator', 
@@ -100,6 +119,44 @@ function zah_enqueue_calculator_scripts() {
             true
         );
     }
+    
+
+    // For product archive pages
+    if (is_product_category()) {
+        //error_log('Attempting to enqueue subcategories slider');
+        
+        // Enqueue Swiper first
+        wp_enqueue_script('swiper-js',
+            'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js',
+            array(),
+            '11.0.5',
+            true
+        );
+
+        // Enqueue slider script
+        wp_enqueue_script('zah-subcategories-slider', 
+            get_template_directory_uri() . '/resources/scripts/subcategories-slider.js', 
+            array('swiper-js', 'jquery'), 
+            filemtime($script_path), // Add version based on file modification time
+            true
+        );
+
+        // Add test console log
+        wp_add_inline_script('zah-subcategories-slider', 
+            'console.log("Subcategories slider script enqueued at: " + new Date().toISOString());', 
+            'before'
+        );
+
+        // Enqueue Swiper CSS
+        wp_enqueue_style('swiper-css',
+            'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css',
+            array(),
+            '11.0.5'
+        );
+
+        //error_log('Enqueue complete');
+    }
+
 
     if (is_product()) {
         if (has_term('atlas', 'product_tag')) {
@@ -387,9 +444,9 @@ function zah_breadcumb() {
     if (!$displayed && function_exists('yoast_breadcrumb')) {
         $displayed = true;
         yoast_breadcrumb('<p id="breadcrumbs">', '</p>');
-        error_log('Breadcrumb displayed.');
+        //error_log('Breadcrumb displayed.');
     } else {
-        error_log('Breadcrumb not displayed. Function exists: ' . (function_exists('yoast_breadcrumb') ? 'yes' : 'no'));
+        //error_log('Breadcrumb not displayed. Function exists: ' . (function_exists('yoast_breadcrumb') ? 'yes' : 'no'));
     }
 }
 
@@ -658,7 +715,7 @@ function calculate_wpcpo_price_adjustment($options) {
             $adjustment += WPCPO()->get_option_price($option_name, $option_value);
         }
     } else {
-        error_log('Options are not an array or object: ' . print_r($options, true));
+        //error_log('Options are not an array or object: ' . print_r($options, true));
     }
 
     return $adjustment;
@@ -725,7 +782,7 @@ if ( ! function_exists( 'zah_is_woocommerce_activated' ) ) {
 	function zah_is_woocommerce_activated() {
 		$activated = class_exists( 'WooCommerce' ) ? true : false;
 		if (!$activated) {
-			error_log('WooCommerce is not activated');
+			//error_log('WooCommerce is not activated');
 		}
 		return $activated;
 	}
@@ -788,14 +845,14 @@ if ( ! function_exists( 'zah_cart_link' ) ) {
 
 
 		if ( ! zah_woo_cart_available() ) {
-			error_log('WooCommerce cart is not available');
+			//error_log('WooCommerce cart is not available');
 			return;
 		}
 
         $cart_subtotal = WC()->cart->get_cart_subtotal();
 		$cart_contents_count = WC()->cart->get_cart_contents_count();
-		// error_log('Cart Subtotal: ' . $cart_subtotal);
-		// error_log('Cart Contents Count: ' . $cart_contents_count);
+		// //error_log('Cart Subtotal: ' . $cart_subtotal);
+		// //error_log('Cart Contents Count: ' . $cart_contents_count);
 
 		?>
 
@@ -2270,7 +2327,7 @@ add_filter('woocommerce_add_cart_item_data', function ($cart_item_data, $product
             $number_of_panels = isset($_POST["{$model}_number_of_panels"]) ? intval($_POST["{$model}_number_of_panels"]) : 0;
 
             // Debug log
-            error_log('POST Data Received: ' . print_r($_POST, true));
+            //error_log('POST Data Received: ' . print_r($_POST, true));
             
             // Only add if we have valid data
             if ($calculated_price > 0) {
@@ -2280,7 +2337,7 @@ add_filter('woocommerce_add_cart_item_data', function ($cart_item_data, $product
                 $cart_item_data["{$model}_number_of_panels"] = $number_of_panels;
                 
                 // Debug log
-                error_log('Cart Item Data Set: ' . print_r($cart_item_data, true));
+                //error_log('Cart Item Data Set: ' . print_r($cart_item_data, true));
             }
         }
     }
@@ -2466,11 +2523,11 @@ add_filter('woocommerce_add_cart_item', function($cart_item) {
     return $cart_item;
 }, 10, 1);
 
-add_action('woocommerce_add_to_cart', function($cart_item_key, $product_id, $quantity, $variation_id, $variation, $cart_item_data) {
-    error_log('Add to Cart Event:');
-    error_log('POST Data: ' . print_r($_POST, true));
-    error_log('Cart Item Data: ' . print_r($cart_item_data, true));
-}, 10, 6);
+// add_action('woocommerce_add_to_cart', function($cart_item_key, $product_id, $quantity, $variation_id, $variation, $cart_item_data) {
+//     ////error_log('Add to Cart Event:');
+//     ////error_log('POST Data: ' . print_r($_POST, true));
+//     ////error_log('Cart Item Data: ' . print_r($cart_item_data, true));
+// }, 10, 6);
 
 
 if( function_exists('acf_add_options_page') ) {
@@ -2492,16 +2549,16 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
     $has_gamma = has_term('gamma', 'product_tag', $product->get_id());
     $has_piramida = has_term('piramida', 'product_tag', $product->get_id());
 
-    error_log('Product ID: ' . $product->get_id());
-    error_log('Has Atlas tag: ' . ($has_atlas ? 'yes' : 'no'));
-    error_log('Has Sigma tag: ' . ($has_sigma ? 'yes' : 'no'));
-    error_log('Has Gamma tag: ' . ($has_gamma ? 'yes' : 'no'));
-    error_log('Has Piramida tag: ' . ($has_piramida ? 'yes' : 'no'));
+    ////error_log('Product ID: ' . $product->get_id());
+    ////error_log('Has Atlas tag: ' . ($has_atlas ? 'yes' : 'no'));
+    ////error_log('Has Sigma tag: ' . ($has_sigma ? 'yes' : 'no'));
+    //////error_log('Has Gamma tag: ' . ($has_gamma ? 'yes' : 'no'));
+    ////error_log('Has Piramida tag: ' . ($has_piramida ? 'yes' : 'no'));
 
     if (!$has_atlas && !$has_sigma && !$has_gamma && !$has_piramida) return;
 
     $models = get_field('models', 'option');
-    error_log('Models data: ' . print_r($models, true));
+    ////error_log('Models data: ' . print_r($models, true));
 
     if (!$models || !is_array($models)) return;
 
@@ -2511,7 +2568,7 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
         $term = get_term($tag_id, 'product_tag');
         $tag_slug = $term ? $term->slug : '';
 
-        error_log('Processing model tag_id: ' . $tag_id . ', slug: ' . $tag_slug);
+        ////error_log('Processing model tag_id: ' . $tag_id . ', slug: ' . $tag_slug);
 
         if (($has_sigma && $tag_slug === 'sigma') || 
             ($has_atlas && $tag_slug === 'atlas') || 
@@ -2519,7 +2576,7 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
             ($has_piramida && $tag_slug === 'piramida')) {
 
             $predefined_sizes = $model['predefined_sizes'];
-            error_log('Predefined sizes for ' . $tag_slug . ': ' . print_r($predefined_sizes, true));
+            //error_log('Predefined sizes for ' . $tag_slug . ': ' . print_r($predefined_sizes, true));
 
             if (is_array($predefined_sizes) && count($predefined_sizes) > 0) {
                 $first_size = $predefined_sizes[0]; // Use the first predefined size for simplicity
@@ -2529,28 +2586,28 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
                 $height = isset($first_size['height']) ? floatval($first_size['height']) : 0;
                 $panels = isset($first_size['number_of_panels']) ? intval($first_size['number_of_panels']) : 0;
 
-                error_log('Selected predefined size - Width: ' . $width . ', Height: ' . $height . ', Panels: ' . $panels);
+                //error_log('Selected predefined size - Width: ' . $width . ', Height: ' . $height . ', Panels: ' . $panels);
 
                 // Calculate blinds profile based on the model
                 if ($tag_slug === 'atlas') {
                     $blindsProfilePcs = max(($height - 0.045) / 0.1 * $panels, 0);
-                    error_log('Using ATLAS formula');
+                    //error_log('Using ATLAS formula');
                 } elseif ($tag_slug === 'sigma') {
                     $blindsProfilePcs = max(($height - 0.06) / 0.08 * $panels, 0);
-                    error_log('Using SIGMA formula');
+                    //error_log('Using SIGMA formula');
                 } elseif ($tag_slug === 'gamma') {
                     $blindsProfilePcs = max(($height - 0.05) / 0.16 * $panels, 0);
-                    error_log('Using GAMMA formula');
+                    //error_log('Using GAMMA formula');
                 } elseif ($tag_slug === 'piramida') {
                     $blindsProfilePcs = max(($height - 0.06) / 0.065 * $panels, 0);
-                    error_log('Using PIRAMIDA formula');
+                    //error_log('Using PIRAMIDA formula');
                 }
 
                 $blindsProfileLm = max(($width - 0.01) * $blindsProfilePcs, 0);
 
                 // Debug blinds profile
-                error_log('Blinds Profile Pcs: ' . $blindsProfilePcs);
-                error_log('Blinds Profile Lm: ' . $blindsProfileLm);
+                //error_log('Blinds Profile Pcs: ' . $blindsProfilePcs);
+                //error_log('Blinds Profile Lm: ' . $blindsProfileLm);
 
                 // Retrieve pricing fields
                 $prices = [
@@ -2563,7 +2620,7 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
                     'self_tapping_screw' => floatval(get_field('price_self_tapping_screw', $product->get_id()) ?: 0),
                 ];
 
-                error_log('Prices: ' . print_r($prices, true));
+                //error_log('Prices: ' . print_r($prices, true));
 
                 // Additional calculations for profiles and other components
                 $uProfileLeftLm = $height * $panels;
@@ -2574,12 +2631,12 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
                 $selfTappingScrewQty = 10; // Assuming constant
 
                 // Debug calculated quantities
-                error_log('U Profile Left Lm: ' . $uProfileLeftLm);
-                error_log('U Profile Right Lm: ' . $uProfileRightLm);
-                error_log('Horizontal U Profile Lm: ' . $horizontalUProfileLm);
-                error_log('Reinforcing Profile Lm: ' . $reinforcingProfileLm);
-                error_log('Rivets Qty: ' . $rivetsQty);
-                error_log('Self-Tapping Screws Qty: ' . $selfTappingScrewQty);
+                //error_log('U Profile Left Lm: ' . $uProfileLeftLm);
+                //error_log('U Profile Right Lm: ' . $uProfileRightLm);
+                //error_log('Horizontal U Profile Lm: ' . $horizontalUProfileLm);
+                //error_log('Reinforcing Profile Lm: ' . $reinforcingProfileLm);
+                //error_log('Rivets Qty: ' . $rivetsQty);
+                //error_log('Self-Tapping Screws Qty: ' . $selfTappingScrewQty);
 
                 // Calculate total price components
                 $price_components = [
@@ -2592,11 +2649,11 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
                     'screws' => $selfTappingScrewQty * $prices['self_tapping_screw'],
                 ];
 
-                error_log('Price Components: ' . print_r($price_components, true));
+                //error_log('Price Components: ' . print_r($price_components, true));
 
                 // Calculate the total price
                 $total_price = array_sum($price_components);
-                error_log('Total Price: ' . $total_price);
+                //error_log('Total Price: ' . $total_price);
 
                 // Display the calculated predefined size and price
                 echo '<div class="predefined-size">';

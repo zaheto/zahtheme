@@ -153,51 +153,24 @@ function displaySelectedOptions() {
   $('.current-cat > ul.children').show();
 
 
-  var nextEl = ".swiper-button-next";
-  var prevEl = ".swiper-button-prev";
-    // Get the number of slides
-  var numberOfSlides = document.querySelectorAll('.subcategories-slider .swiper-slide').length;
+  
+  
 
-  // Set the maximum number of slides per view
-  var maxSlidesPerView = 7;
+  // var readMoreLink = document.querySelector('.read-more');
+  // var shortDescription = document.querySelector('.short-description');
+  // var fullDescription = document.querySelector('.full-description');
 
-  // Determine the slides per view based on the number of slides
-  var slidesPerView = numberOfSlides < maxSlidesPerView ? 'auto' : maxSlidesPerView;
+  // readMoreLink?.addEventListener('click', function(e) {
+  //     e.preventDefault();
+  //     shortDescription.classList.toggle('hidden');
+  //     fullDescription.classList.toggle('hidden');
 
-  var gallerySubcategories = new Swiper(".subcategories-slider", {
-    loop: true,
-    slidesPerView: numberOfSlides < 2 ? 'auto' : 2,
-    spaceBetween: 8,
-    keyboardControl: true,
-    keyboard: true,
-    navigation: numberOfSlides > maxSlidesPerView ? { nextEl: nextEl, prevEl: prevEl } : undefined,
-    breakpoints: {
-      768: {
-        slidesPerView: numberOfSlides < 7 ? 'auto' : 7, // 7 slides per view or 'auto' if fewer
-      },
-    },
-
-  });
-  if (numberOfSlides > maxSlidesPerView) {
-      document.querySelector(nextEl).style.display = "flex";
-      document.querySelector(prevEl).style.display = "flex";
-  }
-
-  var readMoreLink = document.querySelector('.read-more');
-  var shortDescription = document.querySelector('.short-description');
-  var fullDescription = document.querySelector('.full-description');
-
-  readMoreLink?.addEventListener('click', function(e) {
-      e.preventDefault();
-      shortDescription.classList.toggle('hidden');
-      fullDescription.classList.toggle('hidden');
-
-      if (readMoreLink.textContent === 'ВИЖ ОЩЕ') {
-          readMoreLink.textContent = 'ЗАТВОРИ';
-      } else {
-          readMoreLink.textContent = 'ВИЖ ОЩЕ';
-      }
-  });
+  //     if (readMoreLink.textContent === 'ВИЖ ОЩЕ') {
+  //         readMoreLink.textContent = 'ЗАТВОРИ';
+  //     } else {
+  //         readMoreLink.textContent = 'ВИЖ ОЩЕ';
+  //     }
+  // });
 
 
 
@@ -248,7 +221,7 @@ function displaySelectedOptions() {
       },
       1440: {
         spaceBetween: 16,
-        slidesPerView: 6,
+        slidesPerView: 5,
       },
     },
   });
