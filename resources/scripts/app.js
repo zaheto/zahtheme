@@ -594,9 +594,16 @@ function displaySelectedOptions() {
   });
 
   $('#toggleFilters').on('click', function(e) {
-    e.preventDefault()
-    $('#aside').toggleClass('open')
-  });
+    e.preventDefault();
+    $('#shop-sidebar').toggleClass('open');
+    
+    const $text = $(this).contents().filter(function() {
+      return this.nodeType === 3;
+    }).last();
+    
+    const currentText = $text.text().trim();
+    $text.replaceWith(currentText === 'Покажи Филтри' ? ' Скрий филтри' : 'Покажи Филтри');
+   });
 
   if ( $( 'body' ).first().hasClass( 'woocommerce-cart' ) ) {
     $('#mini-cart').on("click", function (e) {

@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: Zah Theme 10.x-dev\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/theme/zah\n"
 "POT-Creation-Date: 2024-05-17T07:30:24+00:00\n"
-"PO-Revision-Date: 2024-11-18 07:10+0200\n"
+"PO-Revision-Date: 2024-11-29 16:26+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg_BG\n"
@@ -45,6 +45,9 @@ msgstr "Твоят профил"
 
 msgid "Filters"
 msgstr "Филтри"
+
+msgid "Hide Filters"
+msgstr "Скрий Филтри"
 
 msgid "Loading..."
 msgstr "Зарежда…"
