@@ -167,6 +167,9 @@ aside.left.open {
         }
       }
     }
+    label {
+      @apply text-14;
+    }
     &.woof_container_checkbox {
       .woof_list_checkbox {
         @apply flex flex-wrap;

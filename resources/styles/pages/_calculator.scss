@@ -1,19 +1,19 @@
 .calculator {
     .calculator-box {
-      @apply bg-third/30 rounded-lg p-8 mb-10;
+      @apply bg-third/20 rounded-lg p-8 mb-10 flex flex-col gap-4;
     }
 
-    .calculator-box .form-form {
+    .calculator-box .form-row {
       @apply grid grid-cols-1 md:grid-cols-3 gap-2;
     }
 
-    .calculator-box .form-form .input-normal,
-    .calculator-box .form-form .select-normal {
+    .calculator-box .form-row .input-normal,
+    .calculator-box .form-row .select-normal {
       @apply w-full  h-[50px] leading-[50px] border border-black/10 rounded-md px-4;
     }
 
     .calculator-tab {
-      @apply bg-white p-6 rounded-xl border-none;
+      @apply bg-white p-6 rounded-xl border-none flex gap-4;
     }
   
     .tabs {
@@ -75,7 +75,7 @@
   }
 
 .calculator-nav {
-  @apply bg-white rounded-md p-2 gap-2 flex mb-2;
+  @apply bg-white rounded-md p-2 gap-2 flex flex-col md:flex-row mb-2;
 }
 
 .calculator-nav .tab-button  {

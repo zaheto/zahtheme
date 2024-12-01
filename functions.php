@@ -1604,12 +1604,22 @@ remove_action( 'woocommerce_shop_loop_item_title', 'woocommerce_template_loop_pr
 add_action( 'woocommerce_shop_loop_item_title', 'zah_loop_product_title', 10 );
 
 function zah_loop_product_title() {
+    global $product;
+    
+    // Get SKU
+    $sku = $product->get_sku();
+    $sku_html = '';
+    
+    // Only display SKU if it exists
+    if ($sku) {
+        $sku_html = '<div class="product-sku">' . esc_html($sku) . '</div>';
+    }
 
-	global $post;
-
-	?>
-		<?php
-		echo '<div class="woocommerce-loop-product__title"><a tabindex="0" href="' . get_the_permalink() . '" aria-label="' . get_the_title() . '" class="woocommerce-LoopProduct-link woocommerce-loop-product__link">' . get_the_title() . '</a></div>';
+    echo '<div class="woocommerce-loop-product__title">' . 
+         $sku_html . 
+         '<a tabindex="0" href="' . get_the_permalink() . '" aria-label="' . get_the_title() . '" class="woocommerce-LoopProduct-link woocommerce-loop-product__link">' . 
+         get_the_title() . 
+         '</a></div>';
 }
 
 /**

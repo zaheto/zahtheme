@@ -4,132 +4,142 @@
 
 @php
 error_log('Calculator template is being used');
+$featured_img_url = get_the_post_thumbnail_url(get_the_ID(), 'full');
 @endphp
 
 @extends('layouts.app')
 
 @section('content')
-  @php
+  {{-- @php
   if ( function_exists('yoast_breadcrumb') ) {
     yoast_breadcrumb( '<p id="breadcrumbs">','</p>' );
   }
-  @endphp
+  @endphp --}}
 
   <header>
-    <h1>Калкулатор</h1>
+    <h1 class="text-h3 md:text-h2 font-bold mb-8 mt-6">{{ get_the_title() }}</h1>
+    <div >{{ the_content() }}</div>
   </header>
   <section class="calculator-box">
     {{-- Calculator Tabs --}}
     <div class="calculator-nav">
       <button class="tab-button active " data-model="atlas">
-        ATLAS Model
+        ATLAS
       </button>
       <button class="tab-button " data-model="gamma">
-        GAMMA Model
+        GAMMA
       </button>
       <button class="tab-button " data-model="sigma">
-        SIGMA Model
+        SIGMA
       </button>
       <button class="tab-button " data-model="piramida">
-        PIRAMIDA Model
+        PIRAMIDA
       </button>
       <button class="tab-button " data-model="terra">
-        TERRA Model
+        TERRA
       </button>
     </div>
 
     {{-- Atlas Calculator Tab --}}
-    <div class="calculator-tab active" id="atlas-calculator">
-      <h2 class="text-24 font-bold mb-6">Калкулатор за модел - ATLAS </h2>
-      
-      <form id="atlas-fence-calculator" class="space-y-6">
-        <div class="form-form">
-          {{-- Panel Width Input --}}
-          <div class="form-cell">
-            <label for="atlas-panel-width" class="block text-14 font-medium text-label">
-              Ширина на паното (m)
-            </label>
-            <input 
-              type="number" 
-              id="atlas-panel-width" 
-              name="atlas-panel-width" 
-              step="0.01" 
-              min="0.3" 
-              max="3.3" 
-              required
-             class="input-normal"
-            >
-          </div>
-
-          {{-- Panel Height Select --}}
-          <div class="form-cell">
-            <label for="atlas-panel-height" class="block text-14 font-medium text-label">
-              Височина на паното (m)
-            </label>
-            <select 
-              id="atlas-panel-height" 
-              name="atlas-panel-height" 
-              required
-              class="select-normal"
-            >
-              @foreach(range(0.745, 3.145, 0.1) as $height)
-                <option value="{{ number_format($height, 3) }}">{{ number_format($height, 3) }}</option>
-              @endforeach
-            </select>
-          </div>
-
-          {{-- Number of Panels Input --}}
-          <div class="form-cell">
-            <label for="atlas-number-of-panels" class="block text-14 font-medium text-label">
-              Брой пана (бр.)
-            </label>
-            <input 
-              type="number" 
-              id="atlas-number-of-panels" 
-              name="atlas-number-of-panels" 
-              min="1" 
-              required
-              class="input-normal"
-            >
-          </div>
-        </div>
-      </form>
-
-      {{-- Results Section --}}
-      <div class="mt-8 border border-border rounded-lg bg-white">
-        <div class="px-4 py-3 border-b border-border flex items-center justify-between">
-          <h3 class="text-18 font-medium text-second">Какво включва комплекта:</h3>
-          <button class="required-materials--toggle-link text-label hover:text-second focus:outline-none">
-            <span class="toggle-icon text-18">+</span>
-          </button>
-        </div>
+    <section class="calculator-tab active" id="atlas-calculator">
+      <div class="flex flex-col">
+        <h2 class="text-24 font-bold mb-6">Калкулатор за модел - ATLAS </h2>
+        <p>Въведете вашите индивидуални размери на оградата:</p>
         
-        <div id="atlas-calculator-results" class="hidden px-4 py-3">
-          <div id="atlas-results" class="divide-y divide-border">
-            {{-- Results will be populated by JavaScript --}}
-          </div>
+        <form id="atlas-fence-calculator" class="space-y-6">
+          <div class="form-row">
+            {{-- Panel Width Input --}}
+            <div class="form-cell">
+              <label for="atlas-panel-width-calc" class="block text-14 font-medium text-label">
+                Ширина на паното (m)
+              </label>
+              <input 
+                type="number" 
+                id="atlas-panel-width-calc" 
+                name="atlas-panel-width-calc" 
+                step="0.01" 
+                min="0.3" 
+                max="3.3" 
+                required
+              class="input-normal"
+              >
+            </div>
 
-          <div id="atlas-final-price" class="mt-4 pt-4 border-t border-border font-medium text-second">
-            {{-- Final price will be populated by JavaScript --}}
+            {{-- Panel Height Select --}}
+            <div class="form-cell">
+              <label for="atlas-panel-height-calc" class="block text-14 font-medium text-label">
+                Височина на паното (m)
+              </label>
+              <select 
+                id="atlas-panel-height-calc" 
+                name="atlas-panel-height-calc" 
+                required
+                class="select-normal"
+              >
+                @foreach(range(0.745, 3.145, 0.1) as $height)
+                  <option value="{{ number_format($height, 3) }}">{{ number_format($height, 3) }}</option>
+                @endforeach
+              </select>
+            </div>
+
+            {{-- Number of Panels Input --}}
+            <div class="form-cell">
+              <label for="atlas-number-of-panels-calc" class="block text-14 font-medium text-label">
+                Брой пана (бр.)
+              </label>
+              <input 
+                type="number" 
+                id="atlas-number-of-panels-calc" 
+                name="atlas-number-of-panels-calc" 
+                min="1" 
+                required
+                class="input-normal"
+              >
+            </div>
+          </div>
+        </form>
+
+        {{-- Results Section --}}
+        <div class="mt-8 border border-border rounded-lg bg-white">
+          <div class="px-4 py-3 border-b border-border flex items-center justify-between">
+            <h3 class="text-18 font-medium text-second">Какво включва комплекта:</h3>
+
+          </div>
+          
+          <div id="atlas-calculator-results-calc" class="hidden px-4 py-3">
+            <div id="atlas-results-calc" class="divide-y divide-border">
+              {{-- Results will be populated by JavaScript --}}
+            </div>
+
+            <div id="atlas-final-price" class="mt-4 pt-4 border-t border-border font-medium text-second">
+              {{-- Final price will be populated by JavaScript --}}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      @if($featured_img_url)
+        <div class="featured-image ">
+            <img src="{{ $featured_img_url }}" alt="{{ get_the_title() }}" class="w-full h-auto">
+        </div>
+      @endif
+
+    </section>
 
     {{-- Gamma Calculator Tab --}}
-    <div class="calculator-tab" id="gamma-calculator" style="display: none;">
+    <section class="calculator-tab" id="gamma-calculator" style="display: none;">
+      <div class="flex flex-col">
       <h2 class="text-24 font-bold mb-6">Калкулатор за модел - GAMMA </h2>
       
       <form id="gamma-fence-calculator" class="space-y-6">
           <div class="form-row">
               <div class="form-cell">
-                <label for="gamma-panel-width" class="block text-14 font-medium text-label">
+                <label for="gamma-panel-width-calc" class="block text-14 font-medium text-label">
                   Ширина на паното (m)
                 </label>
                 <input 
                   type="number" 
-                  id="gamma-panel-width" 
-                  name="gamma-panel-width" 
+                  id="gamma-panel-width-calc" 
+                  name="gamma-panel-width-calc" 
                   step="0.01" 
                   min="0.3" 
                   max="3.3" 
@@ -139,12 +149,12 @@ error_log('Calculator template is being used');
               </div>
       
               <div class="form-cell">
-                <label for="gamma-panel-height" class="block text-14 font-medium text-label">
+                <label for="gamma-panel-height-calc" class="block text-14 font-medium text-label">
                   Височина на паното (m)
                 </label>
                 <select 
-                  id="gamma-panel-height" 
-                  name="gamma-panel-height" 
+                  id="gamma-panel-height-calc" 
+                  name="gamma-panel-height-calc" 
                   required
                   class="select-normal"
                 >
@@ -155,13 +165,13 @@ error_log('Calculator template is being used');
               </div>
       
               <div class="form-cell">
-                <label for="gamma-number-of-panels" class="block text-14 font-medium text-label">
+                <label for="gamma-number-of-panels-calc" class="block text-14 font-medium text-label">
                   Брой пана (бр.)
                 </label>
                 <input 
                   type="number" 
-                  id="gamma-number-of-panels" 
-                  name="gamma-number-of-panels" 
+                  id="gamma-number-of-panels-calc" 
+                  name="gamma-number-of-panels-calc" 
                   min="1" 
                   required
                   class="input-normal"
@@ -173,33 +183,39 @@ error_log('Calculator template is being used');
       <div class="mt-8 border border-border rounded-lg bg-white">
         <div class="px-4 py-3 border-b border-border flex items-center justify-between">
           <h3 class="text-18 font-medium text-second">Какво включва комплекта::</h3>
-          <button class="required-materials--toggle-link text-label hover:text-second focus:outline-none">
-            <span class="toggle-icon text-18">+</span>
-          </button>
+
         </div>
         
-        <div id="gamma-calculator-results" class="hidden px-4 py-3">
+        <div id="gamma-calculator-results-calc" class="hidden px-4 py-3">
           <div id="gamma-results" class="divide-y divide-border">
             {{-- Results will be populated by JavaScript --}}
           </div>
         </div>
       </div>
     </div>
+    @if($featured_img_url)
+      <div class="featured-image ">
+          <img src="{{ $featured_img_url }}" alt="{{ get_the_title() }}" class="w-full h-auto">
+      </div>
+    @endif
+
+    </section>
 
     {{-- Sigma Calculator Tab --}}
-    <div class="calculator-tab" id="sigma-calculator" style="display: none;">
+    <section class="calculator-tab" id="sigma-calculator" style="display: none;">
+      <div class="flex flex-col">
       <h2 class="text-24 font-bold mb-6">Калкулатор за модел - SIGMA</h2>
       
       <form id="sigma-fence-calculator" class="space-y-6">
-        <div class="row">
+        <div class="form-row">
           <div class="form-cell">
-            <label for="sigma-panel-width" class="block text-14 font-medium text-label">
+            <label for="sigma-panel-width-calc" class="block text-14 font-medium text-label">
               Ширина на паното (m)
             </label>
             <input 
               type="number" 
-              id="sigma-panel-width" 
-              name="sigma-panel-width" 
+              id="sigma-panel-width-calc" 
+              name="sigma-panel-width-calc" 
               step="0.01" 
               min="0.3" 
               max="3.3" 
@@ -209,12 +225,12 @@ error_log('Calculator template is being used');
           </div>
   
           <div class="form-cell">
-            <label for="sigma-panel-height" class="block text-14 font-medium text-label">
+            <label for="sigma-panel-height-calc" class="block text-14 font-medium text-label">
               Височина на паното (m)
             </label>
             <select 
-              id="sigma-panel-height" 
-              name="sigma-panel-height" 
+              id="sigma-panel-height-calc" 
+              name="sigma-panel-height-calc" 
               required
               class="select-normal"
             >
@@ -225,13 +241,13 @@ error_log('Calculator template is being used');
           </div>
   
           <div class="form-cell">
-            <label for="sigma-number-of-panels" class="block text-14 font-medium text-label">
+            <label for="sigma-number-of-panels-calc" class="block text-14 font-medium text-label">
               Брой пана (бр.)
             </label>
             <input 
               type="number" 
-              id="sigma-number-of-panels" 
-              name="sigma-number-of-panels" 
+              id="sigma-number-of-panels-calc" 
+              name="sigma-number-of-panels-calc" 
               min="1" 
               required
               class="input-normal"
@@ -243,33 +259,39 @@ error_log('Calculator template is being used');
       <div class="mt-8 border border-border rounded-lg bg-white">
         <div class="px-4 py-3 border-b border-border flex items-center justify-between">
           <h3 class="text-18 font-medium text-second">Какво включва комплекта:</h3>
-          <button class="required-materials--toggle-link text-label hover:text-second focus:outline-none">
-            <span class="toggle-icon text-18">+</span>
-          </button>
+
         </div>
         
-        <div id="sigma-calculator-results" class="hidden px-4 py-3">
+        <div id="sigma-calculator-results-calc" class="hidden px-4 py-3">
           <div id="sigma-results" class="divide-y divide-border">
             {{-- Results will be populated by JavaScript --}}
           </div>
         </div>
       </div>
     </div>
+    @if($featured_img_url)
+      <div class="featured-image ">
+          <img src="{{ $featured_img_url }}" alt="{{ get_the_title() }}" class="w-full h-auto">
+      </div>
+    @endif
+
+    </section>
 
     {{-- Piramida Calculator Tab --}}
-    <div class="calculator-tab" id="piramida-calculator" style="display: none;">
+    <section class="calculator-tab" id="piramida-calculator" style="display: none;">
+      <div class="flex flex-col">
       <h2 class="text-24 font-bold mb-6">Калкулатор за модел - PIRAMIDA</h2>
       
       <form id="piramida-fence-calculator" class="space-y-6">
           <div class="form-row">
             <div class="form-cell">
-              <label for="piramida-panel-width" class="block text-14 font-medium text-label">
+              <label for="piramida-panel-width-calc" class="block text-14 font-medium text-label">
                 Ширина на паното (m)
               </label>
               <input 
                 type="number" 
-                id="piramida-panel-width" 
-                name="piramida-panel-width" 
+                id="piramida-panel-width-calc" 
+                name="piramida-panel-width-calc" 
                 step="0.01" 
                 min="0.3" 
                 max="3.3" 
@@ -279,12 +301,12 @@ error_log('Calculator template is being used');
             </div>
     
             <div class="form-cell">
-              <label for="piramida-panel-height" class="block text-14 font-medium text-label">
+              <label for="piramida-panel-height-calc" class="block text-14 font-medium text-label">
                 Височина на паното (m)
               </label>
               <select 
-                id="piramida-panel-height" 
-                name="piramida-panel-height" 
+                id="piramida-panel-height-calc" 
+                name="piramida-panel-height-calc" 
                 required
                 class="select-normal"
               >
@@ -295,13 +317,13 @@ error_log('Calculator template is being used');
             </div>
     
             <div class="form-cell">
-              <label for="piramida-number-of-panels" class="block text-14 font-medium text-label">
+              <label for="piramida-number-of-panels-calc" class="block text-14 font-medium text-label">
                 Брой пана (бр.)
               </label>
               <input 
                 type="number" 
-                id="piramida-number-of-panels" 
-                name="piramida-number-of-panels" 
+                id="piramida-number-of-panels-calc" 
+                name="piramida-number-of-panels-calc" 
                 min="1" 
                 required
                 class="input-normal"
@@ -313,59 +335,65 @@ error_log('Calculator template is being used');
       <div class="mt-8 border border-border rounded-lg bg-white">
         <div class="px-4 py-3 border-b border-border flex items-center justify-between">
           <h3 class="text-18 font-medium text-second">Какво включва комплекта:</h3>
-          <button class="required-materials--toggle-link text-label hover:text-second focus:outline-none">
-            <span class="toggle-icon text-18">+</span>
-          </button>
+
         </div>
         
-        <div id="piramida-calculator-results" class="hidden px-4 py-3">
+        <div id="piramida-calculator-results-calc" class="hidden px-4 py-3">
           <div id="piramida-results" class="divide-y divide-border">
             {{-- Results will be populated by JavaScript --}}
           </div>
         </div>
       </div>
     </div>
+    @if($featured_img_url)
+      <div class="featured-image ">
+          <img src="{{ $featured_img_url }}" alt="{{ get_the_title() }}" class="w-full h-auto">
+      </div>
+    @endif
+
+    </section>
 
     {{-- Terra Calculator Tab --}}
-    <div class="calculator-tab" id="terra-calculator" style="display: none;">
+    <section class="calculator-tab" id="terra-calculator" style="display: none;">
+      <div class="flex flex-col">
       <h2 class="text-24 font-bold mb-6">Калкулатор за модел - TERRA </h2>
       
       <form id="terra-fence-calculator" class="space-y-6">
         <div class="form-row">
           <div class="form-cell">
-            <label for="terra-panel-width" class="block text-14 font-medium text-label">
+            <label for="terra-panel-width-calc" class="block text-14 font-medium text-label">
               Ширина на паното (m)
             </label>
             <input 
               type="number" 
-              id="terra-panel-width" 
-              name="terra-panel-width" 
+              id="terra-panel-width-calc" 
+              name="terra-panel-width-calc" 
               required
               class="input-normal"
             >
           </div>
   
           <div class="form-cell">
-            <label for="terra-panel-height" class="block text-14 font-medium text-label">
+            <label for="terra-panel-height-calc" class="block text-14 font-medium text-label">
               Височина на паното (m)
             </label>
             <input 
               type="number" 
-              id="terra-panel-height" 
-              name="terra-panel-height" 
+              id="terra-panel-height-calc" 
+              name="terra-panel-height-calc" 
               required
               class="input-normal"
             >
           </div>
   
           <div class="form-cell">
-            <label for="terra-panel-distance-cassettes" class="block text-14 font-medium text-label">
+            <label for="terra-panel-distance-cassettes-calc" class="block text-14 font-medium text-label">
               Разстояние между ламели (cm)
             </label>
             <input 
               type="number" 
-              id="terra-panel-distance-cassettes" 
-              name="terra-panel-distance-cassettes" 
+              id="terra-panel-distance-cassettes-calc" 
+              name="terra-panel-distance-cassettes-calc" 
               required
               class="input-normal"
             >
@@ -376,26 +404,26 @@ error_log('Calculator template is being used');
 
         <div class="form-row">
           <div class="form-cell">
-            <label for="terra-panel-base-distance" class="block text-14 font-medium text-label">
+            <label for="terra-panel-base-distance-calc" class="block text-14 font-medium text-label">
               Разстояние от основата (cm)
             </label>
             <input 
               type="number" 
-              id="terra-panel-base-distance" 
-              name="terra-panel-base-distance" 
+              id="terra-panel-base-distance-calc" 
+              name="terra-panel-base-distance-calc" 
               required
               class="input-normal"
             >
           </div>
   
           <div class="form-cell">
-            <label for="terra-number-of-panels" class="block text-14 font-medium text-label">
+            <label for="terra-number-of-panels-calc" class="block text-14 font-medium text-label">
               Брой пана (бр.)
             </label>
             <input 
               type="number" 
-              id="terra-number-of-panels" 
-              name="terra-number-of-panels" 
+              id="terra-number-of-panels-calc" 
+              name="terra-number-of-panels-calc" 
               min="1" 
               required
               class="input-normal"
@@ -403,13 +431,13 @@ error_log('Calculator template is being used');
           </div>
   
           <div class="form-cell">
-            <label for="terra-panel-optimal-height" class="block text-14 font-medium text-label">
+            <label for="terra-panel-optimal-height-calc" class="block text-14 font-medium text-label">
               Препоръчителна височина (m)
             </label>
             <input 
               type="number" 
-              id="terra-panel-optimal-height" 
-              name="terra-panel-optimal-height" 
+              id="terra-panel-optimal-height-calc" 
+              name="terra-panel-optimal-height-calc" 
               readonly 
               disabled
               class="input-normal"
@@ -421,18 +449,23 @@ error_log('Calculator template is being used');
       <div class="mt-8 border border-border rounded-lg bg-white">
         <div class="px-4 py-3 border-b border-border flex items-center justify-between">
           <h3 class="text-18 font-medium text-second">Какво включва комплекта:</h3>
-          <button class="required-materials--toggle-link text-label hover:text-second focus:outline-none">
-            <span class="toggle-icon text-18">+</span>
-          </button>
+ 
         </div>
         
-        <div id="terra-calculator-results" class="hidden px-4 py-3">
+        <div id="terra-calculator-results-calc" class="hidden px-4 py-3">
           <div id="terra-results" class="divide-y divide-border">
             {{-- Results will be populated by JavaScript --}}
           </div>
         </div>
       </div>
     </div>
+    @if($featured_img_url)
+      <div class="featured-image ">
+          <img src="{{ $featured_img_url }}" alt="{{ get_the_title() }}" class="w-full h-auto">
+      </div>
+    @endif
+
+    </section>
 
 
 
