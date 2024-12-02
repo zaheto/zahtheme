@@ -9,7 +9,7 @@
             $title = $block_data['link_half_section']['title'] ?? ''; // Fallback to empty string or any default title if not set
         @endphp
 
-        <a href="{{ $url }}" class="btn btn-main btn-block" target="{{ $target }}">{{ $title }}</a>
+        <a href="{{ $url }}" class="btn btn-main" target="{{ $target }}">{{ $title }}</a>
     @endif
 
   </div>

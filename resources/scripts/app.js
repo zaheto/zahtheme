@@ -192,39 +192,50 @@ function displaySelectedOptions() {
   });
 
   var categorySlider = new Swiper(".category-list-builder", {
-    autoHeight: true, //enable auto height
+    autoHeight: true,
     keyboardControl: true,
     keyboard: true,
     slidesPerView: 2,
     spaceBetween: 12,
-    // Navigation arrows
     navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
     },
     breakpoints: {
-      760: {
-        slidesPerView: 2,
-        spaceBetween: 12,
-      },
-      768: {
-        slidesPerView: 3,
-        spaceBetween: 12,
-      },
-      1024: {
-        slidesPerView: 4,
-        spaceBetween: 12,
-      },
-      1280: {
-        spaceBetween: 16,
-        slidesPerView: 5,
-      },
-      1440: {
-        spaceBetween: 16,
-        slidesPerView: 5,
-      },
+        760: {
+            slidesPerView: 2,
+            spaceBetween: 12,
+        },
+        768: {
+            slidesPerView: 3,
+            spaceBetween: 12,
+        },
+        1024: {
+            slidesPerView: 4,
+            spaceBetween: 12,
+        },
+        1280: {
+            spaceBetween: 16,
+            slidesPerView: 5,
+        },
+        1440: {
+            spaceBetween: 16,
+            slidesPerView: 5,
+        },
     },
-  });
+    on: {
+        init: function () {
+            // Get total number of slides
+            const totalSlides = this.slides.length;
+            const navigation = document.querySelectorAll('.swiper-button-prev, .swiper-button-next');
+            
+            // Hide navigation if slides are 5 or less
+            navigation.forEach(nav => {
+                nav.style.display = totalSlides <= 5 ? 'none' : 'flex';
+            });
+        }
+    }
+});
 
 
   // var moreProductsSLider = new Swiper(".more-products-slider", {

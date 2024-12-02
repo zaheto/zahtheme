@@ -64,6 +64,14 @@
                     ];
                 }
             }
+            // Handle siding products
+            if (has_term('siding', 'product_tag', get_the_ID())) {
+                $siding_pricing = [
+                    'base_price' => $product->get_regular_price() ?: 0,
+                    'panel_siding_sqm' => get_field('panel_siding_sqm', get_the_ID()) ?: 0,
+                    'panel_siding_useful' => get_field('panel_siding_useful', get_the_ID()) ?: 0
+                ];
+            }
         @endphp
 
         @foreach ($models as $model)
@@ -74,6 +82,12 @@
                 </script>
             @endif
         @endforeach
+
+        @if (has_term('siding', 'product_tag', get_the_ID()))
+            <script>
+                var siding_pricing = @json($siding_pricing);
+            </script>
+        @endif
 
         <div id="product-{{ get_the_ID() }}" @php wc_product_class('', get_the_ID()); @endphp>
             <div class="summary entry-summary">

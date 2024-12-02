@@ -159,6 +159,15 @@ function zah_enqueue_calculator_scripts() {
 
 
     if (is_product()) {
+        if (has_term('siding', 'product_tag')) {
+            wp_enqueue_script('zah-siding-calculator', 
+                get_template_directory_uri() . '/resources/scripts/siding-calculator.js', 
+                array('jquery'), 
+                null, 
+                true
+            );
+        }
+
         if (has_term('atlas', 'product_tag')) {
             wp_enqueue_script('zah-atlas-calculator', 
                 get_template_directory_uri() . '/resources/scripts/atlas-calculator.js', 
@@ -2677,3 +2686,102 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
         }
     }
 });
+
+// Change "Add to Cart" button text for siding products
+add_filter('woocommerce_loop_add_to_cart_link', function($button, $product) {
+    if (has_term('siding', 'product_tag', $product->get_id())) {
+        $product_url = get_permalink($product->get_id());
+        $button = sprintf('<a href="%s" class="button">%s</a>', esc_url($product_url), esc_html__('Calculate', 'zah'));
+    }
+    return $button;
+}, 10, 2);
+
+// Add calculator form in product page
+add_action('woocommerce_single_product_summary', function() {
+    if (has_term('siding', 'product_tag') && function_exists('get_field')) {
+        $data = [
+            'panel_siding_sqm' => get_field('panel_siding_sqm'),
+            'panel_siding_useful' => get_field('panel_siding_useful'),
+            'base_price' => get_field('_regular_price')
+        ];
+        echo view("partials.product.siding-calculator-form", ['sidingData' => $data])->render();
+    }
+}, 6);
+
+// Add calculator results after add to cart form
+add_action('woocommerce_after_add_to_cart_form', function() {
+    if (has_term('siding', 'product_tag')) {
+        echo view("partials.product.siding-calculator-results")->render();
+    }
+});
+
+// Handle cart item data
+add_filter('woocommerce_add_cart_item_data', function ($cart_item_data, $product_id) {
+    if (has_term('siding', 'product_tag', $product_id)) {
+        $calculated_price = isset($_POST['calculated_price']) ? floatval($_POST['calculated_price']) : 0;
+        $siding_width = isset($_POST['siding_width']) ? floatval($_POST['siding_width']) : 0;
+        $panel_number = isset($_POST['siding_panel_number']) ? intval($_POST['siding_panel_number']) : 0;
+
+        if ($calculated_price > 0) {
+            $cart_item_data['custom_price'] = $calculated_price;
+            $cart_item_data['siding_width'] = $siding_width;
+            $cart_item_data['panel_number'] = $panel_number;
+        }
+    }
+    return $cart_item_data;
+}, 10, 2);
+
+// Add hidden fields for add to cart
+add_action('woocommerce_before_add_to_cart_button', function() {
+    if (has_term('siding', 'product_tag')) {
+        ?>
+        <input type="hidden" name="calculated_price" id="calculated_price" value="">
+        <input type="hidden" name="siding_width" id="siding_width" value="">
+        <input type="hidden" name="siding_panel_number" id="siding_panel_number" value="">
+        <script>
+            jQuery(document).ready(function($) {
+                $('#siding-calculate').on('click', function() {
+                    let calculatedPrice = $('.single_add_to_cart_button').attr('data-calculated-price');
+                    let sidingWidth = $('#siding-width').val();
+                    let panelNumber = $('#siding-panel-number').val();
+                    
+                    $('#calculated_price').val(calculatedPrice);
+                    $('#siding_width').val(sidingWidth);
+                    $('#siding_panel_number').val(panelNumber);
+                });
+            });
+        </script>
+        <?php
+    }
+});
+
+// Display siding data in cart
+add_filter('woocommerce_get_item_data', function($item_data, $cart_item) {
+    if (isset($cart_item['siding_width'])) {
+        $item_data[] = [
+            'key' => __('Width', 'zah'),
+            'value' => wc_clean($cart_item['siding_width']) . ' m'
+        ];
+        $item_data[] = [
+            'key' => __('Number of Panels', 'zah'),
+            'value' => wc_clean($cart_item['panel_number'])
+        ];
+    }
+    return $item_data;
+}, 10, 2);
+
+// Save siding data in order
+add_action('woocommerce_checkout_create_order_line_item', function($item, $cart_item_key, $values, $order) {
+    if (isset($values['siding_width'])) {
+        $item->add_meta_data(__('Width', 'zah'), $values['siding_width'] . ' m');
+        $item->add_meta_data(__('Number of Panels', 'zah'), $values['panel_number']);
+    }
+}, 10, 4);
+
+// Hide default price for siding products
+add_filter('woocommerce_get_price_html', function($price, $product) {
+    if (has_term('siding', 'product_tag', $product->get_id())) {
+        return '';
+    }
+    return $price;
+}, 10, 2);

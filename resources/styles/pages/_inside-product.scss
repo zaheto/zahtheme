@@ -12,7 +12,7 @@
 }
 
 .product-subheading {
-  @apply flex items-center gap-6;
+  @apply flex items-center gap-6 mb-2;
 }
 
 .product-subheading .product-balloon-text {
@@ -25,6 +25,10 @@
 
 .product-subheading .sku_wrapper span {
   @apply text-black;
+}
+
+.inside-product--top-wrap .product-subheading .stock {
+  @apply p-0 m-0;
 }
 
 .inside-product--top-wrap {
@@ -609,12 +613,14 @@ div.product table.variations select {
 #gamma-calculator-results,
 #piramida-calculator-results,
 #sigma-calculator-results,
+#siding-calculator-results,
 #terra-calculator-results {
   @apply p-6 rounded-md border border-[#E2EAF0] bg-white  flex-col gap-4;
 }
 
 #atlas-calculator-results h2,
 #gamma-calculator-results h2,
+#siding-calculator-results h2,
 #piramida-calculator-results h2,
 #sigma-calculator-results h2,
 #terra-calculator-results h2 {
@@ -624,6 +630,7 @@ div.product table.variations select {
 
 #atlas-calculator-results ul,
 #gamma-calculator-results ul,
+#siding-calculator-results ul,
 #piramida-calculator-results ul,
 #sigma-calculator-results ul,
 #terra-calculator-results ul {
@@ -632,6 +639,7 @@ div.product table.variations select {
 
 #atlas-calculator-results ul li,
 #gamma-calculator-results ul li,
+#siding-calculator-results ul li,
 #piramida-calculator-results ul li,
 #sigma-calculator-results ul li,
 #terra-calculator-results ul li {
@@ -640,6 +648,7 @@ div.product table.variations select {
 
 #atlas-calculator-results ul li span,
 #gamma-calculator-results ul li span,
+#siding-calculator-results ul li span,
 #piramida-calculator-results ul li span,
 #sigma-calculator-results ul li span,
 #terra-calculator-results ul li span {
@@ -652,6 +661,7 @@ div.product table.variations select {
 
 #atlas-calculator-form,
 #gamma-calculator-form,
+#siding-calculator-form,
 #piramida-calculator-form,
 #sigma-calculator-form,
 #terra-calculator-form {
@@ -660,6 +670,7 @@ div.product table.variations select {
 
 #atlas-calculator-form h2,
 #gamma-calculator-form h2,
+#siding-calculator-form h2,
 #piramida-calculator-form h2,
 #sigma-calculator-form h2,
 #terra-calculator-form h2 {
@@ -674,8 +685,13 @@ div.product table.variations select {
   @apply grid grid-cols-1 lg:grid-cols-3 gap-2;
 }
 
+#siding-calculator-form .siding-calculator-section {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-2;
+}
+
 #atlas-calculator-form .atlas-calculator-section .form-row,
 #gamma-calculator-form .gamma-calculator-section .form-row,
+#siding-calculator-form .siding-calculator-section .form-row,
 #piramida-calculator-form .piramida-calculator-section .form-row,
 #sigma-calculator-form .sigma-calculator-section .form-row,
 #terra-calculator-form .terra-calculator-section .form-row {
@@ -688,6 +704,15 @@ div.product table.variations select {
 }
 
 #atlas-calculator-form label {
+  @apply font-medium text-13 text-[#545454];
+}
+
+#siding-calculator-form .siding-calculator-section select,
+#siding-calculator-form .siding-calculator-section input {
+  @apply border-transparent h-[50px] leading-[50px]
+}
+
+#siding-calculator-form label {
   @apply font-medium text-13 text-[#545454];
 }
 

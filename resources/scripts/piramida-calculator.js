@@ -2,6 +2,7 @@ jQuery(document).ready(function ($) {
     // Hide the results section by default
     $('#piramida-calculator-results').hide();
 
+    // Toggle results section
     $('.required-materials--toggle-link').on('click', function(e) {
         e.preventDefault();
         const resultsSection = $('#piramida-calculator-results');

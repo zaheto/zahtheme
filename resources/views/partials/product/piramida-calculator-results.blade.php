@@ -3,7 +3,7 @@
         <span class="toggle-icon">+</span>piramida Включени материали в цената
     </a>
 
-    <div id="piramida-calculator-results" class="piramida-calculator-section " >
+    <div id="piramida-calculator-results" class="piramida-calculator-section hidden" >
         <h2>Включени материали в цената:</h2>
         <div id="piramida-results"></div>
     </div>

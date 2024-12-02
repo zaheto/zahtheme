@@ -9,13 +9,13 @@
   }
 
   .content {
-    @apply bg-black/90 p-6 md:p-10 rounded flex flex-col items-center max-w-xl text-white;
+    @apply bg-black/60 p-6 md:p-10 rounded flex flex-col justify-start items-start max-w-xl text-white;
     h2 {
-      @apply text-white text-32 md:text-36 text-center mb-2;
+      @apply text-white text-32 md:text-36 text-left font-bold mb-2 uppercase;
     }
     .text {
       p {
-        @apply text-white text-center;
+        @apply text-white text-left;
       }
     }
   }
