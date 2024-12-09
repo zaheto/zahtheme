@@ -1,4 +1,6 @@
-jQuery(document).ready(function ($) { // Pass $ as parameter
+// In terra-calculator.js
+jQuery(document).ready(function ($) {
+    // Hide the results section by default
     // Hide the results section by default
     $('#terra-calculator-results').hide();
 
@@ -19,6 +21,10 @@ jQuery(document).ready(function ($) { // Pass $ as parameter
         }
     });
 
+    // Get price elements
+    const priceElement = $('.price');
+    const addToCartButton = $('button.single_add_to_cart_button');
+
     // Input elements for Terra
     const widthInput = $('#terra-panel-width');
     const heightInput = $('#terra-panel-height');
@@ -26,9 +32,6 @@ jQuery(document).ready(function ($) { // Pass $ as parameter
     const baseDistanceInput = $('#terra-panel-base-distance');
     const panelsInput = $('#terra-number-of-panels');
     const optimalHeightField = $('#terra-panel-optimal-height');
-
-    const priceElement = $('.price');
-    const addToCartButton = $('button.single_add_to_cart_button');
 
     // Function to validate inputs
     function areInputsValid() {
@@ -38,8 +41,8 @@ jQuery(document).ready(function ($) { // Pass $ as parameter
         const baseDistance = parseFloat(baseDistanceInput.val());
         const panels = parseInt(panelsInput.val());
 
-        return !isNaN(width) && !isNaN(height) && !isNaN(cassetteDistance) && !isNaN(baseDistance) && !isNaN(panels) &&
-               panels > 0;
+        return !isNaN(width) && !isNaN(height) && !isNaN(cassetteDistance) && 
+               !isNaN(baseDistance) && !isNaN(panels) && panels > 0;
     }
 
     // Main calculation function
@@ -53,60 +56,93 @@ jQuery(document).ready(function ($) { // Pass $ as parameter
             const baseDistance = parseFloat(baseDistanceInput.val());
             const numberOfPanels = parseInt(panelsInput.val());
 
+            // Format values like Atlas
+            const formattedWidth = panelWidth.toFixed(2);
+            const formattedHeight = (Math.floor(panelHeight * 1000) / 1000).toFixed(3);
+
             // Calculate optimal height
-            const optimalHeight = (panelHeight + cassetteDistance + baseDistance) / numberOfPanels;
-            optimalHeightField.val(optimalHeight.toFixed(2)); // Set optimal height
+            const G15 = Math.floor((panelHeight - baseDistance/100) / (0.108 + cassetteDistance/100));
+            const G16 = Math.ceil((panelHeight - baseDistance/100) / (0.108 + cassetteDistance/100));
+            const H15 = G15 * 0.108 + (G15 - 1) * (cassetteDistance/100) + (baseDistance/100);
+            const H16 = G16 * 0.108 + (G16 - 1) * (cassetteDistance/100) + (baseDistance/100);
+            const G17 = Math.abs(panelHeight - H15);
+            const H17 = Math.abs(panelHeight - H16);
+            const optimalHeight = G17 <= H17 ? H15 : H16;
+            optimalHeightField.val(optimalHeight.toFixed(3));
 
-            // Example material calculations
-            let uProfileLeftLm = panelHeight * numberOfPanels;
-            let uProfileRightLm = panelHeight * numberOfPanels;
-            let horizontalUProfileLm = panelWidth * numberOfPanels;
-            let rivetsQty = numberOfPanels * 50; // Example value
-            let dowelsQty = numberOfPanels * 10; // Example value
+            // Calculate materials
+            const numCassettes = (G17 <= H17 ? G15 : G16);
+            const profileCassettesPcs = numCassettes * numberOfPanels;
+            const profileCassettesLm = Math.max((panelWidth - 0.01) * profileCassettesPcs, 0);
+            const uProfilePcs = numberOfPanels * 2;
+            const uProfileLm = optimalHeight * numberOfPanels * 2;
+            const rivetsPcs = Math.round(profileCassettesPcs * 8) >= 101 ? numberOfPanels * 200 : numberOfPanels * 100;
+            const selfTappingScrewPcs = numberOfPanels * 10;
+            const dowelsPcs = numberOfPanels * 10;
 
-            // Price calculations
-            let totalPrice = parseFloat(terra_pricing.base_price) * (panelWidth + panelHeight);
-            totalPrice += uProfileLeftLm * parseFloat(terra_pricing.price_u_profile_left || 0);
-            totalPrice += uProfileRightLm * parseFloat(terra_pricing.price_u_profile_right || 0);
-            totalPrice += horizontalUProfileLm * parseFloat(terra_pricing.price_u_horizontal_panel || 0);
-            totalPrice += rivetsQty * parseFloat(terra_pricing.price_rivets || 0);
-            totalPrice += dowelsQty * parseFloat(terra_pricing.price_dowels || 0);
+            // Calculate total price
+            let totalPrice = 0;
+            totalPrice += profileCassettesLm * parseFloat(terra_pricing.base_price || 0);
+            totalPrice += uProfileLm * parseFloat(terra_pricing.price_u_profile_left || 0);
+            totalPrice += rivetsPcs * parseFloat(terra_pricing.price_rivets || 0);
+            totalPrice += selfTappingScrewPcs * parseFloat(terra_pricing.price_self_tapping_screw || 0);
+            totalPrice += dowelsPcs * parseFloat(terra_pricing.price_dowels || 0);
 
-            // Update displayed price
-            priceElement.html(`<span class="woocommerce-Price-amount amount">
-                <bdi>Крайна цена: ${totalPrice.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
-            </span>`);
+            // Update UI elements
+            priceElement.html(`
+                <span class="woocommerce-Price-amount amount">
+                    <bdi>Крайна цена: ${totalPrice.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
+                </span>
+            `);
 
-            // Update add-to-cart button data
+            // Update form data for cart
             addToCartButton.attr('data-calculated-price', totalPrice.toFixed(2));
-            addToCartButton.attr('data-panel-width', panelWidth.toFixed(2));
-            addToCartButton.attr('data-panel-height', panelHeight.toFixed(2));
-            addToCartButton.attr('data-panels', numberOfPanels);
+            $('#calculated_price').val(totalPrice.toFixed(2));
+            $('#terra_panel_width').val(formattedWidth);
+            $('#terra_panel_height').val(formattedHeight);
+            $('#terra_number_of_panels').val(numberOfPanels);
 
-            // Update results section
+            // Update results display
             $('#terra-results').html(`
                 <ul>
-                    <li>U Profile Left: <span>${uProfileLeftLm.toFixed(2)} лм</span></li>
-                    <li>U Profile Right: <span>${uProfileRightLm.toFixed(2)} лм</span></li>
-                    <li>Horizontal U Profile: <span>${horizontalUProfileLm.toFixed(2)} лм</span></li>
-                    <li>Rivets: <span>${rivetsQty} бр.</span></li>
-                    <li>Dowels: <span>${dowelsQty} бр.</span></li>
+                    <li>Profile Cassettes: <span>${profileCassettesPcs} бр., ${profileCassettesLm.toFixed(2)} лм</span></li>
+                    <li>U Profile: <span>${uProfilePcs} бр., ${uProfileLm.toFixed(3)} лм</span></li>
+                    <li>Rivets: <span>${rivetsPcs} бр.</span></li>
+                    <li>Self-tapping Screws: <span>${selfTappingScrewPcs} бр.</span></li>
+                    <li>Dowels: <span>${dowelsPcs} бр.</span></li>
                 </ul>
             `);
 
             $('#terra-final-price').html(`<p>Крайна цена: ${totalPrice.toFixed(2)} лв.</p>`);
-
         } catch (error) {
             console.error('Error in Terra Calculator:', error);
         }
     }
 
-    // Attach events to inputs
+    // Event listeners
     widthInput.on('input', calculateTerraPrice);
-    heightInput.on('change', calculateTerraPrice);
+    heightInput.on('input', calculateTerraPrice);
     cassetteDistanceInput.on('input', calculateTerraPrice);
     baseDistanceInput.on('input', calculateTerraPrice);
     panelsInput.on('input', calculateTerraPrice);
+
+    // Predefined sizes click handler
+    $('.main-product-sizes__item').on('click', function(e) {
+        e.preventDefault();
+        
+        $('.main-product-sizes__item').removeClass('selected');
+        $(this).addClass('selected');
+        
+        const width = $(this).data('l');
+        const height = $(this).data('h');
+        const panels = $(this).data('panels') || 1;
+        
+        widthInput.val(width);
+        heightInput.val(height);
+        panelsInput.val(panels);
+        
+        calculateTerraPrice();
+    });
 
     // Initial calculation
     calculateTerraPrice();

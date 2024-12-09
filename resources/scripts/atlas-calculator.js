@@ -155,100 +155,100 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
 
             // Debug log
             // Material calculations debug
-            console.log('Price Calculator Debug:', {
-                inputs: {
-                    width: panelWidth,
-                    height: panelHeight,
-                    panels: numberOfPanels,
-                    formattedWidth: formattedWidth,
-                    formattedHeight: formattedHeight
-                },
-                materialCalculations: {
-                    blindsProfile: {
-                        pieces: blindsProfilePcs,
-                        formula: `(${panelHeight} - 0.045) / 0.1 * ${numberOfPanels}`,
-                        linearMeters: blindsProfileLm,
-                        formula_lm: `(${panelWidth} - 0.01) * ${blindsProfilePcs}`,
-                        price: parseFloat(atlas_pricing.base_price) * blindsProfileLm
-                    },
-                    uProfileLeft: {
-                        pieces: uProfileLeftPcs,
-                        linearMeters: uProfileLeftLm,
-                        formula: `${panelHeight} * ${numberOfPanels}`,
-                        price: uProfileLeftLm * parseFloat(atlas_pricing.price_u_profile_left || 0)
-                    },
-                    uProfileRight: {
-                        pieces: uProfileRightPcs,
-                        linearMeters: uProfileRightLm,
-                        formula: `${panelHeight} * ${numberOfPanels}`,
-                        price: uProfileRightLm * parseFloat(atlas_pricing.price_u_profile_right || 0)
-                    },
-                    horizontalUProfile: {
-                        pieces: horizontalUProfilePcs,
-                        linearMeters: horizontalUProfileLm,
-                        formula: `${panelWidth} * ${numberOfPanels}`,
-                        price: horizontalUProfileLm * parseFloat(atlas_pricing.price_u_horizontal_panel || 0)
-                    },
-                    reinforcingProfile: {
-                        pieces: reinforcingProfilePcs,
-                        F20_condition: `Width ${panelWidth} -> F20 = ${F20}`,
-                        linearMeters: reinforcingProfileLm,
-                        formula: `${panelHeight} * ${F20} * ${numberOfPanels}`,
-                        price: reinforcingProfileLm * parseFloat(atlas_pricing.price_reinforcing_profile || 0)
-                    },
-                    rivets: {
-                        pieces: rivetsPcs,
-                        formula: `F20=${F20} -> ${(blindsProfilePcs / numberOfPanels + 1) * (F20 == 0 ? 4 : F20 == 1 ? 5 : 6) * numberOfPanels} + (${F20} * 2)`,
-                        price: rivetsPcs * parseFloat(atlas_pricing.price_rivets || 0)
-                    },
-                    selfTappingScrews: {
-                        pieces: selfTappingScrewPcs,
-                        formula: `${numberOfPanels} * 10`,
-                        price: selfTappingScrewPcs * parseFloat(atlas_pricing.price_self_tapping_screw || 0)
-                    },
-                    dowels: {
-                        pieces: dowelsPcs,
-                        formula: `${numberOfPanels} * 10 + ${F20} * ${numberOfPanels}`,
-                        price: dowelsPcs * parseFloat(atlas_pricing.price_dowels || 0)
-                    },
-                    corners: {
-                        pieces: cornerPcs,
-                        formula: `${F20} * ${numberOfPanels}`,
-                        price: cornerPcs * parseFloat(atlas_pricing.price_corners || 0)
-                    }
-                },
-                pricing: {
-                    basePrice: atlas_pricing.base_price,
-                    uProfileLeftPrice: atlas_pricing.price_u_profile_left,
-                    uProfileRightPrice: atlas_pricing.price_u_profile_right,
-                    horizontalUProfilePrice: atlas_pricing.price_u_horizontal_panel,
-                    reinforcingProfilePrice: atlas_pricing.price_reinforcing_profile,
-                    rivetsPrice: atlas_pricing.price_rivets,
-                    selfTappingScrewPrice: atlas_pricing.price_self_tapping_screw,
-                    dowelsPrice: atlas_pricing.price_dowels,
-                    cornersPrice: atlas_pricing.price_corners
-                },
-                totalPrice: {
-                    final: totalPrice.toFixed(2),
-                    breakdown: {
-                        blindsProfile: parseFloat(atlas_pricing.base_price) * blindsProfileLm,
-                        uProfileLeft: uProfileLeftLm * parseFloat(atlas_pricing.price_u_profile_left || 0),
-                        uProfileRight: uProfileRightLm * parseFloat(atlas_pricing.price_u_profile_right || 0),
-                        horizontalUProfile: horizontalUProfileLm * parseFloat(atlas_pricing.price_u_horizontal_panel || 0),
-                        reinforcingProfile: reinforcingProfileLm * parseFloat(atlas_pricing.price_reinforcing_profile || 0),
-                        rivets: rivetsPcs * parseFloat(atlas_pricing.price_rivets || 0),
-                        selfTappingScrews: selfTappingScrewPcs * parseFloat(atlas_pricing.price_self_tapping_screw || 0),
-                        dowels: dowelsPcs * parseFloat(atlas_pricing.price_dowels || 0),
-                        corners: cornerPcs * parseFloat(atlas_pricing.price_corners || 0)
-                    }
-                },
-                hiddenFields: {
-                    calculated_price: $('#calculated_price').val(),
-                    atlas_panel_width: $('#atlas_panel_width').val(),
-                    atlas_panel_height: $('#atlas_panel_height').val(),
-                    atlas_number_of_panels: $('#atlas_number_of_panels').val()
-                }
-            });
+            // console.log('Price Calculator Debug:', {
+            //     inputs: {
+            //         width: panelWidth,
+            //         height: panelHeight,
+            //         panels: numberOfPanels,
+            //         formattedWidth: formattedWidth,
+            //         formattedHeight: formattedHeight
+            //     },
+            //     materialCalculations: {
+            //         blindsProfile: {
+            //             pieces: blindsProfilePcs,
+            //             formula: `(${panelHeight} - 0.045) / 0.1 * ${numberOfPanels}`,
+            //             linearMeters: blindsProfileLm,
+            //             formula_lm: `(${panelWidth} - 0.01) * ${blindsProfilePcs}`,
+            //             price: parseFloat(atlas_pricing.base_price) * blindsProfileLm
+            //         },
+            //         uProfileLeft: {
+            //             pieces: uProfileLeftPcs,
+            //             linearMeters: uProfileLeftLm,
+            //             formula: `${panelHeight} * ${numberOfPanels}`,
+            //             price: uProfileLeftLm * parseFloat(atlas_pricing.price_u_profile_left || 0)
+            //         },
+            //         uProfileRight: {
+            //             pieces: uProfileRightPcs,
+            //             linearMeters: uProfileRightLm,
+            //             formula: `${panelHeight} * ${numberOfPanels}`,
+            //             price: uProfileRightLm * parseFloat(atlas_pricing.price_u_profile_right || 0)
+            //         },
+            //         horizontalUProfile: {
+            //             pieces: horizontalUProfilePcs,
+            //             linearMeters: horizontalUProfileLm,
+            //             formula: `${panelWidth} * ${numberOfPanels}`,
+            //             price: horizontalUProfileLm * parseFloat(atlas_pricing.price_u_horizontal_panel || 0)
+            //         },
+            //         reinforcingProfile: {
+            //             pieces: reinforcingProfilePcs,
+            //             F20_condition: `Width ${panelWidth} -> F20 = ${F20}`,
+            //             linearMeters: reinforcingProfileLm,
+            //             formula: `${panelHeight} * ${F20} * ${numberOfPanels}`,
+            //             price: reinforcingProfileLm * parseFloat(atlas_pricing.price_reinforcing_profile || 0)
+            //         },
+            //         rivets: {
+            //             pieces: rivetsPcs,
+            //             formula: `F20=${F20} -> ${(blindsProfilePcs / numberOfPanels + 1) * (F20 == 0 ? 4 : F20 == 1 ? 5 : 6) * numberOfPanels} + (${F20} * 2)`,
+            //             price: rivetsPcs * parseFloat(atlas_pricing.price_rivets || 0)
+            //         },
+            //         selfTappingScrews: {
+            //             pieces: selfTappingScrewPcs,
+            //             formula: `${numberOfPanels} * 10`,
+            //             price: selfTappingScrewPcs * parseFloat(atlas_pricing.price_self_tapping_screw || 0)
+            //         },
+            //         dowels: {
+            //             pieces: dowelsPcs,
+            //             formula: `${numberOfPanels} * 10 + ${F20} * ${numberOfPanels}`,
+            //             price: dowelsPcs * parseFloat(atlas_pricing.price_dowels || 0)
+            //         },
+            //         corners: {
+            //             pieces: cornerPcs,
+            //             formula: `${F20} * ${numberOfPanels}`,
+            //             price: cornerPcs * parseFloat(atlas_pricing.price_corners || 0)
+            //         }
+            //     },
+            //     pricing: {
+            //         basePrice: atlas_pricing.base_price,
+            //         uProfileLeftPrice: atlas_pricing.price_u_profile_left,
+            //         uProfileRightPrice: atlas_pricing.price_u_profile_right,
+            //         horizontalUProfilePrice: atlas_pricing.price_u_horizontal_panel,
+            //         reinforcingProfilePrice: atlas_pricing.price_reinforcing_profile,
+            //         rivetsPrice: atlas_pricing.price_rivets,
+            //         selfTappingScrewPrice: atlas_pricing.price_self_tapping_screw,
+            //         dowelsPrice: atlas_pricing.price_dowels,
+            //         cornersPrice: atlas_pricing.price_corners
+            //     },
+            //     totalPrice: {
+            //         final: totalPrice.toFixed(2),
+            //         breakdown: {
+            //             blindsProfile: parseFloat(atlas_pricing.base_price) * blindsProfileLm,
+            //             uProfileLeft: uProfileLeftLm * parseFloat(atlas_pricing.price_u_profile_left || 0),
+            //             uProfileRight: uProfileRightLm * parseFloat(atlas_pricing.price_u_profile_right || 0),
+            //             horizontalUProfile: horizontalUProfileLm * parseFloat(atlas_pricing.price_u_horizontal_panel || 0),
+            //             reinforcingProfile: reinforcingProfileLm * parseFloat(atlas_pricing.price_reinforcing_profile || 0),
+            //             rivets: rivetsPcs * parseFloat(atlas_pricing.price_rivets || 0),
+            //             selfTappingScrews: selfTappingScrewPcs * parseFloat(atlas_pricing.price_self_tapping_screw || 0),
+            //             dowels: dowelsPcs * parseFloat(atlas_pricing.price_dowels || 0),
+            //             corners: cornerPcs * parseFloat(atlas_pricing.price_corners || 0)
+            //         }
+            //     },
+            //     hiddenFields: {
+            //         calculated_price: $('#calculated_price').val(),
+            //         atlas_panel_width: $('#atlas_panel_width').val(),
+            //         atlas_panel_height: $('#atlas_panel_height').val(),
+            //         atlas_number_of_panels: $('#atlas_number_of_panels').val()
+            //     }
+            // });
 
 
             // When updating the results, check if they should be visible

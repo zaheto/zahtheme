@@ -2709,11 +2709,11 @@ add_action('woocommerce_single_product_summary', function() {
 }, 6);
 
 // Add calculator results after add to cart form
-add_action('woocommerce_after_add_to_cart_form', function() {
-    if (has_term('siding', 'product_tag')) {
-        echo view("partials.product.siding-calculator-results")->render();
-    }
-});
+// add_action('woocommerce_after_add_to_cart_form', function() {
+//     if (has_term('siding', 'product_tag')) {
+//         echo view("partials.product.siding-calculator-results")->render();
+//     }
+// });
 
 // Handle cart item data
 add_filter('woocommerce_add_cart_item_data', function ($cart_item_data, $product_id) {
@@ -2785,3 +2785,85 @@ add_filter('woocommerce_get_price_html', function($price, $product) {
     }
     return $price;
 }, 10, 2);
+
+
+// Add this code to your theme's functions.php or a custom plugin file
+/**
+ * Modify ACF relationship field query to include SKU in search
+ */
+function modify_relationship_query($args, $field, $post_id) {
+    // Debug logging
+    error_log('ACF Relationship Query - Starting');
+    error_log('Current args: ' . print_r($args, true));
+
+    // Only modify for related_products field
+    if ($field['name'] === 'related_products' && !empty($args['s'])) {
+        
+        $search_term = $args['s'];
+        
+        // Store original 's' parameter
+        $original_search = $args['s'];
+        unset($args['s']);
+        
+        // Modify the query
+        $args['meta_query'] = array(
+            'relation' => 'OR',
+            array(
+                'key'     => '_sku',
+                'value'   => $search_term,
+                'compare' => 'LIKE'
+            )
+        );
+        
+        // Add our custom filter for title search
+        add_filter('posts_where', function($where) use ($original_search) {
+            global $wpdb;
+            $search = '%' . $wpdb->esc_like($original_search) . '%';
+            $where .= $wpdb->prepare(
+                " OR ({$wpdb->posts}.post_title LIKE %s)",
+                $search
+            );
+            return $where;
+        }, 10, 1);
+        
+        // Add our custom filter to group results
+        add_filter('posts_groupby', function($groupby) use ($wpdb) {
+            if(!$groupby) {
+                $groupby = "{$wpdb->posts}.ID";
+            }
+            return $groupby;
+        });
+    }
+    
+    error_log('Modified args: ' . print_r($args, true));
+    return $args;
+}
+add_filter('acf/fields/relationship/query', 'modify_relationship_query', 10, 3);
+
+/**
+ * Add debug information to AJAX responses
+ */
+function debug_ajax_response($response) {
+    if (is_admin() && defined('DOING_AJAX') && DOING_AJAX) {
+        error_log('AJAX Response: ' . print_r($response, true));
+    }
+    return $response;
+}
+add_filter('acf/fields/relationship/result', 'debug_ajax_response', 10, 1);
+
+/**
+ * Modify the query join to include SKU from postmeta
+ */
+function modify_relationship_join($join) {
+    global $wpdb;
+    
+    // Check if we're in the correct context
+    if (doing_action('acf/fields/relationship/query')) {
+        $join .= " LEFT JOIN {$wpdb->postmeta} as sku_meta ON ({$wpdb->posts}.ID = sku_meta.post_id AND sku_meta.meta_key = '_sku')";
+    }
+    
+    return $join;
+}
+add_filter('posts_join', 'modify_relationship_join', 10, 1);
+
+

@@ -55,18 +55,18 @@
             </div>
 
             <div class="form-row">
-                <label for="terra-panel-optimal-height" class="font-normal">Препоръчителна височина (m):</label>
-                <input type="number" id="terra-panel-optimal-height" name="terra-panel-optimal-height" step="0.01" disabled />
+                <label for="terra-panel-optimal-height" class="font-normal">Препоръчителна височина(m):</label>
+                <input type="number" id="terra-panel-optimal-height" name="terra-panel-optimal-height" class="bg-black/5 border border-black/10 rounded-md px-4 py-2" step="0.01" disabled />
             </div>
 
             <div class="form-row">
-                <label for="terra-panel-distance-cassettes" class="font-normal">Разстояние между ламели (cm):</label>
-                <input type="number" id="terra-panel-distance-cassettes" name="terra-panel-distance-cassettes" step="0.01" value="2" required />
+                <label for="terra-panel-distance-cassettes" class="font-normal">Разстояние м/у ламели(cm):</label>
+                <input type="number" id="terra-panel-distance-cassettes" name="terra-panel-distance-cassettes" class="border border-black/10 rounded-md px-4 py-2" step="0.01" value="2" required />
             </div>
 
             <div class="form-row">
-                <label for="terra-panel-base-distance" class="font-normal">Разстояние от основата (cm):</label>
-                <input type="number" id="terra-panel-base-distance" name="terra-panel-base-distance" step="0.01" value="2" required />
+                <label for="terra-panel-base-distance" class="font-normal">Разстояние от основата(cm):</label>
+                <input type="number" id="terra-panel-base-distance" name="terra-panel-base-distance" class="border border-black/10 rounded-md px-4 py-2" step="0.01" value="2" required />
             </div>
     
             <div class="form-row">

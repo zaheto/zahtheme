@@ -161,18 +161,18 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
             addToCartButton.attr('data-panels', numberOfPanels);
 
             // Debug log
-            console.log('Calculator Values Updated sigma:', {
-                price: totalPrice.toFixed(2),
-                width: formattedWidth,
-                height: formattedHeight,
-                panels: numberOfPanels,
-                hiddenFields: {
-                    calculated_price: $('#calculated_price').val(),
-                    sigma_panel_width: $('#sigma_panel_width').val(),
-                    sigma_panel_height: $('#sigma_panel_height').val(),
-                    sigma_number_of_panels: $('#sigma_number_of_panels').val()
-                }
-            });
+            // console.log('Calculator Values Updated sigma:', {
+            //     price: totalPrice.toFixed(2),
+            //     width: formattedWidth,
+            //     height: formattedHeight,
+            //     panels: numberOfPanels,
+            //     hiddenFields: {
+            //         calculated_price: $('#calculated_price').val(),
+            //         sigma_panel_width: $('#sigma_panel_width').val(),
+            //         sigma_panel_height: $('#sigma_panel_height').val(),
+            //         sigma_number_of_panels: $('#sigma_number_of_panels').val()
+            //     }
+            // });
 
 
             // When updating the results, check if they should be visible

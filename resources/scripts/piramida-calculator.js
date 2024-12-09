@@ -122,18 +122,18 @@ jQuery(document).ready(function ($) {
             addToCartButton.attr('data-panels', numberOfPanels);
 
             // Debug log
-            console.log('Calculator Values Updated piramida:', {
-                price: totalPrice.toFixed(2),
-                width: formattedWidth,
-                height: formattedHeight,
-                panels: numberOfPanels,
-                hiddenFields: {
-                    calculated_price: $('#calculated_price').val(),
-                    piramida_panel_width: $('#piramida_panel_width').val(),
-                    piramida_panel_height: $('#piramida_panel_height').val(),
-                    piramida_number_of_panels: $('#piramida_number_of_panels').val()
-                }
-            });
+            // console.log('Calculator Values Updated piramida:', {
+            //     price: totalPrice.toFixed(2),
+            //     width: formattedWidth,
+            //     height: formattedHeight,
+            //     panels: numberOfPanels,
+            //     hiddenFields: {
+            //         calculated_price: $('#calculated_price').val(),
+            //         piramida_panel_width: $('#piramida_panel_width').val(),
+            //         piramida_panel_height: $('#piramida_panel_height').val(),
+            //         piramida_number_of_panels: $('#piramida_number_of_panels').val()
+            //     }
+            // });
 
             // When updating the results, check if they should be visible
             const resultsSection = $('#piramida-calculator-results');

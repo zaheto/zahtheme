@@ -1,5 +1,5 @@
 jQuery(document).ready(function ($) {
-    console.log('Calculator initialized');
+    //console.log('Calculator initialized');
     
     class Calculator {
         constructor() {
@@ -78,7 +78,7 @@ jQuery(document).ready(function ($) {
         // }
 
         switchTab(model) {
-            console.log('Switching to model:', model);
+            //console.log('Switching to model:', model);
             $('.tab-button').removeClass('active bg-main text-white').addClass('bg-white text-second');
             $(`.tab-button[data-model="${model}"]`).removeClass('bg-white text-second').addClass('active bg-main text-white');
             $('.calculator-tab').hide().removeClass('active');
@@ -87,7 +87,7 @@ jQuery(document).ready(function ($) {
         }
 
         calculateModel(model) {
-            console.log('Calculating model:', model);
+            //console.log('Calculating model:', model);
             switch(model) {
                 case 'atlas':
                     this.calculateAtlas();
@@ -289,7 +289,7 @@ jQuery(document).ready(function ($) {
         }
 
         setDefaultValues() {
-            console.log('Setting default values');
+            //console.log('Setting default values');
             // Set defaults for standard models
             Object.keys(this.models).forEach(model => {
                 $(`#${model}-panel-width-calc`).val(1.8);
@@ -312,9 +312,9 @@ jQuery(document).ready(function ($) {
 
     // Initialize calculator when document is ready
     if ($('.calculator-tab').length) {
-        console.log('Initializing calculator');
+        //console.log('Initializing calculator');
         new Calculator();
     } else {
-        console.log('No calculator tabs found');
+        //console.log('No calculator tabs found');
     }
 });
