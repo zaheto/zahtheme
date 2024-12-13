@@ -2312,6 +2312,12 @@ add_action('woocommerce_single_product_summary', function() {
                 'price_corners' => get_field('price_corners')
             ];
 
+            // Add Terra-specific pricing fields
+            if ($model === 'terra') {
+                $pricing['base_distance'] = get_field('price_base_distance') ?: 2; // Default 2cm
+                $pricing['distance_cassettes'] = get_field('price_distance_cassettes') ?: 2; // Default 2cm
+            }
+
             $data = [
                 'pricing' => $pricing,
                 'panel_height' => explode("\r\n", get_field('panel_height')),
@@ -2601,22 +2607,16 @@ if( function_exists('acf_add_options_page') ) {
 add_action('woocommerce_after_shop_loop_item_title', function() {
     global $product;
 
-    // Check if product has atlas, sigma, gamma, or piramida tag
+    // Check if product has atlas, sigma, gamma, piramida, or terra tag
     $has_atlas = has_term('atlas', 'product_tag', $product->get_id());
     $has_sigma = has_term('sigma', 'product_tag', $product->get_id());
     $has_gamma = has_term('gamma', 'product_tag', $product->get_id());
     $has_piramida = has_term('piramida', 'product_tag', $product->get_id());
+    $has_terra = has_term('terra', 'product_tag', $product->get_id());
 
-    ////error_log('Product ID: ' . $product->get_id());
-    ////error_log('Has Atlas tag: ' . ($has_atlas ? 'yes' : 'no'));
-    ////error_log('Has Sigma tag: ' . ($has_sigma ? 'yes' : 'no'));
-    //////error_log('Has Gamma tag: ' . ($has_gamma ? 'yes' : 'no'));
-    ////error_log('Has Piramida tag: ' . ($has_piramida ? 'yes' : 'no'));
-
-    if (!$has_atlas && !$has_sigma && !$has_gamma && !$has_piramida) return;
+    if (!$has_atlas && !$has_sigma && !$has_gamma && !$has_piramida && !$has_terra) return;
 
     $models = get_field('models', 'option');
-    ////error_log('Models data: ' . print_r($models, true));
 
     if (!$models || !is_array($models)) return;
 
@@ -2626,48 +2626,23 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
         $term = get_term($tag_id, 'product_tag');
         $tag_slug = $term ? $term->slug : '';
 
-        ////error_log('Processing model tag_id: ' . $tag_id . ', slug: ' . $tag_slug);
-
         if (($has_sigma && $tag_slug === 'sigma') || 
             ($has_atlas && $tag_slug === 'atlas') || 
             ($has_gamma && $tag_slug === 'gamma') || 
-            ($has_piramida && $tag_slug === 'piramida')) {
+            ($has_piramida && $tag_slug === 'piramida') ||
+            ($has_terra && $tag_slug === 'terra')) {
 
             $predefined_sizes = $model['predefined_sizes'];
-            //error_log('Predefined sizes for ' . $tag_slug . ': ' . print_r($predefined_sizes, true));
 
             if (is_array($predefined_sizes) && count($predefined_sizes) > 0) {
-                $first_size = $predefined_sizes[0]; // Use the first predefined size for simplicity
+                $first_size = $predefined_sizes[0];
 
                 // Get dimensions
                 $width = isset($first_size['width']) ? floatval($first_size['width']) : 0;
                 $height = isset($first_size['height']) ? floatval($first_size['height']) : 0;
                 $panels = isset($first_size['number_of_panels']) ? intval($first_size['number_of_panels']) : 0;
 
-                //error_log('Selected predefined size - Width: ' . $width . ', Height: ' . $height . ', Panels: ' . $panels);
-
-                // Calculate blinds profile based on the model
-                if ($tag_slug === 'atlas') {
-                    $blindsProfilePcs = max(($height - 0.045) / 0.1 * $panels, 0);
-                    //error_log('Using ATLAS formula');
-                } elseif ($tag_slug === 'sigma') {
-                    $blindsProfilePcs = max(($height - 0.06) / 0.08 * $panels, 0);
-                    //error_log('Using SIGMA formula');
-                } elseif ($tag_slug === 'gamma') {
-                    $blindsProfilePcs = max(($height - 0.05) / 0.16 * $panels, 0);
-                    //error_log('Using GAMMA formula');
-                } elseif ($tag_slug === 'piramida') {
-                    $blindsProfilePcs = max(($height - 0.06) / 0.065 * $panels, 0);
-                    //error_log('Using PIRAMIDA formula');
-                }
-
-                $blindsProfileLm = max(($width - 0.01) * $blindsProfilePcs, 0);
-
-                // Debug blinds profile
-                //error_log('Blinds Profile Pcs: ' . $blindsProfilePcs);
-                //error_log('Blinds Profile Lm: ' . $blindsProfileLm);
-
-                // Retrieve pricing fields
+                // Set up base variables
                 $prices = [
                     'base_price' => $product->get_regular_price() ?: 0,
                     'u_profile_left' => floatval(get_field('price_u_profile_left', $product->get_id()) ?: 0),
@@ -2676,42 +2651,76 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
                     'reinforcing_profile' => floatval(get_field('price_reinforcing_profile', $product->get_id()) ?: 0),
                     'rivets' => floatval(get_field('price_rivets', $product->get_id()) ?: 0),
                     'self_tapping_screw' => floatval(get_field('price_self_tapping_screw', $product->get_id()) ?: 0),
+                    'dowels' => floatval(get_field('price_dowels', $product->get_id()) ?: 0),
                 ];
 
-                //error_log('Prices: ' . print_r($prices, true));
+                if ($tag_slug === 'terra') {
+                    // Terra-specific calculations
+                    $base_distance = 2; // Default 2cm
+                    $casette_distance = 2; // Default 2cm
 
-                // Additional calculations for profiles and other components
-                $uProfileLeftLm = $height * $panels;
-                $uProfileRightLm = $height * $panels;
-                $horizontalUProfileLm = $width * $panels;
-                $reinforcingProfileLm = $height * $panels;
-                $rivetsQty = 100; // Assuming constant
-                $selfTappingScrewQty = 10; // Assuming constant
+                    // Calculate optimal height
+                    $G15 = floor(($height - $base_distance/100) / (0.108 + $casette_distance/100));
+                    $G16 = ceil(($height - $base_distance/100) / (0.108 + $casette_distance/100));
+                    $H15 = $G15 * 0.108 + ($G15 - 1) * ($casette_distance/100) + ($base_distance/100);
+                    $H16 = $G16 * 0.108 + ($G16 - 1) * ($casette_distance/100) + ($base_distance/100);
+                    $G17 = abs($height - $H15);
+                    $H17 = abs($height - $H16);
+                    
+                    $num_cassettes = ($G17 <= $H17 ? $G15 : $G16);
+                    $profileCassettesPcs = $num_cassettes * $panels;
+                    $profileCassettesLm = max(($width - 0.01) * $profileCassettesPcs, 0);
 
-                // Debug calculated quantities
-                //error_log('U Profile Left Lm: ' . $uProfileLeftLm);
-                //error_log('U Profile Right Lm: ' . $uProfileRightLm);
-                //error_log('Horizontal U Profile Lm: ' . $horizontalUProfileLm);
-                //error_log('Reinforcing Profile Lm: ' . $reinforcingProfileLm);
-                //error_log('Rivets Qty: ' . $rivetsQty);
-                //error_log('Self-Tapping Screws Qty: ' . $selfTappingScrewQty);
+                    // Terra specific components
+                    $uProfilePcs = $panels * 2;
+                    $uProfileLm = $height * $panels * 2;
+                    $rivetsPcs = round($profileCassettesPcs * 8) >= 101 ? $panels * 200 : $panels * 100;
+                    $selfTappingScrewPcs = $panels * 10;
+                    $dowelsPcs = $panels * 10;
 
-                // Calculate total price components
-                $price_components = [
-                    'blinds_profile' => $blindsProfileLm * $prices['base_price'],
-                    'u_profile_left' => $uProfileLeftLm * $prices['u_profile_left'],
-                    'u_profile_right' => $uProfileRightLm * $prices['u_profile_right'],
-                    'horizontal_profile' => $horizontalUProfileLm * $prices['u_horizontal_panel'],
-                    'reinforcing_profile' => $reinforcingProfileLm * $prices['reinforcing_profile'],
-                    'rivets' => $rivetsQty * $prices['rivets'],
-                    'screws' => $selfTappingScrewQty * $prices['self_tapping_screw'],
-                ];
+                    // Calculate price components for Terra
+                    $price_components = [
+                        'cassettes_profile' => $profileCassettesLm * $prices['base_price'],
+                        'u_profile' => $uProfileLm * $prices['u_profile_left'],
+                        'rivets' => $rivetsPcs * $prices['rivets'],
+                        'screws' => $selfTappingScrewPcs * $prices['self_tapping_screw'],
+                        'dowels' => $dowelsPcs * $prices['dowels']
+                    ];
 
-                //error_log('Price Components: ' . print_r($price_components, true));
+                } else {
+                    // Original calculations for other models
+                    if ($tag_slug === 'atlas') {
+                        $blindsProfilePcs = max(($height - 0.045) / 0.1 * $panels, 0);
+                    } elseif ($tag_slug === 'sigma') {
+                        $blindsProfilePcs = max(($height - 0.06) / 0.08 * $panels, 0);
+                    } elseif ($tag_slug === 'gamma') {
+                        $blindsProfilePcs = max(($height - 0.05) / 0.16 * $panels, 0);
+                    } elseif ($tag_slug === 'piramida') {
+                        $blindsProfilePcs = max(($height - 0.06) / 0.065 * $panels, 0);
+                    }
 
-                // Calculate the total price
+                    $blindsProfileLm = max(($width - 0.01) * $blindsProfilePcs, 0);
+                    
+                    $uProfileLeftLm = $height * $panels;
+                    $uProfileRightLm = $height * $panels;
+                    $horizontalUProfileLm = $width * $panels;
+                    $reinforcingProfileLm = $height * $panels;
+                    $rivetsQty = 100;
+                    $selfTappingScrewQty = 10;
+
+                    $price_components = [
+                        'blinds_profile' => $blindsProfileLm * $prices['base_price'],
+                        'u_profile_left' => $uProfileLeftLm * $prices['u_profile_left'],
+                        'u_profile_right' => $uProfileRightLm * $prices['u_profile_right'],
+                        'horizontal_profile' => $horizontalUProfileLm * $prices['u_horizontal_panel'],
+                        'reinforcing_profile' => $reinforcingProfileLm * $prices['reinforcing_profile'],
+                        'rivets' => $rivetsQty * $prices['rivets'],
+                        'screws' => $selfTappingScrewQty * $prices['self_tapping_screw'],
+                    ];
+                }
+
+                // Calculate total price
                 $total_price = array_sum($price_components);
-                //error_log('Total Price: ' . $total_price);
 
                 // Display the calculated predefined size and price
                 echo '<div class="predefined-size">';
