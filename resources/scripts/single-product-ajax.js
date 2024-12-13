@@ -106,6 +106,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 formData.append('piramida_number_of_panels', numberOfPanels);
             }
 
+            // Handle Terra product data
+            if (parent_elem.classList.contains('product-tag-terra')) {
+                // Get values from the actual form inputs
+                var calculatedPrice = document.getElementById('calculated_price').value;
+                var panelWidth = document.querySelector('#terra-panel-width').value;
+                var panelHeight = document.querySelector('#terra-panel-height').value;
+                var numberOfPanels = document.querySelector('#terra-number-of-panels').value;
+                var optimalHeight = document.querySelector('#terra-panel-optimal-height').value;
+                var distanceCassettes = document.querySelector('#terra-panel-distance-cassettes').value;
+                var baseDistance = document.querySelector('#terra-panel-base-distance').value;
+
+                // Convert and validate values
+                calculatedPrice = parseFloat(calculatedPrice) || 0;
+                panelWidth = parseFloat(panelWidth) || 0;
+                panelHeight = parseFloat(panelHeight) || 0;
+                numberOfPanels = parseInt(numberOfPanels) || 0;
+                optimalHeight = parseFloat(optimalHeight) || 0;
+                distanceCassettes = parseFloat(distanceCassettes) || 0;
+                baseDistance = parseFloat(baseDistance) || 0;
+
+                // Append to formData with correct names matching PHP expectations
+                formData.append('custom_price', calculatedPrice.toFixed(2));
+                formData.append('terra_panel_width', panelWidth.toFixed(2));
+                formData.append('terra_panel_height', panelHeight.toFixed(2));
+                formData.append('terra_number_of_panels', numberOfPanels);
+                formData.append('terra_optimal_height', optimalHeight.toFixed(2));
+                formData.append('terra_distance_cassettes', distanceCassettes.toFixed(2));
+                formData.append('terra_base_distance', baseDistance.toFixed(2));
+            }
+
             fetch(wc_add_to_cart_params.wc_ajax_url.toString().replace('%%endpoint%%', 'zah_pdp_ajax_atc'), {
                 method: 'POST',
                 body: formData,

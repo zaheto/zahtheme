@@ -48,7 +48,6 @@
                     id="terra-panel-height" 
                     name="terra-panel-height" 
                     step="0.01" 
-                    max="{{ $terraData['height_max'] }}" 
                     value="1.8"
                     required
                 />

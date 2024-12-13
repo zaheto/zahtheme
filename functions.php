@@ -2336,27 +2336,30 @@ add_action('woocommerce_after_add_to_cart_form', function() {
 
 // Modify the price before adding to cart
 add_filter('woocommerce_add_cart_item_data', function ($cart_item_data, $product_id) {
-    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra'];
     foreach ($models as $model) {
         if (has_term($model, 'product_tag', $product_id)) {
-            // Get values from POST data
+            // Get base values for all models
             $calculated_price = isset($_POST['calculated_price']) ? floatval($_POST['calculated_price']) : 0;
             $panel_width = isset($_POST["{$model}_panel_width"]) ? floatval($_POST["{$model}_panel_width"]) : 0;
             $panel_height = isset($_POST["{$model}_panel_height"]) ? floatval($_POST["{$model}_panel_height"]) : 0;
             $number_of_panels = isset($_POST["{$model}_number_of_panels"]) ? intval($_POST["{$model}_number_of_panels"]) : 0;
 
-            // Debug log
-            //error_log('POST Data Received: ' . print_r($_POST, true));
-            
             // Only add if we have valid data
             if ($calculated_price > 0) {
                 $cart_item_data['custom_price'] = $calculated_price;
                 $cart_item_data["{$model}_panel_width"] = $panel_width;
                 $cart_item_data["{$model}_panel_height"] = $panel_height;
                 $cart_item_data["{$model}_number_of_panels"] = $number_of_panels;
-                
-                // Debug log
-                //error_log('Cart Item Data Set: ' . print_r($cart_item_data, true));
+
+                // Add Terra-specific fields
+                if ($model === 'terra') {
+                    $distance_cassettes = isset($_POST['terra_panel_distance_cassettes']) ? floatval($_POST['terra_panel_distance_cassettes']) : 0;
+                    $base_distance = isset($_POST['terra_panel_base_distance']) ? floatval($_POST['terra_panel_base_distance']) : 0;
+                    
+                    $cart_item_data['terra_panel_distance_cassettes'] = $distance_cassettes;
+                    $cart_item_data['terra_panel_base_distance'] = $base_distance;
+                }
             }
         }
     }
@@ -2365,7 +2368,7 @@ add_filter('woocommerce_add_cart_item_data', function ($cart_item_data, $product
 
 // Add the calculated price to the add to cart form
 add_action('woocommerce_before_add_to_cart_button', function() {
-    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra'];
     foreach ($models as $model) {
         if (has_term($model, 'product_tag')) {
             ?>
@@ -2373,10 +2376,16 @@ add_action('woocommerce_before_add_to_cart_button', function() {
             <input type="hidden" name="<?php echo $model; ?>_panel_width" id="<?php echo $model; ?>_panel_width" value="">
             <input type="hidden" name="<?php echo $model; ?>_panel_height" id="<?php echo $model; ?>_panel_height" value="">
             <input type="hidden" name="<?php echo $model; ?>_number_of_panels" id="<?php echo $model; ?>_number_of_panels" value="">
+            
+            <?php if ($model === 'terra'): ?>
+            <input type="hidden" name="terra_panel_distance_cassettes" id="terra_panel_distance_cassettes" value="">
+            <input type="hidden" name="terra_panel_base_distance" id="terra_panel_base_distance" value="">
+            <?php endif; ?>
+
             <script>
                 jQuery(document).ready(function($) {
                     $('#<?php echo $model; ?>-calculate').on('click', function() {
-                        // Get values
+                        // Get base values
                         let calculatedPrice = $('.single_add_to_cart_button').attr('data-calculated-price');
                         let panelWidth = $('#<?php echo $model; ?>-panel-width').val();
                         let panelHeight = $('#<?php echo $model; ?>-panel-height').val();
@@ -2388,17 +2397,34 @@ add_action('woocommerce_before_add_to_cart_button', function() {
                         panelHeight = parseFloat(panelHeight) || 0;
                         numberOfPanels = parseInt(numberOfPanels) || 0;
                         
-                        // Update hidden fields with formatted values
+                        // Update base fields
                         $('#calculated_price').val(calculatedPrice.toFixed(2));
                         $('#<?php echo $model; ?>_panel_width').val(panelWidth.toFixed(2));
                         $('#<?php echo $model; ?>_panel_height').val(panelHeight.toFixed(2));
                         $('#<?php echo $model; ?>_number_of_panels').val(numberOfPanels);
+
+                        <?php if ($model === 'terra'): ?>
+                        // Get and update Terra-specific fields
+                        let distanceCassettes = $('#terra-panel-distance-cassettes').val();
+                        let baseDistance = $('#terra-panel-base-distance').val();
+                        
+                        distanceCassettes = parseFloat(distanceCassettes) || 0;
+                        baseDistance = parseFloat(baseDistance) || 0;
+                        
+                        $('#terra_panel_distance_cassettes').val(distanceCassettes.toFixed(2));
+                        $('#terra_panel_base_distance').val(baseDistance.toFixed(2));
+                        <?php endif; ?>
                         
                         console.log('Values set:', {
                             price: calculatedPrice,
                             width: panelWidth,
                             height: panelHeight,
                             panels: numberOfPanels
+                            <?php if ($model === 'terra'): ?>
+                            ,
+                            distanceCassettes: distanceCassettes,
+                            baseDistance: baseDistance
+                            <?php endif; ?>
                         });
                     });
                 });
@@ -2410,32 +2436,40 @@ add_action('woocommerce_before_add_to_cart_button', function() {
 
 // Display width, height, and number of panels in the mini cart
 add_filter('woocommerce_get_item_data', function($item_data, $cart_item) {
-    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra'];
     foreach ($models as $model) {
         if (isset($cart_item["{$model}_panel_width"])) {
             $item_data[] = [
                 'key' => __('Panel Width', 'zah'),
                 'value' => wc_clean($cart_item["{$model}_panel_width"]) . ' m',
             ];
-        }
-        if (isset($cart_item["{$model}_panel_height"])) {
             $item_data[] = [
                 'key' => __('Panel Height', 'zah'),
                 'value' => wc_clean($cart_item["{$model}_panel_height"]) . ' m',
             ];
-        }
-        if (isset($cart_item["{$model}_number_of_panels"])) {
             $item_data[] = [
                 'key' => __('Number of Panels', 'zah'),
                 'value' => wc_clean($cart_item["{$model}_number_of_panels"]),
             ];
+
+            // Add Terra-specific fields
+            if ($model === 'terra' && isset($cart_item['terra_panel_distance_cassettes'])) {
+                $item_data[] = [
+                    'key' => __('Distance Between Cassettes', 'zah'),
+                    'value' => wc_clean($cart_item['terra_panel_distance_cassettes']) . ' cm'
+                ];
+                $item_data[] = [
+                    'key' => __('Base Distance', 'zah'),
+                    'value' => wc_clean($cart_item['terra_panel_base_distance']) . ' cm'
+                ];
+            }
         }
     }
     return $item_data;
 }, 10, 2);
 
 add_filter('woocommerce_get_cart_item_from_session', function($cart_item, $values) {
-    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra'];
     foreach ($models as $model) {
         if (isset($values['custom_price'])) {
             $cart_item['custom_price'] = $values['custom_price'];
@@ -2443,12 +2477,14 @@ add_filter('woocommerce_get_cart_item_from_session', function($cart_item, $value
         }
         if (isset($values["{$model}_panel_width"])) {
             $cart_item["{$model}_panel_width"] = $values["{$model}_panel_width"];
-        }
-        if (isset($values["{$model}_panel_height"])) {
             $cart_item["{$model}_panel_height"] = $values["{$model}_panel_height"];
-        }
-        if (isset($values["{$model}_number_of_panels"])) {
             $cart_item["{$model}_number_of_panels"] = $values["{$model}_number_of_panels"];
+
+            // Restore Terra-specific fields
+            if ($model === 'terra' && isset($values['terra_panel_distance_cassettes'])) {
+                $cart_item['terra_panel_distance_cassettes'] = $values['terra_panel_distance_cassettes'];
+                $cart_item['terra_panel_base_distance'] = $values['terra_panel_base_distance'];
+            }
         }
     }
     return $cart_item;
@@ -2456,16 +2492,18 @@ add_filter('woocommerce_get_cart_item_from_session', function($cart_item, $value
 
 // Save the custom data to the order items
 add_action('woocommerce_checkout_create_order_line_item', function($item, $cart_item_key, $values, $order) {
-    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra'];
     foreach ($models as $model) {
         if (isset($values["{$model}_panel_width"])) {
             $item->add_meta_data(__('Panel Width', 'zah'), $values["{$model}_panel_width"] . ' m');
-        }
-        if (isset($values["{$model}_panel_height"])) {
             $item->add_meta_data(__('Panel Height', 'zah'), $values["{$model}_panel_height"] . ' m');
-        }
-        if (isset($values["{$model}_number_of_panels"])) {
             $item->add_meta_data(__('Number of Panels', 'zah'), $values["{$model}_number_of_panels"]);
+
+            // Add Terra-specific fields
+            if ($model === 'terra' && isset($values['terra_panel_distance_cassettes'])) {
+                $item->add_meta_data(__('Distance Between Cassettes', 'zah'), $values['terra_panel_distance_cassettes'] . ' cm');
+                $item->add_meta_data(__('Base Distance', 'zah'), $values['terra_panel_base_distance'] . ' cm');
+            }
         }
     }
 }, 10, 4);
@@ -2527,7 +2565,8 @@ add_action('woocommerce_before_calculate_totals', function($cart) {
         return;
     }
 
-    foreach ($cart->get_cart() as $cart_item) {
+    foreach ($cart->get_cart() as $cart_item_key => $cart_item) {
+        error_log('Calculating totals for item: ' . print_r($cart_item, true));
         if (isset($cart_item['custom_price'])) {
             $cart_item['data']->set_price($cart_item['custom_price']);
         }
@@ -2708,12 +2747,6 @@ add_action('woocommerce_single_product_summary', function() {
     }
 }, 6);
 
-// Add calculator results after add to cart form
-// add_action('woocommerce_after_add_to_cart_form', function() {
-//     if (has_term('siding', 'product_tag')) {
-//         echo view("partials.product.siding-calculator-results")->render();
-//     }
-// });
 
 // Handle cart item data
 add_filter('woocommerce_add_cart_item_data', function ($cart_item_data, $product_id) {

@@ -102,6 +102,9 @@ jQuery(document).ready(function ($) {
             $('#terra_panel_height').val(formattedHeight);
             $('#terra_number_of_panels').val(numberOfPanels);
 
+            $('#terra_panel_distance_cassettes').val(cassetteDistance.toFixed(2));
+            $('#terra_panel_base_distance').val(baseDistance.toFixed(2));
+
             // Update results display
             $('#terra-results').html(`
                 <ul>
