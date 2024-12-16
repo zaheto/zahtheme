@@ -3,8 +3,15 @@
 --}}
 
 @php
-error_log('Calculator template is being used');
+//error_log('Calculator template is being used');
 $featured_img_url = get_the_post_thumbnail_url(get_the_ID(), 'full');
+
+// Get ACF calculator images
+$atlas_image = get_field('atlas_calculator_image');
+$gamma_image = get_field('gamma_calculator_image');
+$sigma_image = get_field('sigma_calculator_image');
+$piramida_image = get_field('piramida_calculator_image');
+$terra_image = get_field('terra_calculator_image');
 @endphp
 
 @extends('layouts.app')
@@ -118,7 +125,11 @@ $featured_img_url = get_the_post_thumbnail_url(get_the_ID(), 'full');
             <img src="{{ $featured_img_url }}" alt="{{ get_the_title() }}" class="w-full h-auto">
         </div>
       @endif
-
+      @if($atlas_image)
+      <div class="featured-image">
+          <img src="{{ $atlas_image['url'] }}" alt="{{ $atlas_image['alt'] ?? 'Atlas Calculator Image' }}" class="w-full h-auto">
+      </div>
+    @endif
     </section>
 
     {{-- Gamma Calculator Tab --}}
@@ -189,9 +200,9 @@ $featured_img_url = get_the_post_thumbnail_url(get_the_ID(), 'full');
       </div>
       </div>
     </div>
-    @if($featured_img_url)
-      <div class="featured-image ">
-          <img src="{{ $featured_img_url }}" alt="{{ get_the_title() }}" class="w-full h-auto">
+    @if($gamma_image)
+      <div class="featured-image">
+          <img src="{{ $gamma_image['url'] }}" alt="{{ $gamma_image['alt'] ?? 'Gamma Calculator Image' }}" class="w-full h-auto">
       </div>
     @endif
 
@@ -265,11 +276,11 @@ $featured_img_url = get_the_post_thumbnail_url(get_the_ID(), 'full');
       </div>
       </div>
     </div>
-    @if($featured_img_url)
-      <div class="featured-image ">
-          <img src="{{ $featured_img_url }}" alt="{{ get_the_title() }}" class="w-full h-auto">
-      </div>
-    @endif
+    @if($sigma_image)
+    <div class="featured-image">
+        <img src="{{ $sigma_image['url'] }}" alt="{{ $sigma_image['alt'] ?? 'Sigma Calculator Image' }}" class="w-full h-auto">
+    </div>
+  @endif
 
     </section>
 
@@ -341,11 +352,11 @@ $featured_img_url = get_the_post_thumbnail_url(get_the_ID(), 'full');
         </div>
       </div>
     </div>
-    @if($featured_img_url)
-      <div class="featured-image ">
-          <img src="{{ $featured_img_url }}" alt="{{ get_the_title() }}" class="w-full h-auto">
-      </div>
-    @endif
+    @if($piramida_image)
+    <div class="featured-image">
+        <img src="{{ $piramida_image['url'] }}" alt="{{ $piramida_image['alt'] ?? 'Piramida Calculator Image' }}" class="w-full h-auto">
+    </div>
+  @endif
 
     </section>
 
@@ -455,11 +466,13 @@ $featured_img_url = get_the_post_thumbnail_url(get_the_ID(), 'full');
         </div>
       </div>
     </div>
-    @if($featured_img_url)
-      <div class="featured-image ">
-          <img src="{{ $featured_img_url }}" alt="{{ get_the_title() }}" class="w-full h-auto">
-      </div>
-    @endif
+
+    @if($terra_image)
+  <div class="featured-image">
+      <img src="{{ $terra_image['url'] }}" alt="{{ $terra_image['alt'] ?? 'Terra Calculator Image' }}" class="w-full h-auto">
+  </div>
+@endif
+
 
     </section>
 
