@@ -2447,11 +2447,11 @@ add_filter('woocommerce_get_item_data', function($item_data, $cart_item) {
         if (isset($cart_item["{$model}_panel_width"])) {
             $item_data[] = [
                 'key' => __('Panel Width', 'zah'),
-                'value' => wc_clean($cart_item["{$model}_panel_width"]) . ' m',
+                'value' => wc_clean($cart_item["{$model}_panel_width"]) . 'm',
             ];
             $item_data[] = [
                 'key' => __('Panel Height', 'zah'),
-                'value' => wc_clean($cart_item["{$model}_panel_height"]) . ' m',
+                'value' => wc_clean($cart_item["{$model}_panel_height"]) . 'm',
             ];
             $item_data[] = [
                 'key' => __('Number of Panels', 'zah'),
@@ -2462,11 +2462,11 @@ add_filter('woocommerce_get_item_data', function($item_data, $cart_item) {
             if ($model === 'terra' && isset($cart_item['terra_panel_distance_cassettes'])) {
                 $item_data[] = [
                     'key' => __('Distance Between Cassettes', 'zah'),
-                    'value' => wc_clean($cart_item['terra_panel_distance_cassettes']) . ' cm'
+                    'value' => wc_clean($cart_item['terra_panel_distance_cassettes']) . 'cm'
                 ];
                 $item_data[] = [
                     'key' => __('Base Distance', 'zah'),
-                    'value' => wc_clean($cart_item['terra_panel_base_distance']) . ' cm'
+                    'value' => wc_clean($cart_item['terra_panel_base_distance']) . 'cm'
                 ];
             }
         }
@@ -2501,8 +2501,8 @@ add_action('woocommerce_checkout_create_order_line_item', function($item, $cart_
     $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra'];
     foreach ($models as $model) {
         if (isset($values["{$model}_panel_width"])) {
-            $item->add_meta_data(__('Panel Width', 'zah'), $values["{$model}_panel_width"] . ' m');
-            $item->add_meta_data(__('Panel Height', 'zah'), $values["{$model}_panel_height"] . ' m');
+            $item->add_meta_data(__('Panel Width', 'zah'), $values["{$model}_panel_width"] . 'm');
+            $item->add_meta_data(__('Panel Height', 'zah'), $values["{$model}_panel_height"] . 'm');
             $item->add_meta_data(__('Number of Panels', 'zah'), $values["{$model}_number_of_panels"]);
 
             // Add Terra-specific fields
@@ -2802,7 +2802,7 @@ add_filter('woocommerce_get_item_data', function($item_data, $cart_item) {
     if (isset($cart_item['siding_width'])) {
         $item_data[] = [
             'key' => __('Width', 'zah'),
-            'value' => wc_clean($cart_item['siding_width']) . ' m'
+            'value' => wc_clean($cart_item['siding_width']) . 'm'
         ];
         $item_data[] = [
             'key' => __('Number of Panels', 'zah'),
@@ -2815,7 +2815,7 @@ add_filter('woocommerce_get_item_data', function($item_data, $cart_item) {
 // Save siding data in order
 add_action('woocommerce_checkout_create_order_line_item', function($item, $cart_item_key, $values, $order) {
     if (isset($values['siding_width'])) {
-        $item->add_meta_data(__('Width', 'zah'), $values['siding_width'] . ' m');
+        $item->add_meta_data(__('Width', 'zah'), $values['siding_width'] . 'm');
         $item->add_meta_data(__('Number of Panels', 'zah'), $values['panel_number']);
     }
 }, 10, 4);

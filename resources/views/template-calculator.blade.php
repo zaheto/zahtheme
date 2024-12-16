@@ -10,11 +10,7 @@ $featured_img_url = get_the_post_thumbnail_url(get_the_ID(), 'full');
 @extends('layouts.app')
 
 @section('content')
-  {{-- @php
-  if ( function_exists('yoast_breadcrumb') ) {
-    yoast_breadcrumb( '<p id="breadcrumbs">','</p>' );
-  }
-  @endphp --}}
+
 
   <header>
     <h1 class="text-h3 md:text-h2 font-bold mb-8 mt-6">{{ get_the_title() }}</h1>
@@ -187,10 +183,10 @@ $featured_img_url = get_the_post_thumbnail_url(get_the_ID(), 'full');
         </div>
         
         <div id="gamma-calculator-results-calc" class="hidden px-4 py-3">
-          <div id="gamma-results" class="divide-y divide-border">
-            {{-- Results will be populated by JavaScript --}}
+          <div id="gamma-results-calc" class="divide-y divide-border">
+              {{-- Results will be populated by JavaScript --}}
           </div>
-        </div>
+      </div>
       </div>
     </div>
     @if($featured_img_url)
@@ -263,10 +259,10 @@ $featured_img_url = get_the_post_thumbnail_url(get_the_ID(), 'full');
         </div>
         
         <div id="sigma-calculator-results-calc" class="hidden px-4 py-3">
-          <div id="sigma-results" class="divide-y divide-border">
-            {{-- Results will be populated by JavaScript --}}
+          <div id="sigma-results-calc" class="divide-y divide-border">
+              {{-- Results will be populated by JavaScript --}}
           </div>
-        </div>
+      </div>
       </div>
     </div>
     @if($featured_img_url)
@@ -339,9 +335,9 @@ $featured_img_url = get_the_post_thumbnail_url(get_the_ID(), 'full');
         </div>
         
         <div id="piramida-calculator-results-calc" class="hidden px-4 py-3">
-          <div id="piramida-results" class="divide-y divide-border">
-            {{-- Results will be populated by JavaScript --}}
-          </div>
+          <div id="piramida-results-calc" class="divide-y divide-border">
+                {{-- Results will be populated by JavaScript --}}
+            </div>
         </div>
       </div>
     </div>
@@ -453,9 +449,9 @@ $featured_img_url = get_the_post_thumbnail_url(get_the_ID(), 'full');
         </div>
         
         <div id="terra-calculator-results-calc" class="hidden px-4 py-3">
-          <div id="terra-results" class="divide-y divide-border">
-            {{-- Results will be populated by JavaScript --}}
-          </div>
+          <div id="terra-results-calc" class="divide-y divide-border">
+                {{-- Results will be populated by JavaScript --}}
+            </div>
         </div>
       </div>
     </div>

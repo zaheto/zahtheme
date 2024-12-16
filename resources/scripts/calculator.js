@@ -1,8 +1,9 @@
+// File: calculator.js
+
 jQuery(document).ready(function ($) {
-    //console.log('Calculator initialized');
-    
     class Calculator {
         constructor() {
+            console.log('Calculator initialized');
             this.models = {
                 atlas: {
                     blindsOffset: 0.045,
@@ -34,51 +35,53 @@ jQuery(document).ready(function ($) {
         }
 
         init() {
-            if (!$('.calculator-tab').length) return;
+            console.log('Initializing calculator');
+            if (!$('.calculator-tab').length) {
+                console.log('No calculator tabs found');
+                return;
+            }
             
             this.setupEventListeners();
-            this.setupToggleButtons();
             this.setDefaultValues();
         }
 
         setupEventListeners() {
+            console.log('Setting up event listeners');
+            
             // Tab switching
             $('.tab-button').on('click', (e) => {
                 const model = $(e.target).data('model');
+                console.log('Tab clicked:', model);
                 this.switchTab(model);
             });
 
-            // Setup input listeners for all models
+            // Setup input event listeners for all models
             Object.keys(this.models).forEach(model => {
+                console.log('Setting up listeners for model:', model);
+                
                 // Calculate on any input change
                 $(`#${model}-panel-width-calc, #${model}-panel-height-calc, #${model}-number-of-panels-calc`).on('input change', () => {
+                    console.log(`Input changed for ${model}`);
                     this.calculateModel(model);
                 });
 
                 // Width validation
                 $(`#${model}-panel-width-calc`).on('input', (e) => {
+                    console.log(`Validating width for ${model}`);
                     this.validateWidth(e, model);
                 });
             });
 
             // Terra specific inputs
             $('#terra-panel-width-calc, #terra-panel-height-calc, #terra-panel-distance-cassettes-calc, #terra-panel-base-distance-calc, #terra-number-of-panels-calc')
-                .on('input change', () => this.calculateTerra());
+                .on('input change', () => {
+                    console.log('Terra inputs changed');
+                    this.calculateTerra();
+                });
         }
 
-        // setupToggleButtons() {
-        //     $('.required-materials--toggle-link').on('click', function(e) {
-        //         e.preventDefault();
-        //         const resultsDiv = $(this).closest('.mt-8').find('[id$="calculator-results"]');
-        //         const toggleIcon = $(this).find('.toggle-icon');
-        //         resultsDiv.slideToggle(300, function() {
-        //             toggleIcon.text($(this).is(':visible') ? '-' : '+');
-        //         });
-        //     });
-        // }
-
         switchTab(model) {
-            //console.log('Switching to model:', model);
+            console.log('Switching to tab:', model);
             $('.tab-button').removeClass('active bg-main text-white').addClass('bg-white text-second');
             $(`.tab-button[data-model="${model}"]`).removeClass('bg-white text-second').addClass('active bg-main text-white');
             $('.calculator-tab').hide().removeClass('active');
@@ -87,16 +90,17 @@ jQuery(document).ready(function ($) {
         }
 
         calculateModel(model) {
-            //console.log('Calculating model:', model);
+            console.log('Calculating for model:', model);
+            
             switch(model) {
                 case 'atlas':
-                    this.calculateAtlas();
+                    this.calculateStandardModel('atlas');
                     break;
                 case 'gamma':
-                    this.calculateGamma();
+                    this.calculateStandardModel('gamma');
                     break;
                 case 'sigma':
-                    this.calculateSigma();
+                    this.calculateStandardModel('sigma');
                     break;
                 case 'piramida':
                     this.calculatePiramida();
@@ -107,25 +111,52 @@ jQuery(document).ready(function ($) {
             }
         }
 
-        calculateAtlas() {
-            const width = parseFloat($('#atlas-panel-width-calc').val()) || 0;
-            const height = parseFloat($('#atlas-panel-height-calc').val()) || 0;
-            const panels = parseInt($('#atlas-number-of-panels-calc').val()) || 0;
+        calculateStandardModel(model) {
+            console.log('Calculating standard model:', model);
+            
+            const width = parseFloat($(`#${model}-panel-width-calc`).val()) || 0;
+            const height = parseFloat($(`#${model}-panel-height-calc`).val()) || 0;
+            const panels = parseInt($(`#${model}-number-of-panels-calc`).val()) || 0;
 
-            if (!width || !height || !panels) return;
+            console.log('Input values:', { width, height, panels });
 
-            const blindsProfilePcs = Math.max((height - 0.045) / 0.1 * panels, 0);
+            if (!width || !height || !panels) {
+                console.log('Missing required values');
+                return;
+            }
+
+            const modelConfig = this.models[model];
+            const blindsProfilePcs = Math.max((height - modelConfig.blindsOffset) / modelConfig.blindsSpacing * panels, 0);
             const blindsProfileLm = Math.max((width - 0.01) * blindsProfilePcs, 0);
 
-            let F20 = 0;
-            if (width > 1.29 && width < 2.1) F20 = 1;
-            else if (width > 2.09) F20 = 2;
-
+            let F20 = this.calculateF20(width);
             const reinforcingProfilePcs = F20;
             const reinforcingProfileLm = height * F20 * panels;
             const rivetsPcs = this.calculateRivets(blindsProfilePcs, panels, F20);
 
-            $('#atlas-results-calc').html(`
+            console.log('Calculated values:', {
+                blindsProfilePcs,
+                blindsProfileLm,
+                F20,
+                reinforcingProfilePcs,
+                reinforcingProfileLm,
+                rivetsPcs
+            });
+
+            const resultsContainer = $(`#${model}-results-calc`);
+            const calculatorContainer = $(`#${model}-calculator-results-calc`);
+
+            console.log(`Results container for ${model}:`, {
+                exists: resultsContainer.length > 0,
+                id: `#${model}-results-calc`
+            });
+
+            if (resultsContainer.length === 0) {
+                console.error(`Results container for ${model} not found`);
+                return;
+            }
+
+            resultsContainer.html(`
                 <p>Профил Жалюзи: ${blindsProfilePcs.toFixed(2)} Pcs, ${blindsProfileLm.toFixed(2)} lm</p>
                 <p>Профил U отляво: ${panels} Pcs, ${(height * panels).toFixed(3)} lm</p>
                 <p>Профил U тодясно: ${panels} Pcs, ${(height * panels).toFixed(3)} lm</p>
@@ -137,73 +168,7 @@ jQuery(document).ready(function ($) {
                 <p>Ъгъл: ${F20 * panels} Pcs</p>
             `);
 
-            $('#atlas-calculator-results-calc').removeClass('hidden');
-        }
-
-        calculateGamma() {
-            const width = parseFloat($('#gamma-panel-width-calc').val()) || 0;
-            const height = parseFloat($('#gamma-panel-height-calc').val()) || 0;
-            const panels = parseInt($('#gamma-number-of-panels-calc').val()) || 0;
-
-            if (!width || !height || !panels) return;
-
-            const blindsProfilePcs = Math.max((height - 0.05) / 0.16 * panels, 0);
-            const blindsProfileLm = Math.max((width - 0.01) * blindsProfilePcs, 0);
-
-            let F20 = 0;
-            if (width > 1.29 && width < 2.1) F20 = 1;
-            else if (width > 2.09) F20 = 2;
-
-            const reinforcingProfilePcs = F20;
-            const reinforcingProfileLm = height * F20 * panels;
-            const rivetsPcs = this.calculateRivets(blindsProfilePcs, panels, F20);
-
-            $('#gamma-results-calc').html(`
-                <p>Профил Жалюзи: ${blindsProfilePcs.toFixed(2)} Pcs, ${blindsProfileLm.toFixed(2)} lm</p>
-                <p>Профил U отляво: ${panels} Pcs, ${(height * panels).toFixed(3)} lm</p>
-                <p>Профил U тодясно: ${panels} Pcs, ${(height * panels).toFixed(3)} lm</p>
-                <p>Хоризонтален профил U: ${panels} Pcs, ${(width * panels).toFixed(2)} lm</p>
-                <p>Укрепващ профил: ${reinforcingProfilePcs} Pcs, ${reinforcingProfileLm.toFixed(3)} lm</p>
-                <p>Заклепки: ${rivetsPcs} Pcs</p>
-                <p>Самонарезни винтове: ${panels * 10} Pcs</p>
-                <p>Тапи: ${panels * 10 + F20 * panels} Pcs</p>
-                <p>Ъгъл: ${F20 * panels} Pcs</p>
-            `);
-
-            $('#gamma-calculator-results-calc').removeClass('hidden');
-        }
-
-        calculateSigma() {
-            const width = parseFloat($('#sigma-panel-width-calc').val()) || 0;
-            const height = parseFloat($('#sigma-panel-height-calc').val()) || 0;
-            const panels = parseInt($('#sigma-number-of-panels-calc').val()) || 0;
-
-            if (!width || !height || !panels) return;
-
-            const blindsProfilePcs = Math.max((height - 0.06) / 0.08 * panels, 0);
-            const blindsProfileLm = Math.max((width - 0.01) * blindsProfilePcs, 0);
-
-            let F20 = 0;
-            if (width > 1.29 && width < 2.1) F20 = 1;
-            else if (width > 2.09) F20 = 2;
-
-            const reinforcingProfilePcs = F20;
-            const reinforcingProfileLm = height * F20 * panels;
-            const rivetsPcs = this.calculateRivets(blindsProfilePcs, panels, F20);
-
-            $('#sigma-results-calc').html(`
-                <p>Профил Жалюзи: ${blindsProfilePcs.toFixed(2)} Pcs, ${blindsProfileLm.toFixed(2)} lm</p>
-                <p>Профил U отляво: ${panels} Pcs, ${(height * panels).toFixed(3)} lm</p>
-                <p>Профил U тодясно: ${panels} Pcs, ${(height * panels).toFixed(3)} lm</p>
-                <p>Хоризонтален профил U: ${panels} Pcs, ${(width * panels).toFixed(2)} lm</p>
-                <p>Укрепващ профил: ${reinforcingProfilePcs} Pcs, ${reinforcingProfileLm.toFixed(3)} lm</p>
-                <p>Заклепки: ${rivetsPcs} Pcs</p>
-                <p>Самонарезни винтове: ${panels * 10} Pcs</p>
-                <p>Тапи: ${panels * 10 + F20 * panels} Pcs</p>
-                <p>Ъгъл: ${F20 * panels} Pcs</p>
-            `);
-
-            $('#sigma-calculator-results-calc').removeClass('hidden');
+            calculatorContainer.removeClass('hidden');
         }
 
         calculatePiramida() {
@@ -211,18 +176,21 @@ jQuery(document).ready(function ($) {
             const height = parseFloat($('#piramida-panel-height-calc').val()) || 0;
             const panels = parseInt($('#piramida-number-of-panels-calc').val()) || 0;
 
-            if (!width || !height || !panels) return;
+            console.log('Piramida input values:', { width, height, panels });
+
+            if (!width || !height || !panels) {
+                console.log('Missing required values for Piramida');
+                return;
+            }
 
             const blindsProfilePcs = Math.max((height - 0.06) / 0.065 * panels, 0);
             const blindsProfileLm = Math.max((width - 0.01) * blindsProfilePcs, 0);
-
-            let F20 = 0;
-            if (width > 1.29 && width < 2.1) F20 = 1;
-            else if (width > 2.09) F20 = 2;
-
             const rivetsPcs = Math.ceil(((blindsProfilePcs + 1) * 4) / panels / 100) * 100 * panels;
 
-            $('#piramida-results-calc').html(`
+            const resultsContainer = $('#piramida-results-calc');
+            console.log('Piramida results container exists:', resultsContainer.length > 0);
+
+            resultsContainer.html(`
                 <p>Профил Жалюзи: ${blindsProfilePcs.toFixed(2)} Pcs, ${blindsProfileLm.toFixed(2)} lm</p>
                 <p>Профил U отляво: ${panels} Pcs, ${(height * panels).toFixed(3)} lm</p>
                 <p>Профил U тодясно: ${panels} Pcs, ${(height * panels).toFixed(3)} lm</p>
@@ -242,7 +210,18 @@ jQuery(document).ready(function ($) {
             const baseDistance = parseFloat($('#terra-panel-base-distance-calc').val()) || 0;
             const panels = parseInt($('#terra-number-of-panels-calc').val()) || 0;
 
-            if (!width || !height || !distanceCassettes || !baseDistance || !panels) return;
+            console.log('Terra input values:', {
+                width,
+                height,
+                distanceCassettes,
+                baseDistance,
+                panels
+            });
+
+            if (!width || !height || !distanceCassettes || !baseDistance || !panels) {
+                console.log('Missing required values for Terra');
+                return;
+            }
 
             const G15 = Math.floor((height - baseDistance / 100) / (0.108 + distanceCassettes / 100));
             const G16 = Math.ceil((height - baseDistance / 100) / (0.108 + distanceCassettes / 100));
@@ -252,15 +231,22 @@ jQuery(document).ready(function ($) {
             const H17 = Math.abs(height - H16);
             const optimalHeight = G17 <= H17 ? H15 : H16;
 
+            console.log('Terra calculated values:', {
+                G15, G16, H15, H16, G17, H17, optimalHeight
+            });
+
             $('#terra-panel-optimal-height-calc').val(optimalHeight.toFixed(3));
 
             const profileCassettesPcs = (G17 <= H17 ? G15 : G16) * panels;
             const profileCassettesLm = Math.max((width - 0.01) * profileCassettesPcs, 0);
             const rivetsPcs = Math.round(profileCassettesPcs * 8) >= 101 ? panels * 200 : panels * 100;
 
-            $('#terra-results-calc').html(`
-                <p>Profile Cassettes: ${profileCassettesPcs} Pcs, ${profileCassettesLm.toFixed(2)} lm</p>
-                <p>U Profile: ${panels * 2} Pcs, ${(optimalHeight * panels * 2).toFixed(3)} lm</p>
+            const resultsContainer = $('#terra-results-calc');
+            console.log('Terra results container exists:', resultsContainer.length > 0);
+
+            resultsContainer.html(`
+                <p>Профил касети: ${profileCassettesPcs} Pcs, ${profileCassettesLm.toFixed(2)} lm</p>
+                <p>Профил U: ${panels * 2} Pcs, ${(optimalHeight * panels * 2).toFixed(3)} lm</p>
                 <p>Заклепки: ${rivetsPcs} Pcs</p>
                 <p>Самонарезни винтове: ${panels * 10} Pcs</p>
                 <p>Тапи: ${panels * 10} Pcs</p>
@@ -269,15 +255,15 @@ jQuery(document).ready(function ($) {
             $('#terra-calculator-results-calc').removeClass('hidden');
         }
 
+        calculateF20(width) {
+            if (width > 2.09) return 2;
+            if (width > 1.29) return 1;
+            return 0;
+        }
+
         calculateRivets(blindsProfilePcs, panels, F20) {
-            let innerCalculation = 0;
-            if (F20 === 0) {
-                innerCalculation = (blindsProfilePcs / panels + 1) * 4 * panels;
-            } else if (F20 === 1) {
-                innerCalculation = (blindsProfilePcs / panels + 1) * 5 * panels;
-            } else if (F20 === 2) {
-                innerCalculation = (blindsProfilePcs / panels + 1) * 6 * panels;
-            }
+            const baseFactor = F20 === 0 ? 4 : F20 === 1 ? 5 : 6;
+            const innerCalculation = (blindsProfilePcs / panels + 1) * baseFactor * panels;
             return Math.ceil((innerCalculation + (F20 * 2)) / panels / 100) * 100 * panels;
         }
 
@@ -286,17 +272,18 @@ jQuery(document).ready(function ($) {
             const { minWidth, maxWidth } = this.models[model];
             
             if (value < minWidth) $(event.target).val(minWidth);
+            if (value > maxWidth) $(event.target).val(maxWidth);
         }
 
         setDefaultValues() {
-            //console.log('Setting default values');
+            console.log('Setting default values');
+            
             // Set defaults for standard models
             Object.keys(this.models).forEach(model => {
+                console.log(`Setting defaults for ${model}`);
                 $(`#${model}-panel-width-calc`).val(1.8);
                 $(`#${model}-panel-height-calc`).find('option:first').prop('selected', true);
                 $(`#${model}-number-of-panels-calc`).val(1);
-
-                // Trigger initial calculation
                 this.calculateModel(model);
             });
 
@@ -310,11 +297,11 @@ jQuery(document).ready(function ($) {
         }
     }
 
-    // Initialize calculator when document is ready
+    // Initialize calculator
     if ($('.calculator-tab').length) {
-        //console.log('Initializing calculator');
+        console.log('Creating calculator instance');
         new Calculator();
     } else {
-        //console.log('No calculator tabs found');
+        console.log('No calculator tabs found, skipping initialization');
     }
 });
