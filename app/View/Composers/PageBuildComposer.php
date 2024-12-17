@@ -23,6 +23,7 @@ class PageBuildComposer extends Composer
         'blocks.landing-how-to',
         'blocks.landing-product-size',
         'blocks.landing-in-the-box',
+        'blocks.banners',
 
     ];
 
@@ -31,6 +32,7 @@ class PageBuildComposer extends Composer
         $id = get_the_ID();
         $page_build = get_field('page_build', $id);
         $big_slider = get_field('big_slider', $id);
+        $add_banner_block = get_field('add_banner_block', $id);
         $product_list_builder = get_field('product_list_builder', $id);
         $section_heading_product_list = get_field('section_heading_product_list', $id);
         $heading_color = get_field('heading_color', $id);
@@ -53,6 +55,6 @@ class PageBuildComposer extends Composer
 
 
 
-        return compact('page_build', 'big_slider', 'section_heading_product_list', 'is_slider', 'heading_color', 'product_list_builder', 'category_list_builder', 'half_section', 'seo_section', 'landing_hero_section', 'landing_introduction_section', 'landing_half_section', 'landing_spacer', 'landing_gallery_section', 'landing_how_to_section', 'landing_product_size', 'landing_in_the_box_section');
+        return compact('page_build', 'big_slider', 'add_banner_block', 'section_heading_product_list', 'is_slider', 'heading_color', 'product_list_builder', 'category_list_builder', 'half_section', 'seo_section', 'landing_hero_section', 'landing_introduction_section', 'landing_half_section', 'landing_spacer', 'landing_gallery_section', 'landing_how_to_section', 'landing_product_size', 'landing_in_the_box_section');
     }
 }

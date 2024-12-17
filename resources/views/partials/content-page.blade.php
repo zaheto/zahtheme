@@ -12,6 +12,10 @@
             @include('blocks.big-slider', ['big_slider' => $row['big_slider']])
         @endif
 
+        @if($row['acf_fc_layout'] == 'add_banners_section')
+            @include('blocks.banners', ['add_banner_block' => $row['add_banner_block']])
+        @endif
+
         @if($row['acf_fc_layout'] == 'product_list_section')
             @include('blocks.product-list', ['block_data' => $row])
         @endif

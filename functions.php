@@ -120,7 +120,6 @@ function zah_enqueue_calculator_scripts() {
         );
     }
     
-
     // For product archive pages
     if (is_product_category()) {
         //error_log('Attempting to enqueue subcategories slider');
