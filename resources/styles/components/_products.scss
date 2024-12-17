@@ -159,8 +159,8 @@
 .related.products,
 .upsells.products {
   @apply block text-center relative pt-10 md:pt-16 pb-2 md:pb-14 bg-white;
-  @apply before:content-[''] before:block before:absolute before:top-0 before:bottom-0 before:-left-full before:w-full before:bg-white;
-  @apply after:block after:absolute after:top-0 after:bottom-0 after:-right-full after:w-full after:bg-white;
+  @apply before:content-[''] before:block before:z-20  before:absolute before:top-0 before:bottom-0 before:-left-full before:w-full before:bg-white;
+  @apply after:block after:z-20 after:absolute after:top-0 after:bottom-0 after:-right-full after:w-full after:bg-white;
 }
 
 .cross-sells h2 ,
@@ -178,7 +178,7 @@
 }
 
 .related.products ul.products {
- @apply md:grid md:grid-cols-4 md:gap-4 w-full md:mx-0 relative z-100;
+ @apply md:grid md:grid-cols-4 md:gap-4 w-full md:mx-0 relative z-40;
 }
 
 .related.products ul.products li.product {

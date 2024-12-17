@@ -105,7 +105,7 @@ body.drawer-open::before {
   }
 
   .widget_shopping_cart .woocommerce-mini-cart__buttons {
-    @apply mb-6 flex flex-col-reverse gap-2;
+    @apply mb-8 flex flex-col-reverse gap-2;
     .button.wc-forward {
       @apply border-none py-1 font-semibold text-15 text-black/60;
     }
