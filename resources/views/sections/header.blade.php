@@ -83,7 +83,7 @@ do_action( 'zah_before_header' );
 
     @endif
   </div>
-  <ul class="header--my-account ">
+  <ul class="header--my-account hidden">
     @if(is_user_logged_in())
     <li>
       <a href="{{ get_permalink( wc_get_page_id( 'myaccount' ) ) }}">

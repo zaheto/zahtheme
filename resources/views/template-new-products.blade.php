@@ -25,12 +25,12 @@
         @endphp
 
         @if($new_products->have_posts())
-            <div class="products columns-4 ">
+            <ul class="products columns-4 ">
                 @while($new_products->have_posts()) 
                     @php($new_products->the_post())
                     @include('woocommerce.content-product')
                 @endwhile
-            </div>
+            </ul>
            
             @php(wp_reset_postdata())
         @endif

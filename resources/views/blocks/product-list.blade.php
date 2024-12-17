@@ -9,7 +9,7 @@
 @endphp
 
 @if($product_list_builder)
-  <section class="product-list-builder px-4 lg:px-6 @if($is_slider) pt-8 lg:pt-16 @else py-8 lg:py-16 @endif" style="background-color: {{ $section_color }};">
+  <section class="product-list-builder @if($is_slider) pt-8 lg:pt-16 @else py-8 lg:py-16 @endif" style="background-color: {{ $section_color }};">
     <div class="container flex flex-col items-center gap-6">
       <h2 class="title"><span style="background-color: {{ $heading_color }}"></span>{{ $section_heading_product_list }}</h2>
 

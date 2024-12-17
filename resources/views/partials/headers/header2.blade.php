@@ -14,7 +14,7 @@
         <!-- END OF HEADER LEFT -->
 
         <div class="header-center">
-          <a class="logo min-w-[174px] max-w-[174px] md:min-w-[240px] md:max-w-[240px] lg:min-w-[660px] lg:max-w-[660px] flex items-center justify-center" href="{{ get_site_url('/') }}">
+          <a class="logo min-w-[220px] max-w-[220px] md:min-w-[240px] md:max-w-[240px] lg:min-w-[660px] lg:max-w-[660px] flex items-center justify-center" href="{{ get_site_url('/') }}">
             @if(get_field('logo_header', 'options'))
             <img src="{{ get_field('logo_header', 'options') }}" alt="{{ get_bloginfo('name', 'display') }}">
             @endif

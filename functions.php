@@ -97,13 +97,13 @@ function zah_enqueue_calculator_scripts() {
      //error_log('is_product_tag: ' . (is_product_tag() ? 'true' : 'false'));
      //error_log('is_post_type_archive: ' . (is_post_type_archive('product') ? 'true' : 'false'));
      // Add debug output to page
-    add_action('wp_footer', function() {
-        if (is_product_category()) {
-            echo '<script>console.log("This is a product category page");</script>';
-        } else {
-            echo '<script>console.log("This is NOT a product category page");</script>';
-        }
-    });
+    // add_action('wp_footer', function() {
+    //     if (is_product_category()) {
+    //         echo '<script>console.log("This is a product category page");</script>';
+    //     } else {
+    //         echo '<script>console.log("This is NOT a product category page");</script>';
+    //     }
+    // });
 
     // Check if script file exists
     $script_path = get_template_directory() . '/resources/scripts/subcategories-slider.js';
@@ -1186,7 +1186,9 @@ function zah_related_content_wrapper_end() {
 	echo '</section>';
 }
 
-
+add_filter('woocommerce_product_related_products_heading',function(){
+    return 'Подобни продукти';
+});
 
 
 if ( ! function_exists( 'zah_pdp_ajax_atc' ) ) {
@@ -2199,14 +2201,15 @@ add_action('woocommerce_after_single_product_summary', function() {
         // Related Products Section
         if ($related_products) {
             $products_count = count($related_products);
-            $slider_class = $products_count >= 5 ? 'is-slider' : 'is-grid';
+            $slider_class = $products_count >= 4 ? 'is-slider' : 'is-grid';
             
             echo '<section class="product-list-builder">';
            
             echo '<h2>' . esc_html__('Connected Products', 'zah') . '</h2>';
             
-            echo '<section class="connected-products"><div class="swiper swiper-container more-products-slider ' . $slider_class . '" data-products-count="' . $products_count . '">';
-            echo '<div class="swiper-products swiper-wrapper">';
+            echo '<section class="connected-products">';
+            echo '<div class="swiper more-products-slider products ' . $slider_class . '" data-products-count="' . $products_count . '">';
+            echo '<div class="swiper-wrapper">'; // Remove swiper-products class
             
             foreach ($related_products as $related_product) {
                 echo '<div class="swiper-slide">';
@@ -2837,7 +2840,7 @@ function modify_relationship_query($args, $field, $post_id) {
     error_log('ACF Relationship Query - Starting');
     error_log('Current args: ' . print_r($args, true));
 
-    // Only modify for related_products field
+    // Only modify for  field
     if ($field['name'] === 'related_products' && !empty($args['s'])) {
         
         $search_term = $args['s'];

@@ -72,7 +72,7 @@ function displaySelectedOptions() {
   const selects = document.querySelectorAll('.wpcpo-option-field.field-select');
   selects.forEach(function(select) {
     select.addEventListener('change', function() {
-        //console.log("Select field changed:", this.value);
+        ////console.log("Select field changed:", this.value);
         displaySelectedOptions();
     });
   });
@@ -81,7 +81,7 @@ function displaySelectedOptions() {
   const radios = document.querySelectorAll('.wpcpo-option-field.field-radio');
   radios.forEach(function(radio) {
     radio.addEventListener('change', function() {
-        //console.log("Radio button changed:", this.value);
+        ////console.log("Radio button changed:", this.value);
         displaySelectedOptions();
     });
   });
@@ -306,77 +306,65 @@ function displaySelectedOptions() {
   // });
 
   
-    $('.more-products-slider').each(function() {
-      const $slider = $(this);
-      const productsCount = parseInt($slider.data('products-count'));
-      
-      // Only initialize Swiper if 6 or more products
-      if (productsCount >= 6) {
-          new Swiper($slider[0], {
-              loop: false,
-              autoHeight: true,
-              keyboardControl: true,
-              keyboard: true,
-              slidesPerView: 2,
-              spaceBetween: 12,
-
-              breakpoints: {
-                  760: {
-                      slidesPerView: 2,
-                      spaceBetween: 12,
-                      pagination: {
-                          el: '.swiper-pagination',
-                          clickable: true,
-                      }
-                  },
-                  768: {
-                      slidesPerView: 3,
-                      spaceBetween: 12,
-                      pagination: {
-                          el: '.swiper-pagination',
-                          clickable: true,
-                      }
-                  },
-                  1024: {
-                      slidesPerView: 4,
-                      spaceBetween: 12,
-                      pagination: {
-                          el: '.swiper-pagination',
-                          clickable: true,
-                      },
-                      navigation: {
-                          nextEl: '.small-swiper-button-next',
-                          prevEl: '.small-swiper-button-prev',
-                      }
-                  },
-                  1280: {
-                      spaceBetween: 16,
-                      slidesPerView: 5,
-                      pagination: {
-                          el: '.swiper-pagination',
-                          clickable: true,
-                      },
-                      navigation: {
-                          nextEl: '.small-swiper-button-next',
-                          prevEl: '.small-swiper-button-prev',
-                      }
-                  },
-                  1440: {
-                      spaceBetween: 16,
-                      slidesPerView: 6,
-                      pagination: {
-                          el: '.swiper-pagination',
-                          clickable: true,
-                      },
-                      navigation: {
-                          nextEl: '.small-swiper-button-next',
-                          prevEl: '.small-swiper-button-prev',
-                      }
-                  },
-              },
-          });
-      }
-  });
+  $('.more-products-slider').each(function() {
+    const $slider = $(this);
+    const rawCount = $slider.data('products-count');
+    //console.log('Raw data-products-count:', rawCount);
+    const productsCount = parseInt($slider.data('products-count'));
+    //console.log('Parsed products count:', productsCount);
+    
+    // Also count actual slides
+    const actualSlides = $slider.find('.swiper-slide').length;
+    //console.log('Actual number of slides:', actualSlides);
+    
+    if (productsCount >= 4) {
+        const swiper = new Swiper($slider[0], {
+            loop: false,
+            autoHeight: true,
+            keyboard: {
+                enabled: true
+            },
+            slidesPerView: 2,
+            spaceBetween: 12,
+            
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            
+            breakpoints: {
+                760: {
+                    slidesPerView: 2,
+                    spaceBetween: 12,
+                },
+                768: {
+                    slidesPerView: 3,
+                    spaceBetween: 12,
+                },
+                1024: {
+                    slidesPerView: 4,
+                    spaceBetween: 12,
+                    navigation: {
+                        nextEl: '.small-swiper-button-next',
+                        prevEl: '.small-swiper-button-prev',
+                    }
+                },
+                1280: {
+                    spaceBetween: 16,
+                    slidesPerView: 4,
+                },
+                1440: {
+                    spaceBetween: 16,
+                    slidesPerView: 4,
+                }
+            },
+        });
+        
+        //console.log('Swiper initialized:', swiper); // Debug log
+      } else {
+        //console.log('Not initializing Swiper due to low product count:', productsCount);
+    }
+});
 
   // Initialize Swiper for smaller screens only
 // function initSwiper() {
@@ -633,7 +621,7 @@ function displaySelectedOptions() {
   // $('.quantity-inner .qty').on('change', function () {
   //     let qtyVal = $(this).val()
   //     $('.btn-submit-single-product').attr('data-qty', qtyVal)
-  //     //console.log('qtyVal', qtyVal)
+  //     ////console.log('qtyVal', qtyVal)
   // })
 
 

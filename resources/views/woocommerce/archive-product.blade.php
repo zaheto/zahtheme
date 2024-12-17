@@ -44,7 +44,7 @@
         @endphp
       
         @if (!empty($subcategories))
-          <div class="relative w-full mb-8">
+          <div class="relative w-full mb-2  md:mb-8">
             {{-- Important: Remove static-subcategories class when there are more than 7 items --}}
             <div class="subcategories-slider">
               <div class="swiper-wrapper">
@@ -61,7 +61,7 @@
                              alt="{{ esc_attr($subcategory->name) }}"
                              class="w-full h-auto object-cover rounded-lg">
                       @endif
-                      <h3 class="mt-2 text-center text-sm md:text-base font-medium">
+                      <h3 class="mt-0 md:mt-2 text-center text-sm md:text-base font-medium">
                         {{ esc_html($subcategory->name) }}
                       </h3>
                     </a>

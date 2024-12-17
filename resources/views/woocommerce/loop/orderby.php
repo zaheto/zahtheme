@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 <form class="woocommerce-ordering w-full lg:w-auto text-14 text-black/40" method="get">
-	<select name="orderby" class="orderby py-2 border border-black/10 rounded-md w-full lg:w-auto text-14 text-black/40" aria-label="<?php esc_attr_e( 'Shop order', 'woocommerce' ); ?>">
+	<select name="orderby" class="orderby py-3 md:py-2 border border-black/10 rounded-md w-full lg:w-auto text-14 text-black/40" aria-label="<?php esc_attr_e( 'Shop order', 'woocommerce' ); ?>">
 		<?php foreach ( $catalog_orderby_options as $id => $name ) : ?>
 			<option value="<?php echo esc_attr( $id ); ?>" <?php selected( $orderby, $id ); ?>><?php echo esc_html( $name ); ?></option>
 		<?php endforeach; ?>

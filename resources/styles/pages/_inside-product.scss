@@ -1,5 +1,5 @@
 .product-template-default .site-main > div.product {
-  @apply  mx-auto mt-0 mb-0 flex flex-wrap;
+  @apply  mx-auto mt-0 mb-0 flex flex-col flex-nowrap;
 }
 
 .ajax_add_to_cart.loading,
@@ -562,7 +562,7 @@ div.product table.variations select {
 }
 
 .cart .single_add_to_cart_button {
-  @apply text-base w-[calc(100%-80px)] md:w-[calc(100%-90px)] h-[52px] ml-3 md:ml-6 pt-0 pb-0 rounded-md outline-0 font-semibold leading-[52px] text-center transition-all duration-200 uppercase;
+  @apply text-15 md:text-base w-[calc(100%-80px)] md:w-[calc(100%-90px)] h-[52px] ml-3 md:ml-6 pt-0 pb-0 rounded-md outline-0 font-semibold leading-[52px] text-center transition-all duration-200 uppercase;
 }
 
 .quantity.hidden + .single_add_to_cart_button,
