@@ -29,6 +29,18 @@
                 >
             </div>
 
+            <div class="form-row">
+                <label for="siding-price-sqm" class="font-normal">Цена на кв.м.</label>
+                <input 
+                    class="border border-black/10 rounded-md px-4 py-2 bg-black/5"
+                    type="text" 
+                    id="siding-price-sqm" 
+                    name="siding-price-sqm" 
+                    value="{{ number_format($sidingData['base_price'], 2) }} лв."
+                    disabled
+                >
+            </div>
+
             
         </form>
         <div class="opt-square-wrap mt-4">

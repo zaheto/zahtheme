@@ -2911,3 +2911,32 @@ function modify_relationship_join($join) {
 add_filter('posts_join', 'modify_relationship_join', 10, 1);
 
 
+add_filter('woocommerce_get_catalog_ordering_args', 'custom_woocommerce_sku_ordering');
+
+function custom_woocommerce_sku_ordering($args) {
+    if (!isset($_GET['orderby'])) {
+        return $args;
+    }
+
+    if ($_GET['orderby'] === 'sku') {
+        $args['orderby'] = 'meta_value';
+        $args['meta_key'] = '_sku';
+    }
+
+    return $args;
+}
+
+add_filter('woocommerce_default_catalog_orderby_options', 'custom_woocommerce_sku_orderby_options');
+add_filter('woocommerce_catalog_orderby', 'custom_woocommerce_sku_orderby_options');
+
+function custom_woocommerce_sku_orderby_options($sortby) {
+    $sortby['sku'] = 'Сортиране по Арт. №';
+    return $sortby;
+}
+
+// Set SKU as default sorting option
+add_filter('woocommerce_default_catalog_orderby', 'custom_default_catalog_orderby');
+
+function custom_default_catalog_orderby($default_orderby) {
+    return 'sku'; // This should match the orderby value we defined earlier
+}
