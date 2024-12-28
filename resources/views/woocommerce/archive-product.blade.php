@@ -43,47 +43,71 @@
           $no_thumbnail_url = get_template_directory_uri() . '/resources/images/no-image.svg';
         @endphp
       
-        @if (!empty($subcategories))
-          <div class="relative w-full mb-2  md:mb-8">
-            {{-- Important: Remove static-subcategories class when there are more than 7 items --}}
-            <div class="subcategories-slider">
-              <div class="swiper-wrapper">
-                @foreach ($subcategories as $subcategory)
-                  @php
-                    $category_link = get_term_link($subcategory->term_id, 'product_cat');
-                    $thumbnail_id = get_term_meta($subcategory->term_id, 'thumbnail_id', true);
-                    $image_url = $thumbnail_id ? wp_get_attachment_url($thumbnail_id) : $no_thumbnail_url;
-                  @endphp
-                  <div class="swiper-slide w-full">
-                    <a href="{{ esc_url($category_link) }}" class="block w-full">
-                      @if ($image_url)
-                        <img src="{{ esc_url($image_url) }}" 
-                             alt="{{ esc_attr($subcategory->name) }}"
-                             class="w-full h-auto object-cover rounded-lg">
-                      @endif
-                      <h3 class="mt-0 md:mt-2 text-center text-sm md:text-base font-medium">
-                        {{ esc_html($subcategory->name) }}
-                      </h3>
-                    </a>
-                  </div>
-                @endforeach
+      @if (!empty($subcategories))
+      <div class="relative w-full mb-2 md:mb-8">
+        <!-- Mobile Grid (under 768px) -->
+        <div class="block md:hidden pt-4">
+          <div class="grid grid-cols-2 gap-4">
+            @foreach ($subcategories as $subcategory)
+              @php
+                $category_link = get_term_link($subcategory->term_id, 'product_cat');
+                $thumbnail_id = get_term_meta($subcategory->term_id, 'thumbnail_id', true);
+                $image_url = $thumbnail_id ? wp_get_attachment_url($thumbnail_id) : $no_thumbnail_url;
+              @endphp
+              <div class="subcategory-item">
+                <a href="{{ esc_url($category_link) }}" class="block w-full">
+                  @if ($image_url)
+                    <img src="{{ esc_url($image_url) }}" 
+                         alt="{{ esc_attr($subcategory->name) }}"
+                         class="w-full h-auto object-cover rounded-lg">
+                  @endif
+                  <h3 class="mt-1 text-center leading-none text-14 font-medium">
+                    {{ esc_html($subcategory->name) }}
+                  </h3>
+                </a>
               </div>
-      
-              {{-- Navigation Buttons --}}
-              <div class="subcategories-prev absolute -left-2 top-[82px] md:top-[88px] z-10 w-14 h-14 bg-white/80 hover:bg-white rounded-md shadow-lg flex items-center justify-center focus:outline-none cursor-pointer">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                </svg>
-              </div>
-      
-              <div class="subcategories-next absolute -right-2 top-[82px] md:top-[88px] z-10 w-14 h-14 bg-white/80 hover:bg-white rounded-md shadow-lg flex items-center justify-center focus:outline-none cursor-pointer">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
-            </div>
+            @endforeach
           </div>
-        @endif
+        </div>
+    
+        <!-- Desktop Slider (768px and above) -->
+        <div class="hidden md:block subcategories-slider">
+          <div class="swiper-wrapper">
+            @foreach ($subcategories as $subcategory)
+              @php
+                $category_link = get_term_link($subcategory->term_id, 'product_cat');
+                $thumbnail_id = get_term_meta($subcategory->term_id, 'thumbnail_id', true);
+                $image_url = $thumbnail_id ? wp_get_attachment_url($thumbnail_id) : $no_thumbnail_url;
+              @endphp
+              <div class="swiper-slide w-full">
+                <a href="{{ esc_url($category_link) }}" class="block w-full">
+                  @if ($image_url)
+                    <img src="{{ esc_url($image_url) }}" 
+                         alt="{{ esc_attr($subcategory->name) }}"
+                         class="w-full h-auto object-cover rounded-lg">
+                  @endif
+                  <h3 class="mt-2 text-center text-base font-medium">
+                    {{ esc_html($subcategory->name) }}
+                  </h3>
+                </a>
+              </div>
+            @endforeach
+          </div>
+    
+          <div class="subcategories-prev absolute -left-2 top-[82px] md:top-[88px] z-10 w-14 h-14 bg-white/80 hover:bg-white rounded-md shadow-lg flex items-center justify-center focus:outline-none cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </div>
+    
+          <div class="subcategories-next absolute -right-2 top-[82px] md:top-[88px] z-10 w-14 h-14 bg-white/80 hover:bg-white rounded-md shadow-lg flex items-center justify-center focus:outline-none cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    @endif
       @endif
       </header>
 

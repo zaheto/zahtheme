@@ -11,3 +11,13 @@
     @apply text-18 lg:text-22 text-white leading-[15px] block font-bold text-left absolute left-0 right-0 bottom-0 z-30 px-6 py-4;
   }
 }
+
+
+.category-list-grid  {
+  a {
+    @apply relative rounded-md overflow-hidden block before:content-[''] before:block before:left-0 before:top-20 before:bottom-0 before:right-0 before:bg-gradient-to-b before:from-black/0 before:to-black/80 before:z-10 before:absolute;
+  }
+  h3 {
+    @apply text-18 lg:text-22 text-white leading-[15px] block font-bold text-left absolute left-0 right-0 bottom-0 z-30 px-6 py-4;
+  }
+}

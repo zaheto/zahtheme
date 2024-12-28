@@ -1,6 +1,6 @@
 <section class="required-materials--toggle">
     <a class="required-materials--toggle-link">
-        <span class="toggle-icon">+</span>SIGMA Включени материали в цената
+        <span class="toggle-icon">+</span> Включени материали в цената
     </a>
 
     <div id="sigma-calculator-results" class="sigma-calculator-section hidden" >

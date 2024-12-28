@@ -191,50 +191,67 @@ function displaySelectedOptions() {
     },
   });
 
-  var categorySlider = new Swiper(".category-list-builder", {
-    autoHeight: true,
-    keyboardControl: true,
-    keyboard: true,
-    slidesPerView: 2,
-    spaceBetween: 12,
-    navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-    },
-    breakpoints: {
-        760: {
-            slidesPerView: 2,
-            spaceBetween: 12,
-        },
-        768: {
+
+
+let categorySwiper;
+
+function initializeCategorySwiper() {
+    if (window.innerWidth >= 768) {
+        categorySwiper = new Swiper(".category-list-builder", {
+            autoHeight: true,
+            keyboardControl: true,
+            keyboard: true,
             slidesPerView: 3,
             spaceBetween: 12,
-        },
-        1024: {
-            slidesPerView: 4,
-            spaceBetween: 12,
-        },
-        1280: {
-            spaceBetween: 16,
-            slidesPerView: 5,
-        },
-        1440: {
-            spaceBetween: 16,
-            slidesPerView: 5,
-        },
-    },
-    on: {
-        init: function () {
-            // Get total number of slides
-            const totalSlides = this.slides.length;
-            const navigation = document.querySelectorAll('.swiper-button-prev, .swiper-button-next');
-            
-            // Hide navigation if slides are 5 or less
-            navigation.forEach(nav => {
-                nav.style.display = totalSlides <= 5 ? 'none' : 'flex';
-            });
-        }
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            breakpoints: {
+                768: {
+                    slidesPerView: 3,
+                    spaceBetween: 12,
+                },
+                1024: {
+                    slidesPerView: 4,
+                    spaceBetween: 12,
+                },
+                1280: {
+                    spaceBetween: 16,
+                    slidesPerView: 5,
+                },
+                1440: {
+                    spaceBetween: 16,
+                    slidesPerView: 5,
+                },
+            },
+            on: {
+                init: function () {
+                    const totalSlides = this.slides.length;
+                    const navigation = document.querySelectorAll('.swiper-button-prev, .swiper-button-next');
+                    
+                    navigation.forEach(nav => {
+                        nav.style.display = totalSlides <= 5 ? 'none' : 'flex';
+                    });
+                }
+            }
+        });
     }
+}
+
+// Initialize on load
+initializeCategorySwiper();
+
+// Handle resize events
+let categoryResizeTimer;
+window.addEventListener('resize', function() {
+    clearTimeout(categoryResizeTimer);
+    categoryResizeTimer = setTimeout(function() {
+        if (categorySwiper && typeof categorySwiper.destroy === 'function') {
+            categorySwiper.destroy();
+        }
+        initializeCategorySwiper();
+    }, 250);
 });
 
 
@@ -306,7 +323,7 @@ function displaySelectedOptions() {
   // });
 
   
-  $('.more-products-slider').each(function() {
+$('.more-products-slider').each(function() {
     const $slider = $(this);
     const rawCount = $slider.data('products-count');
     //console.log('Raw data-products-count:', rawCount);

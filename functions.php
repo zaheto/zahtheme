@@ -1935,7 +1935,7 @@ function custom_product_subheading() {
     
     // Add SKU
     if ($product->get_sku()) {
-        echo '<span class="sku_wrapper">' . esc_html__('SKU:', 'zah') . ' <span class="sku">' . esc_html($product->get_sku()) . '</span></span>';
+        echo '<span class="sku_wrapper">' . esc_html__('SKU', 'zah') . ' <span class="sku">' . esc_html($product->get_sku()) . '</span></span>';
     }
 
     // Add stock status
@@ -2118,6 +2118,12 @@ function zah_product_video_modal() {
         }
 
         $('.product-video-btn').on('click', function(e) {
+            e.preventDefault();
+            var videoId = $(this).data('video');
+            openVideoModal(videoId);
+        });
+
+        $('.product-video-btn-desiption').on('click', function(e) {
             e.preventDefault();
             var videoId = $(this).data('video');
             openVideoModal(videoId);
@@ -2833,15 +2839,19 @@ add_filter('woocommerce_get_price_html', function($price, $product) {
 
 // Add this code to your theme's functions.php or a custom plugin file
 /**
- * Modify ACF relationship field query to include SKU in search
+ * Modify ACF relationship field query to include SKU in search for product fields
  */
 function modify_relationship_query($args, $field, $post_id) {
     // Debug logging
-    error_log('ACF Relationship Query - Starting');
-    error_log('Current args: ' . print_r($args, true));
+    if (WP_DEBUG) {
+        error_log('ACF Relationship Query - Starting');
+        error_log('Current args: ' . print_r($args, true));
+    }
 
-    // Only modify for  field
-    if ($field['name'] === 'related_products' && !empty($args['s'])) {
+    // Check for both field names
+    $product_fields = ['product_list_builder', 'related_products'];
+    
+    if (in_array($field['name'], $product_fields) && !empty($args['s'])) {
         
         $search_term = $args['s'];
         
@@ -2849,7 +2859,7 @@ function modify_relationship_query($args, $field, $post_id) {
         $original_search = $args['s'];
         unset($args['s']);
         
-        // Modify the query
+        // Modify the query to include SKU search
         $args['meta_query'] = array(
             'relation' => 'OR',
             array(
@@ -2859,8 +2869,8 @@ function modify_relationship_query($args, $field, $post_id) {
             )
         );
         
-        // Add our custom filter for title search
-        add_filter('posts_where', function($where) use ($original_search) {
+        // Add custom filter for title search
+        $where_filter = function($where) use ($original_search) {
             global $wpdb;
             $search = '%' . $wpdb->esc_like($original_search) . '%';
             $where .= $wpdb->prepare(
@@ -2868,18 +2878,28 @@ function modify_relationship_query($args, $field, $post_id) {
                 $search
             );
             return $where;
-        }, 10, 1);
+        };
+        add_filter('posts_where', $where_filter, 10, 1);
         
-        // Add our custom filter to group results
-        add_filter('posts_groupby', function($groupby) use ($wpdb) {
+        // Add custom filter to group results
+        $groupby_filter = function($groupby) use ($wpdb) {
             if(!$groupby) {
                 $groupby = "{$wpdb->posts}.ID";
             }
             return $groupby;
-        });
+        };
+        add_filter('posts_groupby', $groupby_filter);
+
+        // Remove the filters after the query
+        add_action('pre_get_posts', function() use ($where_filter, $groupby_filter) {
+            remove_filter('posts_where', $where_filter);
+            remove_filter('posts_groupby', $groupby_filter);
+        }, 999);
     }
     
-    error_log('Modified args: ' . print_r($args, true));
+    if (WP_DEBUG) {
+        error_log('Modified args: ' . print_r($args, true));
+    }
     return $args;
 }
 add_filter('acf/fields/relationship/query', 'modify_relationship_query', 10, 3);

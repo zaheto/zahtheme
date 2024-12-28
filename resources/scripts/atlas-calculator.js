@@ -3,13 +3,21 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
     $('#atlas-calculator-results').hide();
 
     $('.required-materials--toggle-link').on('click', function(e) {
-                e.preventDefault();
-                const resultsDiv = $(this).closest('.mt-8').find('[id$="calculator-results"]');
-                const toggleIcon = $(this).find('.toggle-icon');
-                resultsDiv.slideToggle(300, function() {
-                    toggleIcon.text($(this).is(':visible') ? '-' : '+');
-                });
+        e.preventDefault();
+        const resultsSection = $('#atlas-calculator-results');
+        const toggleIcon = $(this).find('.toggle-icon');
+        
+        if (resultsSection.is(':visible')) {
+            resultsSection.slideUp(300, function() {
+                resultsSection.addClass('hidden').css('display', '');
+                toggleIcon.text('+');
             });
+        } else {
+            resultsSection.removeClass('hidden').slideDown(300, function() {
+                toggleIcon.text('-');
+            });
+        }
+    });
 
     // Get price elements
     const priceElement = $('.price');
