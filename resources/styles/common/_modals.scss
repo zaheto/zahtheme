@@ -23,3 +23,49 @@
   }
 }
 
+
+.free-sample-modal .form-container {
+  @apply w-full max-w-[700px] mx-auto  bg-white rounded-lg p-6;
+}
+
+.free-sample-modal .form-container h2 {
+  @apply text-18 md:text-24 font-semibold text-black leading-6 md:leading-7 mb-4;
+}
+
+.free-sample-modal .wpcf7-form p {
+  @apply m-0 p-0;
+}
+
+
+.free-sample-modal .wpcf7-form br {
+  @apply hidden;
+}
+
+.free-sample-modal .wpcf7-form .row {
+  @apply flex flex-col md:flex-row gap-4 mb-2;
+}
+
+.free-sample-modal .wpcf7-form .row .cell {
+  @apply w-full;
+}
+
+.free-sample-modal .wpcf7-form .row .cell  label {
+  @apply text-14 text-black/80 font-semibold;
+}
+
+.free-sample-modal .wpcf7-form input,
+.free-sample-modal .wpcf7-form textarea {
+  @apply text-black bg-white border border-black/10 rounded-md w-full py-2 px-3;
+}
+
+.free-sample-modal .wpcf7-form textarea {
+  @apply h-[90px];
+}
+
+.free-sample-modal .wpcf7-form .wpcf7-submit {
+  @apply bg-main text-white text-15 font-bold uppercase py-2 px-4 rounded-md cursor-pointer hover:bg-second;
+}
+
+.free-sample-modal .wpcf7-form .wpcf7-spinner {
+  @apply absolute;
+}

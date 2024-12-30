@@ -1186,9 +1186,84 @@ function zah_related_content_wrapper_end() {
 	echo '</section>';
 }
 
-add_filter('woocommerce_product_related_products_heading',function(){
-    return 'Подобни продукти';
-});
+/**
+ * Override WooCommerce related products function
+ */
+function woocommerce_related_products($args = array()) {
+    global $product;
+
+    error_log("\n\n=== Custom Related Products Function Start ===");
+    error_log("Processing product: " . $product->get_id() . " - " . $product->get_name());
+
+    // Get all categories for current product
+    $terms = get_the_terms($product->get_id(), 'product_cat');
+    
+    if ($terms && !is_wp_error($terms)) {
+        error_log("Found " . count($terms) . " categories");
+        
+        // Find deepest category
+        $deepest_term = null;
+        $max_depth = -1;
+        
+        foreach ($terms as $term) {
+            $ancestors = get_ancestors($term->term_id, 'product_cat');
+            $depth = count($ancestors);
+            
+            error_log("Category: {$term->name} (ID: {$term->term_id}) - Depth: {$depth}");
+            
+            if ($depth > $max_depth) {
+                $max_depth = $depth;
+                $deepest_term = $term;
+            }
+        }
+        
+        if ($deepest_term) {
+            error_log("Selected deepest category: " . $deepest_term->name);
+            
+            // Set up custom arguments for related products query
+            $args = array(
+                'posts_per_page' => 4,
+                'columns'        => 4,
+                'orderby'        => 'rand',
+                'post__not_in'   => array($product->get_id()),
+                'tax_query'      => array(
+                    array(
+                        'taxonomy' => 'product_cat',
+                        'field'    => 'term_id',
+                        'terms'    => $deepest_term->term_id
+                    )
+                )
+            );
+        }
+    }
+
+    error_log("Final query args: " . print_r($args, true));
+    
+    // Get the products
+    $related_products = new WP_Query($args);
+    
+    error_log("Found " . $related_products->post_count . " related products");
+    error_log("=== Custom Related Products Function End ===\n");
+
+    if ($related_products->have_posts()) {
+        echo '<div class="related products">';
+        
+        echo '<h2>' . esc_html__('Related products', 'zah') . '</h2>';
+        
+        woocommerce_product_loop_start();
+        
+        while ($related_products->have_posts()) : $related_products->the_post();
+            wc_get_template_part('content', 'product');
+        endwhile;
+        
+        woocommerce_product_loop_end();
+        
+        echo '</div>';
+    }
+    
+    wp_reset_postdata();
+}
+
 
 
 if ( ! function_exists( 'zah_pdp_ajax_atc' ) ) {
@@ -2145,6 +2220,72 @@ function zah_product_video_modal() {
     <?php
 }
 
+// Add free sample modal to page footer
+add_action('wp_footer', 'zah_free_sample_modal');
+function zah_free_sample_modal() {
+    if (!is_product()) {
+        return;
+    }
+    ?>
+    <div id="sampleModal" class="sample-modal free-sample-modal fixed inset-0 z-[9999] hidden">
+        <div class="modal-overlay absolute inset-0 bg-black/90"></div>
+        <div class="modal-content relative z-[10000] w-full h-full flex items-center justify-center">
+            <button class="modal-close absolute top-4 right-4 text-white text-4xl z-[10001]">&times;</button>
+            <div class="form-container ">
+                <h2 >Поръчай Безплатна мостра</h2>
+                <?php 
+                    // Get the current product
+                    global $product;
+                    
+                    // Set up the dynamic data
+                    add_filter('wpcf7_form_tag_data_option', function($value, $option, $args) use ($product) {
+                        if ($option === 'get-post-title') {
+                            return $product->get_title();
+                        }
+                        if ($option === 'get-custom-field' && $args === 'sku') {
+                            return $product->get_sku();
+                        }
+                        return $value;
+                    }, 10, 3);
+                    
+                    // Output the form
+                    echo do_shortcode('[contact-form-7 id="db605c4" title="Безплатна мостра"]'); 
+                    ?>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    jQuery(document).ready(function($) {
+        function openSampleModal() {
+            $('#sampleModal').removeClass('hidden');
+            $('body').addClass('modal-open');
+        }
+
+        function closeSampleModal() {
+            $('#sampleModal').addClass('hidden');
+            $('body').removeClass('modal-open');
+        }
+
+        $('.free-sample-btn').on('click', function(e) {
+            e.preventDefault();
+            openSampleModal();
+        });
+
+        $('.sample-modal .modal-close, .sample-modal .modal-overlay').on('click', function() {
+            closeSampleModal();
+        });
+
+        $(document).on('keydown', function(e) {
+            if (e.key === 'Escape' && !$('#sampleModal').hasClass('hidden')) {
+                closeSampleModal();
+            }
+        });
+    });
+    </script>
+    <?php
+}
+
 // Modify the product description tab to include video button
 add_filter('woocommerce_product_tabs', function($tabs) {
     $tabs['description']['callback'] = function() {
@@ -2269,6 +2410,9 @@ add_action('woocommerce_after_single_product_summary', function() {
                 echo '<div class="sample-description">';
                 echo wp_kses_post($free_sample['sample_description']);
                 echo '</div>';
+
+                echo '<button class="free-sample-btn ">Поръчай Безплатна мостра</button>';
+
             }
             echo '</div>'; // .sample-text
 
