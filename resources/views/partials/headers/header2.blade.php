@@ -94,3 +94,6 @@
 
 
 
+<div class="search-box search-box--mobile">
+    <?php aws_get_search_form( true ); ?>
+</div><!-- search-box -->

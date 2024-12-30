@@ -51,7 +51,7 @@
 }
 
 #breadcrumbs span {
-  @apply flex items-center justify-start py-2 gap-1 px-0;
+  @apply flex items-center justify-start flex-wrap md:flex-nowrap py-1 md:py-2 gap-0.5 md:gap-1 px-0;
 }
 
 .woocommerce-tabs {

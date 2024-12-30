@@ -3,7 +3,7 @@
         <h2 class="mb-2">Въведете вашите индивидуални размери:</h2>
         <form id="siding-fence-calculator" class="siding-calculator-section">
             <div class="form-row">
-                <label for="siding-width" class="font-normal">Ширина (m)</label>
+                <label for="siding-width" class="font-normal">Дължина (m)</label>
                 <input 
                     class="border border-black/10 rounded-md px-4 py-2"
                     type="number" 

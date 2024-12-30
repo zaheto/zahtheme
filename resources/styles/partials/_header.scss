@@ -209,8 +209,6 @@
   border-radius: 5px!important;
 }
 
-
-
 .search-box .aws-search-result .aws_result_image img {
   @apply w-[70px] bg-main text-white;
 }
@@ -244,6 +242,10 @@
 
 .aws-container .aws-search-form .aws-search-btn_icon {
   @apply h-[26px];
+}
+
+.search-box--mobile {
+  @apply flex lg:hidden items-center justify-center;
 }
 
 .header.headroom--not-top #desktop-menu {
