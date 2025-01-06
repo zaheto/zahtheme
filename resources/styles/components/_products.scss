@@ -43,6 +43,11 @@
   @apply text-left text-black text-15 leading-4 font-medium mt-2;
 }
 
+.products .product .product-loop-title-container .custom-text-after-price,
+.swiper-products .product .product-loop-title-container .custom-text-after-price {
+  @apply hidden;
+}
+
 .products .product .product-sku,
 .swiper-products .product .product-sku {
   @apply text-black/60 text-13 block pb-1 uppercase;

@@ -147,6 +147,7 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
             // Update displayed price
             priceElement.html(`<span class="woocommerce-Price-amount amount"> 
                 <bdi>Крайна цена: ${totalPrice.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
+                <span class="custom-text-after-price">(вкл. ДДС)</span>
             </span>`);
 
             // Update hidden fields with specific formatting

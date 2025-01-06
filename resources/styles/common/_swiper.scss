@@ -86,7 +86,11 @@
 //   display: flex;
 // }
 
-.connected-products .swiper {
-  display: grid;
-  grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+// .connected-products .swiper {
+//   display: grid;
+//   grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+// }
+
+.connected-products .more-products-slider.is-grid .swiper-wrapper {
+  @apply grid grid-cols-2 md:grid-cols-4;
 }

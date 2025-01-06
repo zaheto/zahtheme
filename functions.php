@@ -2352,7 +2352,7 @@ add_action('woocommerce_after_single_product_summary', function() {
             
             echo '<section class="product-list-builder">';
            
-            echo '<h2>' . esc_html__('Connected Products', 'zah') . '</h2>';
+            echo '<h2 class="mb-0 p-0">' . esc_html__('Connected Products', 'zah') . '</h2>';
             
             echo '<section class="connected-products">';
             echo '<div class="swiper more-products-slider products ' . $slider_class . '" data-products-count="' . $products_count . '">';
@@ -2981,16 +2981,10 @@ add_filter('woocommerce_get_price_html', function($price, $product) {
 }, 10, 2);
 
 
-// Add this code to your theme's functions.php or a custom plugin file
 /**
  * Modify ACF relationship field query to include SKU in search for product fields
  */
 function modify_relationship_query($args, $field, $post_id) {
-    // Debug logging
-    if (WP_DEBUG) {
-        error_log('ACF Relationship Query - Starting');
-        error_log('Current args: ' . print_r($args, true));
-    }
 
     // Check for both field names
     $product_fields = ['product_list_builder', 'related_products'];
@@ -3075,21 +3069,65 @@ function modify_relationship_join($join) {
 add_filter('posts_join', 'modify_relationship_join', 10, 1);
 
 
+
+
+
+
+
+
+
+
+
+
+// Modify catalog ordering arguments for SKU sorting
 add_filter('woocommerce_get_catalog_ordering_args', 'custom_woocommerce_sku_ordering');
 
 function custom_woocommerce_sku_ordering($args) {
-    if (!isset($_GET['orderby'])) {
-        return $args;
-    }
-
-    if ($_GET['orderby'] === 'sku') {
+    // If no orderby is set or it's explicitly set to 'sku'
+    if (!isset($_GET['orderby']) || $_GET['orderby'] === 'sku') {
         $args['orderby'] = 'meta_value';
         $args['meta_key'] = '_sku';
+        $args['meta_type'] = 'CHAR';
+        
+        // Add custom sorting through posts_clauses
+        add_filter('posts_clauses', 'custom_sku_sorting_clauses', 10, 2);
     }
 
     return $args;
 }
 
+// Custom sorting clauses for natural SKU ordering
+function custom_sku_sorting_clauses($clauses, $query) {
+    global $wpdb;
+    
+    // Only modify if we're sorting by SKU and on a WooCommerce page
+    if (is_woocommerce() && isset($clauses['join']) && strpos($clauses['join'], '_sku') !== false) {
+        // Original orderby
+        $original_orderby = $clauses['orderby'];
+        
+        // New orderby with natural sorting
+        $clauses['orderby'] = "
+            CASE 
+                WHEN pm.meta_value REGEXP '^[0-9]' THEN 1
+                ELSE 2
+            END ASC,
+            CASE 
+                WHEN pm.meta_value REGEXP '^[0-9]' 
+                THEN CAST(pm.meta_value AS UNSIGNED)
+                ELSE pm.meta_value
+            END ASC,
+            " . $original_orderby;
+    }
+    
+    return $clauses;
+}
+
+// Remove the filter after the query is complete
+add_action('wp', function() {
+    remove_filter('posts_clauses', 'custom_sku_sorting_clauses', 10);
+});
+
+// Add SKU sorting option to the dropdown
 add_filter('woocommerce_default_catalog_orderby_options', 'custom_woocommerce_sku_orderby_options');
 add_filter('woocommerce_catalog_orderby', 'custom_woocommerce_sku_orderby_options');
 
@@ -3102,5 +3140,77 @@ function custom_woocommerce_sku_orderby_options($sortby) {
 add_filter('woocommerce_default_catalog_orderby', 'custom_default_catalog_orderby');
 
 function custom_default_catalog_orderby($default_orderby) {
-    return 'sku'; // This should match the orderby value we defined earlier
+    return 'sku';
+}
+
+add_filter('woocommerce_get_price_html', 'custom_text_after_price', 10, 2);
+
+function custom_text_after_price($price, $product) {
+    // Check if we're on a single product page
+    if (is_product()) {
+        // Your custom text here
+        $custom_text = ' <span class="custom-text-after-price">(вкл. ДДС)</span>';
+        
+        // Append the custom text to the price
+        return $price . $custom_text;
+    }
+
+    // Return the original price if not on a product page
+    return $price;
+}
+
+add_filter( 'econt_create_loading_result', 'mrejanet_alter_shipping_price876876', 10, 2 );
+
+function mrejanet_alter_shipping_price876876 ($result, $loading_data) {
+global $woocommerce;
+
+$free_shipping_products = false;
+$free_shipping_class_name = 'free-shipping';
+
+if($loading_data['order_id'] < 0){
+if( isset($woocommerce->cart) ){
+$items = $woocommerce->cart->get_cart();
+
+foreach($items as $item => $values) {
+$_product = wc_get_product( $values['data']->get_id() );
+$shipping_class = $_product->get_shipping_class();
+
+if( $shipping_class == $free_shipping_class_name ){
+$free_shipping_products = true;
+break;
+}
+}
+
+}
+if( $free_shipping_products === true ){
+$result['customer_shipping_cost'] = __('Безплатна доставка', 'woocommerce-econt');
+if(!isset($_SESSION)) {
+session_start();
+}
+$_SESSION['econt_shipping_cost'] = 0.00;
+
+}
+}else{
+$order = wc_get_order( $loading_data['order_id'] );
+
+if( $order ){
+foreach( $order->get_items() as $item_id => $item ) {
+$_product = wc_get_product( $item->get_product_id() );
+$shipping_class = $_product->get_shipping_class();
+$quantity = $item->get_quantity();
+
+if( $shipping_class == $free_shipping_class_name ){
+$free_shipping_products = true;
+break;
+}
+}
+}
+if( $free_shipping_products === true ){
+$result['customer_shipping_cost'] = __('free shipping', 'woocommerce-econt');
+}
+
+}
+
+return $result;
+
 }

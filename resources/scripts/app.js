@@ -609,17 +609,44 @@ $('.more-products-slider').each(function() {
     $(document.body).addClass('disable-scroll');
   });
 
-  $('#toggleFilters').on('click', function(e) {
-    e.preventDefault();
-    $('#shop-sidebar').toggleClass('open');
-    
-    const $text = $(this).contents().filter(function() {
-      return this.nodeType === 3;
-    }).last();
-    
-    const currentText = $text.text().trim();
-    $text.replaceWith(currentText === 'Покажи Филтри' ? ' Скрий филтри' : 'Покажи Филтри');
-   });
+  $(document).ready(function() {
+    // Function to set the initial text of the toggle button
+    function setInitialToggleText() {
+      const isMobile = window.innerWidth <= 768; // Adjust the breakpoint as needed
+      const $text = $('#toggleFilters').contents().filter(function() {
+        return this.nodeType === 3;
+      }).last();
+  
+      if (isMobile) {
+        // On mobile, filters are hidden by default
+        $text.replaceWith('Покажи Филтри');
+      } else {
+        // On desktop, filters are shown by default
+        $text.replaceWith('Скрий Филтри');
+      }
+    }
+  
+    // Set the initial text when the page loads
+    setInitialToggleText();
+  
+    // Update the text on window resize (optional)
+    $(window).resize(function() {
+      setInitialToggleText();
+    });
+  
+    // Toggle the filters and update the text
+    $('#toggleFilters').on('click', function(e) {
+      e.preventDefault();
+      $('#shop-sidebar').toggleClass('open');
+  
+      const $text = $(this).contents().filter(function() {
+        return this.nodeType === 3;
+      }).last();
+  
+      const currentText = $text.text().trim();
+      $text.replaceWith(currentText === 'Покажи Филтри' ? 'Скрий Филтри' : 'Покажи Филтри');
+    });
+  });
 
   if ( $( 'body' ).first().hasClass( 'woocommerce-cart' ) ) {
     $('#mini-cart').on("click", function (e) {

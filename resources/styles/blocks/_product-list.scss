@@ -37,5 +37,10 @@
 
 
 
+.product-additional-sections .product-list-builder {
+  @apply gap-0;
+}
 
-
+.product-additional-sections .product-list-builder h2 {
+  @apply mb-0 p-0;
+}
