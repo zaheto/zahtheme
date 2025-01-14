@@ -103,16 +103,9 @@
   }
 }
 
-.product-additional-sections .product-list-builder {
-  @apply py-16;
-}
-
-.product-additional-sections .product-list-builder h2 {
-  @apply text-black uppercase font-black text-22 md:text-32 xl:text-40 text-center mb-2 md:mb-6 relative  inline-block mx-auto;
-}
-
 .products.is-grid .swiper-wrapper,
 .product-list-builder .is-grid .swiper-wrapper,
+.product-list-builder2 .is-grid .swiper-wrapper,
 .products.is-grid  {
   @apply grid gap-4 w-full;
 }
@@ -134,7 +127,7 @@
 }
 
 .products .product .predefined-size .fence-price {
-  @apply m-0  p-0;
+  @apply m-0  p-0 text-left;
 }
 
 .products .product .predefined-size .fence-data {
@@ -151,11 +144,13 @@
   @apply w-full;
 }
 
-.product-list-builder .is-grid .product-list-builder--pagination {
+.product-list-builder .is-grid .product-list-builder--pagination,
+.product-list-builder2 .is-grid .product-list-builder--pagination2 {
   @apply mt-6 gap-2 hidden w-full h-6 relative items-center content-center justify-center;
 }
 
-.product-list-builder .is-slider .product-list-builder--pagination {
+.product-list-builder .is-slider .product-list-builder--pagination,
+.product-list-builder2 .is-slider .product-list-builder--pagination2 {
   @apply flex items-center justify-center;
 }
 

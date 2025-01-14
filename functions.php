@@ -91,24 +91,10 @@ add_action('wp_enqueue_scripts', 'zah_enqueue_product_gallery_script');
 
 
 function zah_enqueue_calculator_scripts() {
-     // Log all the conditions
-     //error_log('Debug conditions:');
-     //error_log('is_product_category: ' . (is_product_category() ? 'true' : 'false'));
-     //error_log('is_product_tag: ' . (is_product_tag() ? 'true' : 'false'));
-     //error_log('is_post_type_archive: ' . (is_post_type_archive('product') ? 'true' : 'false'));
-     // Add debug output to page
-    // add_action('wp_footer', function() {
-    //     if (is_product_category()) {
-    //         echo '<script>console.log("This is a product category page");</script>';
-    //     } else {
-    //         echo '<script>console.log("This is NOT a product category page");</script>';
-    //     }
-    // });
+
 
     // Check if script file exists
     $script_path = get_template_directory() . '/resources/scripts/subcategories-slider.js';
-    //error_log('Script path: ' . $script_path);
-    //error_log('Script exists: ' . (file_exists($script_path) ? 'true' : 'false'));
 
     // For the calculator template page
     if (is_page_template('template-calculator.blade.php')) {
@@ -121,7 +107,7 @@ function zah_enqueue_calculator_scripts() {
     }
     
     // For product archive pages
-    if (is_product_category()) {
+    if (is_product_category() || is_shop()) {  // Add is_shop() check here
         //error_log('Attempting to enqueue subcategories slider');
         
         // Enqueue Swiper first
@@ -141,10 +127,10 @@ function zah_enqueue_calculator_scripts() {
         );
 
         // Add test console log
-        wp_add_inline_script('zah-subcategories-slider', 
-            'console.log("Subcategories slider script enqueued at: " + new Date().toISOString());', 
-            'before'
-        );
+        // wp_add_inline_script('zah-subcategories-slider', 
+        //     'console.log("Subcategories slider script enqueued at: " + new Date().toISOString());', 
+        //     'before'
+        // );
 
         // Enqueue Swiper CSS
         wp_enqueue_style('swiper-css',
@@ -1192,14 +1178,14 @@ function zah_related_content_wrapper_end() {
 function woocommerce_related_products($args = array()) {
     global $product;
 
-    error_log("\n\n=== Custom Related Products Function Start ===");
-    error_log("Processing product: " . $product->get_id() . " - " . $product->get_name());
+    // error_log("\n\n=== Custom Related Products Function Start ===");
+    // error_log("Processing product: " . $product->get_id() . " - " . $product->get_name());
 
     // Get all categories for current product
     $terms = get_the_terms($product->get_id(), 'product_cat');
     
     if ($terms && !is_wp_error($terms)) {
-        error_log("Found " . count($terms) . " categories");
+        //error_log("Found " . count($terms) . " categories");
         
         // Find deepest category
         $deepest_term = null;
@@ -1209,7 +1195,7 @@ function woocommerce_related_products($args = array()) {
             $ancestors = get_ancestors($term->term_id, 'product_cat');
             $depth = count($ancestors);
             
-            error_log("Category: {$term->name} (ID: {$term->term_id}) - Depth: {$depth}");
+           // error_log("Category: {$term->name} (ID: {$term->term_id}) - Depth: {$depth}");
             
             if ($depth > $max_depth) {
                 $max_depth = $depth;
@@ -1218,7 +1204,7 @@ function woocommerce_related_products($args = array()) {
         }
         
         if ($deepest_term) {
-            error_log("Selected deepest category: " . $deepest_term->name);
+            //error_log("Selected deepest category: " . $deepest_term->name);
             
             // Set up custom arguments for related products query
             $args = array(
@@ -1237,13 +1223,13 @@ function woocommerce_related_products($args = array()) {
         }
     }
 
-    error_log("Final query args: " . print_r($args, true));
+   // error_log("Final query args: " . print_r($args, true));
     
     // Get the products
     $related_products = new WP_Query($args);
     
-    error_log("Found " . $related_products->post_count . " related products");
-    error_log("=== Custom Related Products Function End ===\n");
+   // error_log("Found " . $related_products->post_count . " related products");
+    //error_log("=== Custom Related Products Function End ===\n");
 
     if ($related_products->have_posts()) {
         echo '<div class="related products">';
@@ -2334,105 +2320,6 @@ add_filter('woocommerce_product_tabs', function($tabs) {
     return $tabs;
 });
 
-// Add new sections after product tabs
-add_action('woocommerce_after_single_product_summary', function() {
-    global $product;
-    
-    // Get related products and free sample data
-    $related_products = get_field('related_products');
-    $free_sample = get_field('free_sample');
-    
-    if ($related_products || ($free_sample && !empty($free_sample['sample_heading']))) {
-        echo '<div class="product-additional-sections">';
-        
-        // Related Products Section
-        if ($related_products) {
-            $products_count = count($related_products);
-            $slider_class = $products_count >= 4 ? 'is-slider' : 'is-grid';
-            
-            echo '<section class="product-list-builder">';
-           
-            echo '<h2 class="mb-0 p-0">' . esc_html__('Connected Products', 'zah') . '</h2>';
-            
-            echo '<section class="connected-products">';
-            echo '<div class="swiper more-products-slider products ' . $slider_class . '" data-products-count="' . $products_count . '">';
-            echo '<div class="swiper-wrapper">'; // Remove swiper-products class
-            
-            foreach ($related_products as $related_product) {
-                echo '<div class="swiper-slide">';
-                
-                global $post, $product;
-                $post = get_post($related_product->ID);
-                $product = wc_get_product($related_product->ID);
-                setup_postdata($post);
-                
-                wc_get_template_part('content', 'product');
-                
-                wp_reset_postdata();
-                
-                echo '</div>';
-            }
-            
-            echo '</div>'; // .swiper-wrapper
-            
-            // Only show navigation and pagination if 6 or more products
-            if ($products_count >= 6) {
-                echo '<div class="mt-6 gap-2 flex w-full h-6 relative items-center content-center justify-center">';
-                echo '<div class="small-swiper-button-prev">';
-                echo '<svg class="text-black w-[24px] h-[24px] hover:text-main transition-all duration-200 scale-100 hover:scale-95 transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 19L8 12L15 5" stroke="inherit" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-                echo '</div>';
-                echo '<div class="swiper-pagination"></div>';
-                echo '<div class="small-swiper-button-next">';
-                echo '<svg class="text-black w-[24px] h-[24px] hover:text-main transition-all duration-200 scale-100 hover:scale-95 transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 5L16 12L9 19" stroke="inherit" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-                echo '</div>';
-                echo '</div>';
-            }
-            
-            echo '</div></section>'; // .swiper-container
-            
-            echo '</section>';
-        }
-
-        // Free Sample Section
-        if ($free_sample && !empty($free_sample['sample_heading'])) {
-            echo '<section class="free-sample-block">';
-           
-            echo '<div class="free-sample-content">';
-            
-            
-            
-            echo '<div class="sample-text">';
-            if (!empty($free_sample['sample_heading'])) {
-                echo '<h2>' . esc_html($free_sample['sample_heading']) . '</h2>';
-            }
-            
-            if (!empty($free_sample['sample_description'])) {
-                echo '<div class="sample-description">';
-                echo wp_kses_post($free_sample['sample_description']);
-                echo '</div>';
-
-                echo '<button class="free-sample-btn ">Поръчай Безплатна мостра</button>';
-
-            }
-            echo '</div>'; // .sample-text
-
-            if (!empty($free_sample['sample_image'])) {
-                echo '<div class="sample-image">';
-                echo wp_get_attachment_image($free_sample['sample_image']['ID'], 'medium_large', false, [
-                    'class' => 'sample-featured-image',
-                    'alt' => esc_attr($free_sample['sample_heading'])
-                ]);
-                echo '</div>';
-            }
-            
-            echo '</div>'; // .free-sample-content
-    
-            echo '</section>';
-        }
-        
-        echo '</div>'; // .product-additional-sections
-    }
-}, 15); // Priority 15 to ensure it comes after tabs
 
 //-------------------- custom calculator pass to cart -------------------------
 
@@ -2724,7 +2611,7 @@ add_action('woocommerce_before_calculate_totals', function($cart) {
     }
 
     foreach ($cart->get_cart() as $cart_item_key => $cart_item) {
-        error_log('Calculating totals for item: ' . print_r($cart_item, true));
+        //error_log('Calculating totals for item: ' . print_r($cart_item, true));
         if (isset($cart_item['custom_price'])) {
             $cart_item['data']->set_price($cart_item['custom_price']);
         }
@@ -2759,7 +2646,7 @@ if( function_exists('acf_add_options_page') ) {
 add_action('woocommerce_after_shop_loop_item_title', function() {
     global $product;
 
-    // Check if product has atlas, sigma, gamma, piramida, or terra tag
+    // Check if product has relevant tags
     $has_atlas = has_term('atlas', 'product_tag', $product->get_id());
     $has_sigma = has_term('sigma', 'product_tag', $product->get_id());
     $has_gamma = has_term('gamma', 'product_tag', $product->get_id());
@@ -2797,6 +2684,7 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
                 // Set up base variables
                 $prices = [
                     'base_price' => $product->get_regular_price() ?: 0,
+                    'sale_price' => $product->get_sale_price() ?: 0,
                     'u_profile_left' => floatval(get_field('price_u_profile_left', $product->get_id()) ?: 0),
                     'u_profile_right' => floatval(get_field('price_u_profile_right', $product->get_id()) ?: 0),
                     'u_horizontal_panel' => floatval(get_field('price_u_horizontal_panel', $product->get_id()) ?: 0),
@@ -2804,79 +2692,76 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
                     'rivets' => floatval(get_field('price_rivets', $product->get_id()) ?: 0),
                     'self_tapping_screw' => floatval(get_field('price_self_tapping_screw', $product->get_id()) ?: 0),
                     'dowels' => floatval(get_field('price_dowels', $product->get_id()) ?: 0),
+                    'corners' => floatval(get_field('price_corners', $product->get_id()) ?: 0),
                 ];
 
-                if ($tag_slug === 'terra') {
-                    // Terra-specific calculations
-                    $base_distance = 2; // Default 2cm
-                    $casette_distance = 2; // Default 2cm
-
-                    // Calculate optimal height
-                    $G15 = floor(($height - $base_distance/100) / (0.108 + $casette_distance/100));
-                    $G16 = ceil(($height - $base_distance/100) / (0.108 + $casette_distance/100));
-                    $H15 = $G15 * 0.108 + ($G15 - 1) * ($casette_distance/100) + ($base_distance/100);
-                    $H16 = $G16 * 0.108 + ($G16 - 1) * ($casette_distance/100) + ($base_distance/100);
-                    $G17 = abs($height - $H15);
-                    $H17 = abs($height - $H16);
-                    
-                    $num_cassettes = ($G17 <= $H17 ? $G15 : $G16);
-                    $profileCassettesPcs = $num_cassettes * $panels;
-                    $profileCassettesLm = max(($width - 0.01) * $profileCassettesPcs, 0);
-
-                    // Terra specific components
-                    $uProfilePcs = $panels * 2;
-                    $uProfileLm = $height * $panels * 2;
-                    $rivetsPcs = round($profileCassettesPcs * 8) >= 101 ? $panels * 200 : $panels * 100;
-                    $selfTappingScrewPcs = $panels * 10;
-                    $dowelsPcs = $panels * 10;
-
-                    // Calculate price components for Terra
-                    $price_components = [
-                        'cassettes_profile' => $profileCassettesLm * $prices['base_price'],
-                        'u_profile' => $uProfileLm * $prices['u_profile_left'],
-                        'rivets' => $rivetsPcs * $prices['rivets'],
-                        'screws' => $selfTappingScrewPcs * $prices['self_tapping_screw'],
-                        'dowels' => $dowelsPcs * $prices['dowels']
-                    ];
-
-                } else {
-                    // Original calculations for other models
-                    if ($tag_slug === 'atlas') {
-                        $blindsProfilePcs = max(($height - 0.045) / 0.1 * $panels, 0);
-                    } elseif ($tag_slug === 'sigma') {
-                        $blindsProfilePcs = max(($height - 0.06) / 0.08 * $panels, 0);
-                    } elseif ($tag_slug === 'gamma') {
-                        $blindsProfilePcs = max(($height - 0.05) / 0.16 * $panels, 0);
-                    } elseif ($tag_slug === 'piramida') {
-                        $blindsProfilePcs = max(($height - 0.06) / 0.065 * $panels, 0);
-                    }
-
-                    $blindsProfileLm = max(($width - 0.01) * $blindsProfilePcs, 0);
-                    
-                    $uProfileLeftLm = $height * $panels;
-                    $uProfileRightLm = $height * $panels;
-                    $horizontalUProfileLm = $width * $panels;
-                    $reinforcingProfileLm = $height * $panels;
-                    $rivetsQty = 100;
-                    $selfTappingScrewQty = 10;
-
-                    $price_components = [
-                        'blinds_profile' => $blindsProfileLm * $prices['base_price'],
-                        'u_profile_left' => $uProfileLeftLm * $prices['u_profile_left'],
-                        'u_profile_right' => $uProfileRightLm * $prices['u_profile_right'],
-                        'horizontal_profile' => $horizontalUProfileLm * $prices['u_horizontal_panel'],
-                        'reinforcing_profile' => $reinforcingProfileLm * $prices['reinforcing_profile'],
-                        'rivets' => $rivetsQty * $prices['rivets'],
-                        'screws' => $selfTappingScrewQty * $prices['self_tapping_screw'],
-                    ];
+                // Calculate F20
+                $F20 = 0;
+                if ($width > 1.29 && $width < 2.1) {
+                    $F20 = 1;
+                } else if ($width > 2.09) {
+                    $F20 = 2;
                 }
 
-                // Calculate total price
-                $total_price = array_sum($price_components);
+                // Calculate dowels and corners
+                $dowelsPcs = $panels * 10 + $F20 * $panels;
+                $cornerPcs = $F20 * $panels;
 
-                // Display the calculated predefined size and price
+                // Initialize variables
+                $blindsProfilePcs = 0; // Always initialize this variable
+
+                // Calculate blinds profile pieces based on model
+                if ($tag_slug === 'atlas') {
+                    $blindsProfilePcs = max(($height - 0.045) / 0.1 * $panels, 0);
+                } elseif ($tag_slug === 'sigma') {
+                    $blindsProfilePcs = max(($height - 0.06) / 0.08 * $panels, 0);
+                } elseif ($tag_slug === 'gamma') {
+                    $blindsProfilePcs = max(($height - 0.05) / 0.16 * $panels, 0);
+                } elseif ($tag_slug === 'piramida') {
+                    $blindsProfilePcs = max(($height - 0.06) / 0.065 * $panels, 0);
+                }
+
+                // Calculate linear meters and quantities
+                $blindsProfileLm = max(($width - 0.01) * $blindsProfilePcs, 0);
+                $uProfileLeftLm = $height * $panels;
+                $uProfileRightLm = $height * $panels;
+                $horizontalUProfileLm = $width * $panels;
+                $reinforcingProfileLm = $height * $panels;
+                $rivetsQty = 100;
+                $selfTappingScrewQty = 10;
+
+                // Calculate total price (regular price)
+                $total_price = $blindsProfileLm * $prices['base_price'] +
+                               $uProfileLeftLm * $prices['u_profile_left'] +
+                               $uProfileRightLm * $prices['u_profile_right'] +
+                               $horizontalUProfileLm * $prices['u_horizontal_panel'] +
+                               $reinforcingProfileLm * $prices['reinforcing_profile'] +
+                               $rivetsQty * $prices['rivets'] +
+                               $selfTappingScrewQty * $prices['self_tapping_screw'] +
+                               $dowelsPcs * $prices['dowels'] +
+                               $cornerPcs * $prices['corners'];
+
+                // Calculate discounted price if product is on sale
+                $discounted_price = $blindsProfileLm * ($prices['sale_price'] ?: $prices['base_price']) +
+                                    $uProfileLeftLm * $prices['u_profile_left'] +
+                                    $uProfileRightLm * $prices['u_profile_right'] +
+                                    $horizontalUProfileLm * $prices['u_horizontal_panel'] +
+                                    $reinforcingProfileLm * $prices['reinforcing_profile'] +
+                                    $rivetsQty * $prices['rivets'] +
+                                    $selfTappingScrewQty * $prices['self_tapping_screw'] +
+                                    $dowelsPcs * $prices['dowels'] +
+                                    $cornerPcs * $prices['corners'];
+
                 echo '<div class="predefined-size">';
-                echo '<p class="fence-price">' . sprintf(__('%s', 'zah'), wc_price($total_price)) . '</p>';
+                if ($product->is_on_sale() && $prices['sale_price'] > 0 && $prices['sale_price'] < $prices['base_price']) {
+                    echo '<p class="fence-price">';
+                    echo '<del>' . wc_price($total_price) . '</del> ';
+                    echo '<ins>' . wc_price($discounted_price) . '</ins>';
+                    echo '</p>';
+                } else {
+                    echo '<p class="fence-price">' . wc_price($total_price) . '</p>';
+                }
+
                 echo '<span class="fence-data">' . __('Panel price for', 'zah') . ' ' .
                      number_format($width, 2) . '(ш) x ' . number_format($height, 3) . '(в)' . '</span>';
                 echo '</div>';
@@ -2886,6 +2771,14 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
         }
     }
 });
+
+// Optionally, add this filter to hide the default price
+add_filter('woocommerce_get_price_html', function($price, $product) {
+    if (has_term(['atlas', 'sigma', 'gamma', 'piramida', 'terra'], 'product_tag', $product->get_id())) {
+        return ''; // Return empty string to hide default price
+    }
+    return $price;
+}, 100, 2);
 
 // Change "Add to Cart" button text for siding products
 add_filter('woocommerce_loop_add_to_cart_link', function($button, $product) {
@@ -3168,49 +3061,177 @@ $free_shipping_products = false;
 $free_shipping_class_name = 'free-shipping';
 
 if($loading_data['order_id'] < 0){
-if( isset($woocommerce->cart) ){
-$items = $woocommerce->cart->get_cart();
+    if( isset($woocommerce->cart) ){
+        $items = $woocommerce->cart->get_cart();
 
-foreach($items as $item => $values) {
-$_product = wc_get_product( $values['data']->get_id() );
-$shipping_class = $_product->get_shipping_class();
+        foreach($items as $item => $values) {
+            $_product = wc_get_product( $values['data']->get_id() );
+            $shipping_class = $_product->get_shipping_class();
 
-if( $shipping_class == $free_shipping_class_name ){
-$free_shipping_products = true;
-break;
-}
-}
+            if( $shipping_class == $free_shipping_class_name ){
+                $free_shipping_products = true;
+                break;
+            }
+        }
 
-}
-if( $free_shipping_products === true ){
-$result['customer_shipping_cost'] = __('Безплатна доставка', 'woocommerce-econt');
-if(!isset($_SESSION)) {
-session_start();
-}
-$_SESSION['econt_shipping_cost'] = 0.00;
+    }
+    if( $free_shipping_products === true ){
+    $result['customer_shipping_cost'] = __('Безплатна доставка', 'woocommerce-econt');
+        if(!isset($_SESSION)) {
+            session_start();
+        }
+    $_SESSION['econt_shipping_cost'] = 0.00;
 
-}
+    }
 }else{
 $order = wc_get_order( $loading_data['order_id'] );
 
 if( $order ){
-foreach( $order->get_items() as $item_id => $item ) {
-$_product = wc_get_product( $item->get_product_id() );
-$shipping_class = $_product->get_shipping_class();
-$quantity = $item->get_quantity();
+    foreach( $order->get_items() as $item_id => $item ) {
+        $_product = wc_get_product( $item->get_product_id() );
+        $shipping_class = $_product->get_shipping_class();
+        $quantity = $item->get_quantity();
 
-if( $shipping_class == $free_shipping_class_name ){
-$free_shipping_products = true;
-break;
-}
-}
-}
-if( $free_shipping_products === true ){
-$result['customer_shipping_cost'] = __('free shipping', 'woocommerce-econt');
-}
+        if( $shipping_class == $free_shipping_class_name ){
+            $free_shipping_products = true;
+            break;
+            }
+        }
+    }
+    if( $free_shipping_products === true ){
+        $result['customer_shipping_cost'] = __('free shipping', 'woocommerce-econt');
+    }
 
 }
 
 return $result;
 
 }
+
+
+
+
+
+add_action('woocommerce_after_single_product_summary', function() {
+    global $product;
+    
+    // Get related products and free sample data
+    $related_products = get_field('related_products');
+    $free_sample = get_field('free_sample');
+    
+    if ($related_products || ($free_sample && !empty($free_sample['sample_heading']))) {
+        echo '<div class="product-additional-sections">';
+        
+        // Related Products Section
+        if ($related_products) {
+            $products_count = count($related_products);
+            $slider_class = $products_count >= 5 ? 'is-slider' : 'is-grid';
+            
+            echo '<section class="product-list-builder2">';
+           
+            echo '<h2 class="title">' . esc_html__('Connected Products', 'zah') . '</h2>';
+            
+            echo '<section class="connected-products">';
+            echo '<div class="swiper more-products-slider products ' . $slider_class . '" data-products-count="' . $products_count . '">';
+            echo '<div class="swiper-wrapper">';
+            
+            // Temporarily remove the price action
+            remove_action('woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_price', 10);
+            
+            foreach ($related_products as $related_product) {
+                // Debug: Log product ID and title
+                // error_log('Product ID: ' . $related_product->ID);
+                // error_log('Product Title: ' . get_the_title($related_product->ID));
+                // error_log('Product Price: ' . wc_get_product($related_product->ID)->get_price());
+            
+                echo '<div class="swiper-slide">';
+
+                // Store original globals
+                $original_post = $GLOBALS['post'];
+                $original_product = $GLOBALS['product'];
+
+                // Set up new post data
+                $GLOBALS['post'] = get_post($related_product->ID);
+                $GLOBALS['product'] = wc_get_product($related_product->ID);
+                setup_postdata($GLOBALS['post']);
+
+                // Debugging: Output correct price directly
+                $current_price = $GLOBALS['product']->get_price();
+                echo '<p class="debug-price">' . esc_html($current_price) . '</p>';
+
+                // Render the product template
+                wc_get_template_part('content', 'product');
+
+                // Manually render the price HTML
+                $price_html = $GLOBALS['product']->get_price_html();
+                if ($price_html) {
+                    echo '<div class="woocommerce-loop-product__price">' . $price_html . '</div>';
+                }
+
+                // Restore original globals
+                $GLOBALS['post'] = $original_post;
+                $GLOBALS['product'] = $original_product;
+                wp_reset_postdata();
+
+                echo '</div>';
+            }
+            
+            // Add back the price action
+            add_action('woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_price', 10);
+            
+            echo '</div>'; // .swiper-wrapper
+            
+            // Only show navigation and pagination if 6 or more products
+            if ($products_count >= 6) {
+                echo '<div class="product-list-builder--pagination2">';
+                echo '<div class="small-swiper-button-prev-connected">';
+                echo '<svg class="text-black w-[24px] h-[24px] hover:text-main transition-all duration-200 scale-100 hover:scale-95 transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 19L8 12L15 5" stroke="inherit" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                echo '</div>';
+                echo '<div class="swiper-pagination"></div>';
+                echo '<div class="small-swiper-button-next-connected">';
+                echo '<svg class="text-black w-[24px] h-[24px] hover:text-main transition-all duration-200 scale-100 hover:scale-95 transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 5L16 12L9 19" stroke="inherit" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                echo '</div>';
+                echo '</div>';
+            }
+            
+            echo '</div></section>';
+            echo '</section>';
+        }
+
+        // Free Sample Section
+        if ($free_sample && !empty($free_sample['sample_heading'])) {
+            echo '<section class="free-sample-block">';
+           
+            echo '<div class="free-sample-content">';
+            
+            echo '<div class="sample-text">';
+            if (!empty($free_sample['sample_heading'])) {
+                echo '<h2>' . esc_html($free_sample['sample_heading']) . '</h2>';
+            }
+            
+            if (!empty($free_sample['sample_description'])) {
+                echo '<div class="sample-description">';
+                echo wp_kses_post($free_sample['sample_description']);
+                echo '</div>';
+
+                echo '<button class="free-sample-btn ">Поръчай Безплатна мостра</button>';
+            }
+            echo '</div>'; // .sample-text
+
+            if (!empty($free_sample['sample_image'])) {
+                echo '<div class="sample-image">';
+                echo wp_get_attachment_image($free_sample['sample_image']['ID'], 'medium_large', false, [
+                    'class' => 'sample-featured-image',
+                    'alt' => esc_attr($free_sample['sample_heading'])
+                ]);
+                echo '</div>';
+            }
+            
+            echo '</div>'; // .free-sample-content
+    
+            echo '</section>';
+        }
+        
+        echo '</div>'; // .product-additional-sections
+    }
+}, 15); // Priority 15 to ensure it comes after tabs

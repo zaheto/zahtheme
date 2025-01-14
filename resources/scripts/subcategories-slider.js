@@ -1,98 +1,95 @@
 jQuery(document).ready(function ($) {
-  if (typeof Swiper === 'undefined') {
-    console.error('Swiper is required for subcategories slider');
-    return;
-  }
-
   let subcategoriesSlider;
 
   function initSubcategoriesSlider() {
-    const sliderContainer = document.querySelector('.subcategories-slider');
-    if (!sliderContainer || window.innerWidth < 768) return;
+      const sliderContainer = document.querySelector('.subcategories-slider');
+      if (!sliderContainer) return;
 
-    const numberOfSlides = document.querySelectorAll('.subcategories-slider .swiper-slide').length;
-    
-    if (numberOfSlides > 0) {
-      try {
-        subcategoriesSlider = new Swiper(".subcategories-slider", {
-          loop: false,
-          slidesPerView: 4,
-          spaceBetween: 16,
-          centeredSlides: false,
-          initialSlide: 0,
-          roundLengths: true,
-          watchOverflow: true,
-          keyboard: {
-            enabled: true,
-            onlyInViewport: true,
-          },
-          navigation: {
-            nextEl: '.subcategories-next',
-            prevEl: '.subcategories-prev'
-          },
-          breakpoints: {
-            768: {
-              slidesPerView: 4,
-              spaceBetween: 16,
-            },
-            1028: {
-              slidesPerView: 6,
-              spaceBetween: 16,
-            },
-            1280: {
-              slidesPerView: 7,
-              spaceBetween: 16,
-            }
-          },
-          on: {
-            init: function() {
-              // Hide prev button on initial load
-              document.querySelector('.subcategories-prev').style.opacity = '0';
-              document.querySelector('.subcategories-prev').style.pointerEvents = 'none';
-            },
-            slideChange: function() {
-              const prevButton = document.querySelector('.subcategories-prev');
-              const nextButton = document.querySelector('.subcategories-next');
+      // Check if element is actually visible
+      const isVisible = window.getComputedStyle(sliderContainer).display !== 'none';
+      if (!isVisible || window.innerWidth < 768) return;
+
+      const numberOfSlides = document.querySelectorAll('.subcategories-slider .swiper-slide').length;
+      
+      if (numberOfSlides > 0) {
+          try {
+              // First, ensure proper Swiper classes
+              sliderContainer.classList.add('swiper');
               
-              // Handle prev button
-              if (this.isBeginning) {
-                prevButton.style.opacity = '0';
-                prevButton.style.pointerEvents = 'none';
-              } else {
-                prevButton.style.opacity = '1';
-                prevButton.style.pointerEvents = 'auto';
+              // Add swiper-initialized class to prevent multiple initializations
+              if (sliderContainer.classList.contains('swiper-initialized')) {
+                  return;
               }
-              
-              // Handle next button
-              if (this.isEnd) {
-                nextButton.style.opacity = '0';
-                nextButton.style.pointerEvents = 'none';
-              } else {
-                nextButton.style.opacity = '1';
-                nextButton.style.pointerEvents = 'auto';
-              }
-            }
-          }
-        });
 
-        const navigationButtons = document.querySelectorAll('.subcategories-prev, .subcategories-next');
-        navigationButtons.forEach(button => {
-          if (numberOfSlides > 7) {
-            button.style.display = 'flex';
-          } else {
-            button.style.display = 'none';
-          }
-        });
+              subcategoriesSlider = new Swiper(".subcategories-slider", {
+                  loop: false,
+                  slidesPerView: 4,
+                  spaceBetween: 16,
+                  centeredSlides: false,
+                  initialSlide: 0,
+                  roundLengths: true,
+                  watchOverflow: true,
+                  enabled: true,
+                  keyboard: {
+                      enabled: true,
+                      onlyInViewport: true,
+                  },
+                  navigation: {
+                      nextEl: '.subcategories-next',
+                      prevEl: '.subcategories-prev'
+                  },
+                  breakpoints: {
+                      768: {
+                          slidesPerView: Math.min(4, numberOfSlides),
+                          spaceBetween: 16,
+                          enabled: true
+                      },
+                      1028: {
+                          slidesPerView: Math.min(4, numberOfSlides),
+                          spaceBetween: 16,
+                          enabled: true
+                      },
+                      1280: {
+                          slidesPerView: Math.min(5, numberOfSlides),
+                          spaceBetween: 16,
+                          enabled: true
+                      }
+                  },
+                  on: {
+                      init: function() {
+                          const prevButton = document.querySelector('.subcategories-prev');
+                          const nextButton = document.querySelector('.subcategories-next');
+                          
+                          if (numberOfSlides > this.params.slidesPerView) {
+                              prevButton.style.display = 'flex';
+                              nextButton.style.display = 'flex';
+                              prevButton.style.opacity = this.isBeginning ? '0' : '1';
+                              prevButton.style.pointerEvents = this.isBeginning ? 'none' : 'auto';
+                          } else {
+                              prevButton.style.display = 'none';
+                              nextButton.style.display = 'none';
+                          }
+                      },
+                      slideChange: function() {
+                          const prevButton = document.querySelector('.subcategories-prev');
+                          const nextButton = document.querySelector('.subcategories-next');
+                          
+                          prevButton.style.opacity = this.isBeginning ? '0' : '1';
+                          prevButton.style.pointerEvents = this.isBeginning ? 'none' : 'auto';
+                          
+                          nextButton.style.opacity = this.isEnd ? '0' : '1';
+                          nextButton.style.pointerEvents = this.isEnd ? 'none' : 'auto';
+                      }
+                  }
+              });
 
-        return subcategoriesSlider;
-      } catch (error) {
-        console.error('Error initializing Swiper:', error);
+              return subcategoriesSlider;
+          } catch (error) {}
       }
-    }
   }
 
-  // Initialize on load
-  initSubcategoriesSlider();
+  // Initialize with a small delay to ensure DOM is ready
+  setTimeout(initSubcategoriesSlider, 100);
 
   // Handle resize events
   let subcategoriesResizeTimer;

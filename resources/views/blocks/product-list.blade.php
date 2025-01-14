@@ -39,9 +39,9 @@
 
         @if($is_slider)
               <div class="product-list-builder--pagination ">
-                <div class="small-swiper-button-prev"><x-iconsax-lin-arrow-left class="text-black w-[24px] h-[24px] hover:text-main transition-all duration-200 scale-100 hover:scale-95 transform" /></div>
+                <div class="small-swiper-button-prev-connected relative z-100"><x-iconsax-lin-arrow-left class="text-black w-[24px] h-[24px] hover:text-main transition-all duration-200 scale-100 hover:scale-95 transform" /></div>
                 <div class="swiper-pagination"></div>
-                <div class="small-swiper-button-next"><x-iconsax-lin-arrow-right class="text-black w-[24px] h-[24px] hover:text-main transition-all duration-200 scale-100 hover:scale-95 transform" /></div>
+                <div class="small-swiper-button-next-connected relative z-100"><x-iconsax-lin-arrow-right class="text-black w-[24px] h-[24px] hover:text-main transition-all duration-200 scale-100 hover:scale-95 transform" /></div>
               </div>
           </div>
         @else

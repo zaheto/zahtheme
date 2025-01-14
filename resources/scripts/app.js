@@ -255,73 +255,6 @@ window.addEventListener('resize', function() {
 });
 
 
-  // var moreProductsSLider = new Swiper(".more-products-slider", {
-  //   loop: false,
-  //   autoHeight: true, //enable auto height
-  //   keyboardControl: true,
-  //   keyboard: true,
-  //   slidesPerView: 2,
-  //   spaceBetween: 12,
-
-  //   breakpoints: {
-  //     760: {
-  //       slidesPerView: 2,
-  //       spaceBetween: 12,
-  //       pagination: {
-  //         el: '.swiper-pagination',
-  //         clickable: true,
-  //       }
-  //     },
-  //     768: {
-  //       slidesPerView: 3,
-  //       spaceBetween: 12,
-  //       pagination: {
-  //         el: '.swiper-pagination',
-  //         clickable: true,
-  //       }
-  //     },
-  //     1024: {
-  //       slidesPerView: 4,
-  //       spaceBetween: 12,
-  //       pagination: {
-  //         el: '.swiper-pagination',
-  //         clickable: true,
-  //       },
-  //       // Navigation arrows
-  //       navigation: {
-  //         nextEl: '.swiper-button-next',
-  //         prevEl: '.swiper-button-prev',
-  //       }
-  //     },
-  //     1280: {
-  //       spaceBetween: 16,
-  //       slidesPerView: 5,
-  //       pagination: {
-  //         el: '.swiper-pagination',
-  //         clickable: true,
-  //       },
-  //       // Navigation arrows
-  //       navigation: {
-  //         nextEl: '.swiper-button-next',
-  //         prevEl: '.swiper-button-prev',
-  //       }
-  //     },
-  //     1440: {
-  //       spaceBetween: 16,
-  //       slidesPerView: 6,
-  //       pagination: {
-  //         el: '.swiper-pagination',
-  //         clickable: true,
-  //       },
-  //       // Navigation arrows
-  //       navigation: {
-  //         nextEl: '.swiper-button-next',
-  //         prevEl: '.swiper-button-prev',
-  //       }
-  //     },
-  //   },
-  // });
-
   
 $('.more-products-slider').each(function() {
     const $slider = $(this);
@@ -343,7 +276,10 @@ $('.more-products-slider').each(function() {
             },
             slidesPerView: 2,
             spaceBetween: 12,
-            
+            navigation: {
+              nextEl: '.small-swiper-button-next-connected',
+              prevEl: '.small-swiper-button-prev-connected'
+            },
             pagination: {
                 el: '.swiper-pagination',
                 clickable: true,
@@ -361,10 +297,6 @@ $('.more-products-slider').each(function() {
                 1024: {
                     slidesPerView: 4,
                     spaceBetween: 12,
-                    navigation: {
-                        nextEl: '.small-swiper-button-next',
-                        prevEl: '.small-swiper-button-prev',
-                    }
                 },
                 1280: {
                     spaceBetween: 16,

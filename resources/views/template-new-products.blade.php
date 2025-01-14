@@ -19,23 +19,36 @@
             'posts_per_page' => 12,
             'orderby' => 'date',
             'order' => 'DESC',
+            'paged' => get_query_var('paged') ? get_query_var('paged') : 1, // Add this line for pagination
         );
         
         $new_products = new WP_Query($args);
         @endphp
 
         @if($new_products->have_posts())
-            <ul class="products columns-4 ">
+            <ul class="products columns-4">
                 @while($new_products->have_posts()) 
-                    @php($new_products->the_post())
+                    @php
+                    $new_products->the_post();
+                    @endphp
                     @include('woocommerce.content-product')
                 @endwhile
             </ul>
-           
-            @php(wp_reset_postdata())
-        @endif
 
-        
+            {{-- Include WooCommerce pagination --}}
+            @php
+            wc_get_template('loop/pagination.php', array(
+                'total'   => $new_products->max_num_pages,
+                'current' => max(1, get_query_var('paged')),
+                'base'    => esc_url_raw(str_replace(999999999, '%#%', remove_query_arg('add-to-cart', get_pagenum_link(999999999, false)))),
+                'format'  => '',
+            ));
+            @endphp
+
+            @php
+            wp_reset_postdata();
+            @endphp
+        @endif
     </div>
   @endwhile
 @endsection

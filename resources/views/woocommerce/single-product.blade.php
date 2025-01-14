@@ -31,11 +31,13 @@
 
             // Move this inside the loop to ensure we have the correct post ID
             $product = wc_get_product(get_the_ID());
+            
             $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra']; // Add other models here as needed
             foreach ($models as $model) {
                 if (has_term($model, 'product_tag', get_the_ID())) {
                     ${"{$model}_pricing"} = [
-                        'base_price' => $product->get_regular_price() ?: 0,
+                       'base_price' => $product->get_regular_price() ?: 0,
+                        'sale_price' => (has_term($model, 'product_tag') && $product->is_on_sale()) ? $product->get_sale_price() : 0,
                         'price_u_profile_left' => get_field('price_u_profile_left', get_the_ID()) ?: 0,
                         'price_u_profile_right' => get_field('price_u_profile_right', get_the_ID()) ?: 0,
                         'price_u_horizontal_panel' => get_field('price_u_horizontal_panel', get_the_ID()) ?: 0,

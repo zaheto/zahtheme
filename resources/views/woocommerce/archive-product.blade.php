@@ -84,7 +84,7 @@
             </div>
 
             <!-- Desktop Slider (768px and above) -->
-            <div class="hidden md:block subcategories-slider">
+            <div class="hidden md:block subcategories-slider swiper">
               <div class="swiper-wrapper">
                 @foreach ($categories as $category)
                   @php
@@ -92,7 +92,7 @@
                     $thumbnail_id = get_term_meta($category->term_id, 'thumbnail_id', true);
                     $image_url = $thumbnail_id ? wp_get_attachment_url($thumbnail_id) : $no_thumbnail_url;
                   @endphp
-                  <div class="swiper-slide w-full">
+                  <div class="swiper-slide">
                     <a href="{{ esc_url($category_link) }}" class="block w-full">
                       @if ($image_url)
                         <img src="{{ esc_url($image_url) }}" 
@@ -106,17 +106,16 @@
                   </div>
                 @endforeach
               </div>
-
+              <!-- Add these navigation buttons -->
               <div class="subcategories-prev absolute -left-2 top-[82px] md:top-[88px] z-10 w-14 h-14 bg-white/80 hover:bg-white rounded-md shadow-lg flex items-center justify-center focus:outline-none cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
               </div>
-
               <div class="subcategories-next absolute -right-2 top-[82px] md:top-[88px] z-10 w-14 h-14 bg-white/80 hover:bg-white rounded-md shadow-lg flex items-center justify-center focus:outline-none cursor-pointer">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
               </div>
             </div>
           </div>
