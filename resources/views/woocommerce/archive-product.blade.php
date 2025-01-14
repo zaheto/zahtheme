@@ -144,33 +144,61 @@
           {{-- Products Area --}}
           <div id="shop-products" class="content-area">
             @if (woocommerce_product_loop())
-              {{-- Products Loop --}}
-              @php
-                woocommerce_product_loop_start();
-              @endphp
+                {{-- Products Loop --}}
+                @php
+                    woocommerce_product_loop_start();
+                @endphp
 
-              @if (wc_get_loop_prop('total'))
-                @while (have_posts())
-                  @php
-                    the_post();
-                    do_action('woocommerce_shop_loop');
-                    wc_get_template_part('content', 'product');
-                  @endphp
-                @endwhile
-              @endif
+                @if (wc_get_loop_prop('total'))
+                    @while (have_posts())
+                        @php
+                            the_post();
+                            global $product;
 
-              @php
-                woocommerce_product_loop_end();
-                do_action('woocommerce_after_shop_loop');
-              @endphp
+                            // Get the product badges
+                            $badges = zah_get_product_badges($product);
+
+                            // Output the product badges
+                            // echo $badges;
+
+                            // Render the product template
+                            do_action('woocommerce_shop_loop');
+                            wc_get_template_part('content', 'product');
+                        @endphp
+                    @endwhile
+                @endif
+
+                @php
+                    woocommerce_product_loop_end();
+                    do_action('woocommerce_after_shop_loop');
+                @endphp
             @else
-              @php
-                do_action('woocommerce_no_products_found')
-              @endphp
+                @php
+                    do_action('woocommerce_no_products_found')
+                @endphp
             @endif
           </div>
         </div>
       </div>
+
+      <script>
+        jQuery(document).ready(function($) {
+        // Loop through each product on the archive page
+          $('.product').each(function() {
+            const product = $(this);
+            const totalPrice = parseFloat(product.find('.fence-price del .woocommerce-Price-amount bdi').text().replace(',', ''));
+            const discountedPrice = parseFloat(product.find('.fence-price ins .woocommerce-Price-amount bdi').text().replace(',', ''));
+
+            // Calculate the discount percentage
+            if (totalPrice > 0 && discountedPrice > 0) {
+                const discountPercentage = Math.round(100 - (discountedPrice / totalPrice * 100));
+                if (discountPercentage > 0) {
+                    product.find('.product-badge.sale').text(`-${discountPercentage}%`);
+                }
+            }
+            });
+        });
+    </script>
 
   </main>
 

@@ -18,9 +18,10 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
             });
         }
     });
+    
 
     // Get price elements
-    const priceElement = $('.price');
+    const priceElement = $('.inside-product--top-wrap .price');
     const addToCartButton = $('button.single_add_to_cart_button');
 
     // Input elements
@@ -54,6 +55,8 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
                width <= parseFloat(widthInput.attr('max')) && 
                panels > 0;
     }
+
+    
     function calculatePrice() {
         if (!areInputsValid()) return;
     
@@ -144,12 +147,25 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
             }
     
             // Debug: Log the total and discounted prices
-            // console.log('Total Price:', totalPrice);
-            // console.log('Discounted Price:', discountedPrice);
+            console.log('Total Price:', totalPrice);
+            console.log('Discounted Price:', discountedPrice);
+    
+            // Calculate the discount percentage
+            let discountPercentage = 0;
+            if (totalPrice > 0 && discountedPrice > 0) {
+                discountPercentage = Math.round(100 - (discountedPrice / totalPrice * 100));
+                console.log('Discount Percentage:', discountPercentage + '%');
+            }
+    
+            // Update the discount badge
+            $('.product-badge.sale').text(`-${discountPercentage}%`);
+    
+            // Set hidden fields for total_price and discounted_price
+            $('#total_price').val(totalPrice.toFixed(2));
+            $('#discounted_price').val(discountedPrice.toFixed(2));
     
             // Update displayed price
             if (atlas_pricing.sale_price && atlas_pricing.sale_price > 0 && atlas_pricing.sale_price < atlas_pricing.base_price) {
-                //console.log('Showing discounted price (A and B)');
                 priceElement.html(`
                     <span class="woocommerce-Price-amount amount">
                         <del>
@@ -162,7 +178,6 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
                     </span>
                 `);
             } else {
-                //console.log('Showing original price (C)');
                 priceElement.html(`
                     <span class="woocommerce-Price-amount amount">
                         <bdi>${totalPrice.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
@@ -203,6 +218,7 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
             console.error("An error occurred during calculations: ", error);
         }
     }
+    
 
     // Add event listeners to all inputs
     widthInput.on('input', calculatePrice);
@@ -239,6 +255,19 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
         
         // Trigger calculation
         calculatePrice();
+
+        // Add this part to dynamically update the badge text
+        $('.product-badge.sale').each(function () {
+            const totalPrice = $(this).data('total-price');
+            const discountedPrice = $(this).data('discounted-price');
+            const discountPercentage = $(this).data('discount-percentage');
+
+            // Update the badge text dynamically
+            if (discountPercentage > 0) {
+                $(this).html(`-${discountPercentage}%`);
+                console.log(`Discount Badge Updated: -${discountPercentage}%`);
+            }
+        });
     });
 
     // Trigger initial calculation

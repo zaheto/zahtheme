@@ -335,3 +335,13 @@ form.woocommerce-checkout  {
     clear: inherit!important;
   }
 }
+@media (min-width: 768px) {
+  #econt_door_street_et_field {
+    width: 47%;
+      margin-right: 0 !important;
+  }
+
+  #econt_door_street_ap_field {
+    float: left!important;
+  }
+}

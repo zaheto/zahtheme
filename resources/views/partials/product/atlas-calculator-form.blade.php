@@ -68,6 +68,9 @@
                     required
                 >
             </div>
+             <!-- Add hidden fields for total_price and discounted_price -->
+             <input type="hidden" name="total_price" id="total_price" value="">
+             <input type="hidden" name="discounted_price" id="discounted_price" value="">
         </form>
     
         
