@@ -23,7 +23,7 @@
 
 <section class="fences-product">
     <div id="sigma-calculator-form" class="sigma-calculator-section">
-        <h2 class="mb-2">SIGMA Въведете вашите индивидуални размери на оградата:</h2>
+        <h2 class="mb-2">Въведете вашите индивидуални размери на оградата:</h2>
         <form id="sigma-fence-calculator" class="sigma-calculator-section">
             <div class="form-row">
                 <label for="sigma-panel-width" class="font-normal">Ширина на паното (m)</label>
@@ -68,6 +68,9 @@
                     required
                 >
             </div>
+            <!-- Add hidden fields for total_price and discounted_price -->
+            <input type="hidden" name="total_price" id="total_price" value="">
+            <input type="hidden" name="discounted_price" id="discounted_price" value="">
         </form>
     
         

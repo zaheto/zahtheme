@@ -40,7 +40,9 @@
                     disabled
                 >
             </div>
-
+             <!-- Add hidden fields for total_price and discounted_price -->
+             <input type="hidden" name="total_price" id="total_price" value="">
+             <input type="hidden" name="discounted_price" id="discounted_price" value="">
             
         </form>
         <div class="opt-square-wrap mt-4">
@@ -55,6 +57,15 @@
         @endif
     </div>
 </section>
+
+<script>
+    var siding_pricing = {
+        base_price: '{{ $sidingData['base_price'] }}',
+        sale_price: '{{ $product->get_sale_price() }}',  // Add this line
+        panel_siding_sqm: '{{ $sidingData['panel_siding_sqm'] }}',
+        panel_siding_useful: '{{ $sidingData['panel_siding_useful'] }}'
+    };
+</script>
 
 <script>
 jQuery(document).ready(function($) {

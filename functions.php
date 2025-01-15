@@ -2658,18 +2658,97 @@ if( function_exists('acf_add_options_page') ) {
 add_action('woocommerce_after_shop_loop_item_title', function() {
     global $product;
 
+    // Initial debug - will show for ALL products
+    echo "<script>
+        console.log('Product Check:', {
+            'product_id': '" . $product->get_id() . "',
+            'product_name': '" . $product->get_name() . "'
+        });
+    </script>";
+
     // Check if product has relevant tags
     $has_atlas = has_term('atlas', 'product_tag', $product->get_id());
     $has_sigma = has_term('sigma', 'product_tag', $product->get_id());
     $has_gamma = has_term('gamma', 'product_tag', $product->get_id());
     $has_piramida = has_term('piramida', 'product_tag', $product->get_id());
     $has_terra = has_term('terra', 'product_tag', $product->get_id());
+    $has_siding = has_term('siding', 'product_tag', $product->get_id());
 
-    if (!$has_atlas && !$has_sigma && !$has_gamma && !$has_piramida && !$has_terra) return;
+    // Debug tag checks - will show immediately after checking tags
+    echo "<script>
+        console.log('Tag Check:', {
+            'has_atlas': " . ($has_atlas ? 'true' : 'false') . ",
+            'has_sigma': " . ($has_sigma ? 'true' : 'false') . ",
+            'has_gamma': " . ($has_gamma ? 'true' : 'false') . ",
+            'has_piramida': " . ($has_piramida ? 'true' : 'false') . ",
+            'has_terra': " . ($has_terra ? 'true' : 'false') . ",
+            'has_siding': " . ($has_siding ? 'true' : 'false') . "
+        });
+    </script>";
+
+    // Handle siding products first, before the models loop
+    if ($has_siding) {
+        // Get the siding-specific fields directly
+        $panel_siding_sqm = floatval(get_field('panel_siding_sqm', $product->get_id()) ?: 0);
+        $panel_siding_useful = floatval(get_field('panel_siding_useful', $product->get_id()) ?: 0);
+        $base_price = floatval($product->get_regular_price() ?: 0);
+        $sale_price = floatval($product->get_sale_price() ?: 0);
+    
+        // Calculate price for 1m² (using panel_siding_sqm like in the calculator)
+        $width = 1; // Using 1m as base
+        $panels = 1; // Using 1 panel as base
+        $totalArea = $width * $panels * $panel_siding_sqm;
+        
+        // Calculate total prices
+        $total_price = $totalArea * $base_price;
+        $discounted_price = $sale_price > 0 ? $totalArea * $sale_price : $total_price;
+    
+        echo "<script>
+            console.log('Siding Price Calculation:', {
+                'panel_siding_sqm': '" . $panel_siding_sqm . "',
+                'base_price': '" . $base_price . "',
+                'sale_price': '" . $sale_price . "',
+                'totalArea': '" . $totalArea . "',
+                'total_price': '" . $total_price . "',
+                'discounted_price': '" . $discounted_price . "'
+            });
+        </script>";
+    
+        // Display price
+        if ($product->is_on_sale() && $sale_price > 0 && $sale_price < $base_price) {
+            echo '<div class="price">';
+            echo '<span class="woocommerce-Price-amount amount">';
+            echo '<del><bdi>' . number_format($total_price, 2) . '&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi></del> ';
+            echo '<ins><bdi>' . number_format($discounted_price, 2) . '&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi></ins>';
+            echo '<span class="custom-text-after-price">(вкл. ДДС)</span>';
+            echo '</span>';
+            echo '</div>';
+        } else {
+            echo '<div class="price">';
+            echo '<span class="woocommerce-Price-amount amount">';
+            echo '<bdi>' . number_format($total_price, 2) . '&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>';
+            echo '<span class="custom-text-after-price">(вкл. ДДС)</span>';
+            echo '</span>';
+            echo '</div>';
+        }
+    
+        return; // Exit early for siding products
+    }
+
+    if (!$has_atlas && !$has_sigma && !$has_gamma && !$has_piramida && !$has_terra && !$has_siding) {
+        echo "<script>console.log('No relevant tags found');</script>";
+        return;
+    }
 
     $models = get_field('models', 'option');
 
-    if (!$models || !is_array($models)) return;
+   // Debug models
+   echo "<script>console.log('Models:', " . json_encode($models) . ");</script>";
+
+   if (!$models || !is_array($models)) {
+       echo "<script>console.log('No models found or invalid models');</script>";
+       return;
+   }
 
     foreach ($models as $model) {
         // Get tag info
@@ -2677,12 +2756,34 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
         $term = get_term($tag_id, 'product_tag');
         $tag_slug = $term ? $term->slug : '';
 
+        echo "<script>
+        console.log('Processing Model:', {
+            'tag_id': '" . $tag_id . "',
+            'tag_slug': '" . $tag_slug . "',
+            'has_siding': " . ($has_siding ? 'true' : 'false') . ",
+            'model_data': " . json_encode($model) . "
+        });
+    </script>";
+
         if (($has_sigma && $tag_slug === 'sigma') || 
             ($has_atlas && $tag_slug === 'atlas') || 
             ($has_gamma && $tag_slug === 'gamma') || 
             ($has_piramida && $tag_slug === 'piramida') ||
-            ($has_terra && $tag_slug === 'terra')) {
+            ($has_terra && $tag_slug === 'terra') ||
+            ($has_siding && $tag_slug === 'siding')) {
 
+                // Debug log for tag matching
+    echo "<script>
+    console.log('Tag Matching Check:', {
+        'tag_slug': '" . $tag_slug . "',
+        'has_siding': " . ($has_siding ? 'true' : 'false') . ",
+        'condition_result': " . (($has_siding && $tag_slug === 'siding') ? 'true' : 'false') . "
+    });
+</script>";
+
+// Add this BEFORE your predefined sizes check
+echo "<script>console.log('Checking model: " . $tag_slug . "');</script>";
+            
             $predefined_sizes = $model['predefined_sizes'];
 
             if (is_array($predefined_sizes) && count($predefined_sizes) > 0) {
@@ -2707,62 +2808,130 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
                     'corners' => floatval(get_field('price_corners', $product->get_id()) ?: 0),
                 ];
 
-                // Calculate F20
-                $F20 = 0;
-                if ($width > 1.29 && $width < 2.1) {
-                    $F20 = 1;
-                } else if ($width > 2.09) {
-                    $F20 = 2;
+                if (($has_siding && $tag_slug === 'siding')) {
+                    echo "<script>console.log('Entered siding section');</script>";
+                    
+                    // Get the siding-specific fields directly
+                    $panel_siding_sqm = floatval(get_field('panel_siding_sqm', $product->get_id()) ?: 0);
+                    $panel_siding_useful = floatval(get_field('panel_siding_useful', $product->get_id()) ?: 0);
+                    $base_price = floatval($product->get_regular_price() ?: 0);
+                    $sale_price = floatval($product->get_sale_price() ?: 0);
+                
+                    // Calculate example price for 1m²
+                    $total_price = $base_price;
+                    $discounted_price = $sale_price > 0 ? $sale_price : $total_price;
+                
+                    echo "<script>
+                        console.log('Siding Price Info:', {
+                            'panel_siding_sqm': '" . $panel_siding_sqm . "',
+                            'base_price': '" . $base_price . "',
+                            'sale_price': '" . $sale_price . "',
+                            'total_price': '" . $total_price . "',
+                            'discounted_price': '" . $discounted_price . "'
+                        });
+                    </script>";
+                
+                    // Display price per square meter
+                    if ($product->is_on_sale() && $sale_price > 0 && $sale_price < $base_price) {
+                        echo '<div class="price">';
+                        echo '<del>' . wc_price($total_price) . '</del> ';
+                        echo '<ins>' . wc_price($discounted_price) . '</ins>';
+                        echo '<span class="price-suffix">' . __('/м²', 'zah') . '</span>';
+                        echo '</div>';
+                    } else {
+                        echo '<div class="price">';
+                        echo wc_price($total_price);
+                        echo '<span class="price-suffix">' . __('/м²', 'zah') . '</span>';
+                        echo '</div>';
+                    }
+                
+                    break;
+                } elseif ($tag_slug === 'terra') {
+                    // Terra calculations (existing code)
+                    $cassetteDistance = 2;
+                    $baseDistance = 2;
+                    
+                    $G15 = floor(($height - $baseDistance/100) / (0.108 + $cassetteDistance/100));
+                    $G16 = ceil(($height - $baseDistance/100) / (0.108 + $cassetteDistance/100));
+                    $H15 = $G15 * 0.108 + ($G15 - 1) * ($cassetteDistance/100) + ($baseDistance/100);
+                    $H16 = $G16 * 0.108 + ($G16 - 1) * ($cassetteDistance/100) + ($baseDistance/100);
+                    $G17 = abs($height - $H15);
+                    $H17 = abs($height - $H16);
+                    
+                    $numCassettes = ($G17 <= $H17) ? $G15 : $G16;
+                    $profileCassettesPcs = $numCassettes * $panels;
+                    $profileCassettesLm = max(($width - 0.01) * $profileCassettesPcs, 0);
+                    
+                    $uProfilePcs = $panels * 2;
+                    $uProfileLm = ($G17 <= $H17 ? $H15 : $H16) * $panels * 2;
+                    $rivetsPcs = round($profileCassettesPcs * 8) >= 101 ? $panels * 200 : $panels * 100;
+                    $selfTappingScrewPcs = $panels * 10;
+                    $dowelsPcs = $panels * 10;
+
+                    $total_price = $profileCassettesLm * $prices['base_price'] +
+                                 $uProfileLm * $prices['u_profile_left'] +
+                                 $rivetsPcs * $prices['rivets'] +
+                                 $selfTappingScrewPcs * $prices['self_tapping_screw'] +
+                                 $dowelsPcs * $prices['dowels'];
+
+                    $discounted_price = $profileCassettesLm * ($prices['sale_price'] ?: $prices['base_price']) +
+                                      $uProfileLm * $prices['u_profile_left'] +
+                                      $rivetsPcs * $prices['rivets'] +
+                                      $selfTappingScrewPcs * $prices['self_tapping_screw'] +
+                                      $dowelsPcs * $prices['dowels'];
+
+                } else {
+                    // Other models calculations (existing code)
+                    $F20 = 0;
+                    if ($width > 1.29 && $width < 2.1) {
+                        $F20 = 1;
+                    } else if ($width > 2.09) {
+                        $F20 = 2;
+                    }
+
+                    $dowelsPcs = $panels * 10 + $F20 * $panels;
+                    $cornerPcs = $F20 * $panels;
+
+                    $blindsProfilePcs = 0;
+
+                    if ($tag_slug === 'atlas') {
+                        $blindsProfilePcs = max(($height - 0.045) / 0.1 * $panels, 0);
+                    } elseif ($tag_slug === 'sigma') {
+                        $blindsProfilePcs = max(($height - 0.06) / 0.08 * $panels, 0);
+                    } elseif ($tag_slug === 'gamma') {
+                        $blindsProfilePcs = max(($height - 0.05) / 0.16 * $panels, 0);
+                    } elseif ($tag_slug === 'piramida') {
+                        $blindsProfilePcs = max(($height - 0.06) / 0.065 * $panels, 0);
+                    }
+
+                    $blindsProfileLm = max(($width - 0.01) * $blindsProfilePcs, 0);
+                    $uProfileLeftLm = $height * $panels;
+                    $uProfileRightLm = $height * $panels;
+                    $horizontalUProfileLm = $width * $panels;
+                    $reinforcingProfileLm = $height * $panels;
+                    $rivetsQty = 100;
+                    $selfTappingScrewQty = 10;
+
+                    $total_price = $blindsProfileLm * $prices['base_price'] +
+                                 $uProfileLeftLm * $prices['u_profile_left'] +
+                                 $uProfileRightLm * $prices['u_profile_right'] +
+                                 $horizontalUProfileLm * $prices['u_horizontal_panel'] +
+                                 $reinforcingProfileLm * $prices['reinforcing_profile'] +
+                                 $rivetsQty * $prices['rivets'] +
+                                 $selfTappingScrewQty * $prices['self_tapping_screw'] +
+                                 $dowelsPcs * $prices['dowels'] +
+                                 $cornerPcs * $prices['corners'];
+
+                    $discounted_price = $blindsProfileLm * ($prices['sale_price'] ?: $prices['base_price']) +
+                                      $uProfileLeftLm * $prices['u_profile_left'] +
+                                      $uProfileRightLm * $prices['u_profile_right'] +
+                                      $horizontalUProfileLm * $prices['u_horizontal_panel'] +
+                                      $reinforcingProfileLm * $prices['reinforcing_profile'] +
+                                      $rivetsQty * $prices['rivets'] +
+                                      $selfTappingScrewQty * $prices['self_tapping_screw'] +
+                                      $dowelsPcs * $prices['dowels'] +
+                                      $cornerPcs * $prices['corners'];
                 }
-
-                // Calculate dowels and corners
-                $dowelsPcs = $panels * 10 + $F20 * $panels;
-                $cornerPcs = $F20 * $panels;
-
-                // Initialize variables
-                $blindsProfilePcs = 0; // Always initialize this variable
-
-                // Calculate blinds profile pieces based on model
-                if ($tag_slug === 'atlas') {
-                    $blindsProfilePcs = max(($height - 0.045) / 0.1 * $panels, 0);
-                } elseif ($tag_slug === 'sigma') {
-                    $blindsProfilePcs = max(($height - 0.06) / 0.08 * $panels, 0);
-                } elseif ($tag_slug === 'gamma') {
-                    $blindsProfilePcs = max(($height - 0.05) / 0.16 * $panels, 0);
-                } elseif ($tag_slug === 'piramida') {
-                    $blindsProfilePcs = max(($height - 0.06) / 0.065 * $panels, 0);
-                }
-
-                // Calculate linear meters and quantities
-                $blindsProfileLm = max(($width - 0.01) * $blindsProfilePcs, 0);
-                $uProfileLeftLm = $height * $panels;
-                $uProfileRightLm = $height * $panels;
-                $horizontalUProfileLm = $width * $panels;
-                $reinforcingProfileLm = $height * $panels;
-                $rivetsQty = 100;
-                $selfTappingScrewQty = 10;
-
-                // Calculate total price (regular price)
-                $total_price = $blindsProfileLm * $prices['base_price'] +
-                               $uProfileLeftLm * $prices['u_profile_left'] +
-                               $uProfileRightLm * $prices['u_profile_right'] +
-                               $horizontalUProfileLm * $prices['u_horizontal_panel'] +
-                               $reinforcingProfileLm * $prices['reinforcing_profile'] +
-                               $rivetsQty * $prices['rivets'] +
-                               $selfTappingScrewQty * $prices['self_tapping_screw'] +
-                               $dowelsPcs * $prices['dowels'] +
-                               $cornerPcs * $prices['corners'];
-
-                // Calculate discounted price if product is on sale
-                $discounted_price = $blindsProfileLm * ($prices['sale_price'] ?: $prices['base_price']) +
-                                    $uProfileLeftLm * $prices['u_profile_left'] +
-                                    $uProfileRightLm * $prices['u_profile_right'] +
-                                    $horizontalUProfileLm * $prices['u_horizontal_panel'] +
-                                    $reinforcingProfileLm * $prices['reinforcing_profile'] +
-                                    $rivetsQty * $prices['rivets'] +
-                                    $selfTappingScrewQty * $prices['self_tapping_screw'] +
-                                    $dowelsPcs * $prices['dowels'] +
-                                    $cornerPcs * $prices['corners'];
 
                 echo '<div class="predefined-size">';
                 if ($product->is_on_sale() && $prices['sale_price'] > 0 && $prices['sale_price'] < $prices['base_price']) {
@@ -2786,11 +2955,13 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
 
 // Optionally, add this filter to hide the default price
 add_filter('woocommerce_get_price_html', function($price, $product) {
-    if (has_term(['atlas', 'sigma', 'gamma', 'piramida', 'terra'], 'product_tag', $product->get_id())) {
+    if (has_term(['atlas', 'sigma', 'gamma', 'piramida', 'terra', 'siding'], 'product_tag', $product->get_id())) {
         return ''; // Return empty string to hide default price
     }
     return $price;
 }, 100, 2);
+
+
 
 // Change "Add to Cart" button text for siding products
 add_filter('woocommerce_loop_add_to_cart_link', function($button, $product) {
@@ -2802,17 +2973,23 @@ add_filter('woocommerce_loop_add_to_cart_link', function($button, $product) {
 }, 10, 2);
 
 // Add calculator form in product page
+
 add_action('woocommerce_single_product_summary', function() {
     if (has_term('siding', 'product_tag') && function_exists('get_field')) {
+        global $product;  // Get the product object
+        
         $data = [
             'panel_siding_sqm' => get_field('panel_siding_sqm'),
             'panel_siding_useful' => get_field('panel_siding_useful'),
-            'base_price' => get_field('_regular_price')
+            'base_price' => $product->get_regular_price()
         ];
-        echo view("partials.product.siding-calculator-form", ['sidingData' => $data])->render();
+        
+        echo view("partials.product.siding-calculator-form", [
+            'sidingData' => $data,
+            'product' => $product  // Pass the product object
+        ])->render();
     }
 }, 6);
-
 
 // Handle cart item data
 add_filter('woocommerce_add_cart_item_data', function ($cart_item_data, $product_id) {

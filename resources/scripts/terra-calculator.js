@@ -48,18 +48,23 @@ jQuery(document).ready(function ($) {
     // Main calculation function
     function calculateTerraPrice() {
         if (!areInputsValid()) return;
-
+    
         try {
+            // Debug: Log the terra_pricing object
+            console.log('terra_pricing:', terra_pricing);
+            console.log('Sale Price:', terra_pricing.sale_price);
+            console.log('Base Price:', terra_pricing.base_price);
+    
             const panelWidth = parseFloat(widthInput.val());
             const panelHeight = parseFloat(heightInput.val());
             const cassetteDistance = parseFloat(cassetteDistanceInput.val());
             const baseDistance = parseFloat(baseDistanceInput.val());
             const numberOfPanels = parseInt(panelsInput.val());
-
-            // Format values like Atlas
+    
+            // Format values
             const formattedWidth = panelWidth.toFixed(2);
             const formattedHeight = (Math.floor(panelHeight * 1000) / 1000).toFixed(3);
-
+    
             // Calculate optimal height
             const G15 = Math.floor((panelHeight - baseDistance/100) / (0.108 + cassetteDistance/100));
             const G16 = Math.ceil((panelHeight - baseDistance/100) / (0.108 + cassetteDistance/100));
@@ -69,7 +74,7 @@ jQuery(document).ready(function ($) {
             const H17 = Math.abs(panelHeight - H16);
             const optimalHeight = G17 <= H17 ? H15 : H16;
             optimalHeightField.val(optimalHeight.toFixed(3));
-
+    
             // Calculate materials
             const numCassettes = (G17 <= H17 ? G15 : G16);
             const profileCassettesPcs = numCassettes * numberOfPanels;
@@ -79,33 +84,87 @@ jQuery(document).ready(function ($) {
             const rivetsPcs = Math.round(profileCassettesPcs * 8) >= 101 ? numberOfPanels * 200 : numberOfPanels * 100;
             const selfTappingScrewPcs = numberOfPanels * 10;
             const dowelsPcs = numberOfPanels * 10;
-
-            // Calculate total price
-            let totalPrice = 0;
-            totalPrice += profileCassettesLm * parseFloat(terra_pricing.base_price || 0);
+    
+            // Calculate base total price
+            let basePrice = parseFloat(terra_pricing.base_price) * profileCassettesLm;
+            let totalPrice = basePrice;
+            
+            // Add essential components
             totalPrice += uProfileLm * parseFloat(terra_pricing.price_u_profile_left || 0);
             totalPrice += rivetsPcs * parseFloat(terra_pricing.price_rivets || 0);
             totalPrice += selfTappingScrewPcs * parseFloat(terra_pricing.price_self_tapping_screw || 0);
             totalPrice += dowelsPcs * parseFloat(terra_pricing.price_dowels || 0);
-
-            // Update UI elements
-            priceElement.html(`
-                <span class="woocommerce-Price-amount amount">
-                    <bdi>Крайна цена: ${totalPrice.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
-                    <span class="custom-text-after-price">(вкл. ДДС)</span>
-                </span>
-            `);
-
+    
+            // Calculate the discounted price if a sale price exists and is valid
+            let discountedPrice = totalPrice;
+            if (terra_pricing.sale_price && 
+                parseFloat(terra_pricing.sale_price) > 0 && 
+                parseFloat(terra_pricing.sale_price) < parseFloat(terra_pricing.base_price)) {
+                
+                discountedPrice = parseFloat(terra_pricing.sale_price) * profileCassettesLm;
+                discountedPrice += uProfileLm * parseFloat(terra_pricing.price_u_profile_left || 0);
+                discountedPrice += rivetsPcs * parseFloat(terra_pricing.price_rivets || 0);
+                discountedPrice += selfTappingScrewPcs * parseFloat(terra_pricing.price_self_tapping_screw || 0);
+                discountedPrice += dowelsPcs * parseFloat(terra_pricing.price_dowels || 0);
+            }
+    
+            // Debug: Log the prices
+            console.log('Total Price:', totalPrice);
+            console.log('Discounted Price:', discountedPrice);
+    
+            // Calculate the discount percentage
+            let discountPercentage = 0;
+            if (totalPrice > 0 && discountedPrice < totalPrice) {
+                discountPercentage = Math.round(100 - (discountedPrice / totalPrice * 100));
+                console.log('Discount Percentage:', discountPercentage + '%');
+            }
+    
+            // Update the discount badge
+            $('.product-badge.sale').text(`-${discountPercentage}%`);
+    
+            // Set hidden fields for total_price and discounted_price
+            $('#total_price').val(totalPrice.toFixed(2));
+            $('#discounted_price').val(discountedPrice.toFixed(2));
+    
+            // Update displayed price
+            if (terra_pricing.sale_price && 
+                parseFloat(terra_pricing.sale_price) > 0 && 
+                parseFloat(terra_pricing.sale_price) < parseFloat(terra_pricing.base_price)) {
+                
+                priceElement.html(`
+                    <span class="woocommerce-Price-amount amount">
+                        <del>
+                            <bdi>${totalPrice.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
+                        </del>
+                        <ins>
+                            <bdi>${discountedPrice.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
+                        </ins>
+                        <span class="custom-text-after-price">(вкл. ДДС)</span>
+                    </span>
+                `);
+            } else {
+                priceElement.html(`
+                    <span class="woocommerce-Price-amount amount">
+                        <bdi>${totalPrice.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
+                        <span class="custom-text-after-price">(вкл. ДДС)</span>
+                    </span>
+                `);
+            }
+    
             // Update form data for cart
-            addToCartButton.attr('data-calculated-price', totalPrice.toFixed(2));
-            $('#calculated_price').val(totalPrice.toFixed(2));
+            $('#calculated_price').val(discountedPrice.toFixed(2));
             $('#terra_panel_width').val(formattedWidth);
             $('#terra_panel_height').val(formattedHeight);
             $('#terra_number_of_panels').val(numberOfPanels);
-
             $('#terra_panel_distance_cassettes').val(cassetteDistance.toFixed(2));
             $('#terra_panel_base_distance').val(baseDistance.toFixed(2));
-
+    
+            // Update button attributes
+            addToCartButton.attr('data-calculated-price', discountedPrice.toFixed(2));
+            addToCartButton.attr('data-panel-width', formattedWidth);
+            addToCartButton.attr('data-panel-height', formattedHeight);
+            addToCartButton.attr('data-panels', numberOfPanels);
+    
             // Update results display
             $('#terra-results').html(`
                 <ul>
@@ -116,8 +175,9 @@ jQuery(document).ready(function ($) {
                     <li>Dowels: <span>${dowelsPcs} бр.</span></li>
                 </ul>
             `);
-
-            $('#terra-final-price').html(`<p>Крайна цена: ${totalPrice.toFixed(2)} лв.</p>`);
+    
+            $('#terra-final-price').html(`<p>Крайна цена: ${discountedPrice.toFixed(2)} лв.</p>`);
+    
         } catch (error) {
             console.error('Error in Terra Calculator:', error);
         }

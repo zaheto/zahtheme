@@ -23,7 +23,7 @@
 
 <section class="fences-product">
     <div id="gamma-calculator-form" class="gamma-calculator-section">
-        <h2 class="mb-2">gamma Въведете вашите индивидуални размери на оградата:</h2>
+        <h2 class="mb-2">Въведете вашите индивидуални размери на оградата:</h2>
         <form id="gamma-fence-calculator" class="gamma-calculator-section">
             <div class="form-row">
                 <label for="gamma-panel-width" class="font-normal">Ширина на паното (m)</label>
@@ -68,6 +68,10 @@
                     required
                 >
             </div>
+            
+            <!-- Add hidden fields for total_price and discounted_price -->
+            <input type="hidden" name="total_price" id="total_price" value="">
+            <input type="hidden" name="discounted_price" id="discounted_price" value="">
         </form>
     
         
