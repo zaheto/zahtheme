@@ -105,7 +105,7 @@ function zah_enqueue_calculator_scripts() {
             true
         );
     }
-    
+
     // For product archive pages
     if (is_product_category() || is_shop()) {  // Add is_shop() check here
         //error_log('Attempting to enqueue subcategories slider');
@@ -2658,14 +2658,6 @@ if( function_exists('acf_add_options_page') ) {
 add_action('woocommerce_after_shop_loop_item_title', function() {
     global $product;
 
-    // Initial debug - will show for ALL products
-    echo "<script>
-        console.log('Product Check:', {
-            'product_id': '" . $product->get_id() . "',
-            'product_name': '" . $product->get_name() . "'
-        });
-    </script>";
-
     // Check if product has relevant tags
     $has_atlas = has_term('atlas', 'product_tag', $product->get_id());
     $has_sigma = has_term('sigma', 'product_tag', $product->get_id());
@@ -2674,17 +2666,6 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
     $has_terra = has_term('terra', 'product_tag', $product->get_id());
     $has_siding = has_term('siding', 'product_tag', $product->get_id());
 
-    // Debug tag checks - will show immediately after checking tags
-    echo "<script>
-        console.log('Tag Check:', {
-            'has_atlas': " . ($has_atlas ? 'true' : 'false') . ",
-            'has_sigma': " . ($has_sigma ? 'true' : 'false') . ",
-            'has_gamma': " . ($has_gamma ? 'true' : 'false') . ",
-            'has_piramida': " . ($has_piramida ? 'true' : 'false') . ",
-            'has_terra': " . ($has_terra ? 'true' : 'false') . ",
-            'has_siding': " . ($has_siding ? 'true' : 'false') . "
-        });
-    </script>";
 
     // Handle siding products first, before the models loop
     if ($has_siding) {
@@ -2702,17 +2683,6 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
         // Calculate total prices
         $total_price = $totalArea * $base_price;
         $discounted_price = $sale_price > 0 ? $totalArea * $sale_price : $total_price;
-    
-        echo "<script>
-            console.log('Siding Price Calculation:', {
-                'panel_siding_sqm': '" . $panel_siding_sqm . "',
-                'base_price': '" . $base_price . "',
-                'sale_price': '" . $sale_price . "',
-                'totalArea': '" . $totalArea . "',
-                'total_price': '" . $total_price . "',
-                'discounted_price': '" . $discounted_price . "'
-            });
-        </script>";
     
         // Display price
         if ($product->is_on_sale() && $sale_price > 0 && $sale_price < $base_price) {
@@ -2736,17 +2706,14 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
     }
 
     if (!$has_atlas && !$has_sigma && !$has_gamma && !$has_piramida && !$has_terra && !$has_siding) {
-        echo "<script>console.log('No relevant tags found');</script>";
+        //echo "<script>console.log('No relevant tags found');</script>";
         return;
     }
 
     $models = get_field('models', 'option');
 
-   // Debug models
-   echo "<script>console.log('Models:', " . json_encode($models) . ");</script>";
-
    if (!$models || !is_array($models)) {
-       echo "<script>console.log('No models found or invalid models');</script>";
+       //echo "<script>console.log('No models found or invalid models');</script>";
        return;
    }
 
@@ -2756,33 +2723,12 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
         $term = get_term($tag_id, 'product_tag');
         $tag_slug = $term ? $term->slug : '';
 
-        echo "<script>
-        console.log('Processing Model:', {
-            'tag_id': '" . $tag_id . "',
-            'tag_slug': '" . $tag_slug . "',
-            'has_siding': " . ($has_siding ? 'true' : 'false') . ",
-            'model_data': " . json_encode($model) . "
-        });
-    </script>";
-
         if (($has_sigma && $tag_slug === 'sigma') || 
             ($has_atlas && $tag_slug === 'atlas') || 
             ($has_gamma && $tag_slug === 'gamma') || 
             ($has_piramida && $tag_slug === 'piramida') ||
             ($has_terra && $tag_slug === 'terra') ||
             ($has_siding && $tag_slug === 'siding')) {
-
-                // Debug log for tag matching
-    echo "<script>
-    console.log('Tag Matching Check:', {
-        'tag_slug': '" . $tag_slug . "',
-        'has_siding': " . ($has_siding ? 'true' : 'false') . ",
-        'condition_result': " . (($has_siding && $tag_slug === 'siding') ? 'true' : 'false') . "
-    });
-</script>";
-
-// Add this BEFORE your predefined sizes check
-echo "<script>console.log('Checking model: " . $tag_slug . "');</script>";
             
             $predefined_sizes = $model['predefined_sizes'];
 
@@ -2809,7 +2755,6 @@ echo "<script>console.log('Checking model: " . $tag_slug . "');</script>";
                 ];
 
                 if (($has_siding && $tag_slug === 'siding')) {
-                    echo "<script>console.log('Entered siding section');</script>";
                     
                     // Get the siding-specific fields directly
                     $panel_siding_sqm = floatval(get_field('panel_siding_sqm', $product->get_id()) ?: 0);
@@ -2820,16 +2765,6 @@ echo "<script>console.log('Checking model: " . $tag_slug . "');</script>";
                     // Calculate example price for 1m²
                     $total_price = $base_price;
                     $discounted_price = $sale_price > 0 ? $sale_price : $total_price;
-                
-                    echo "<script>
-                        console.log('Siding Price Info:', {
-                            'panel_siding_sqm': '" . $panel_siding_sqm . "',
-                            'base_price': '" . $base_price . "',
-                            'sale_price': '" . $sale_price . "',
-                            'total_price': '" . $total_price . "',
-                            'discounted_price': '" . $discounted_price . "'
-                        });
-                    </script>";
                 
                     // Display price per square meter
                     if ($product->is_on_sale() && $sale_price > 0 && $sale_price < $base_price) {
@@ -3392,3 +3327,274 @@ add_action('woocommerce_after_single_product_summary', function() {
         echo '</div>'; // .product-additional-sections
     }
 }, 15); // Priority 15 to ensure it comes after tabs
+
+
+
+function get_atlas_pokritie_products() {
+    $args = array(
+        'post_type' => 'product',
+        'tax_query' => array(
+            array(
+                'taxonomy' => 'product_tag',
+                'field' => 'slug',
+                'terms' => 'atlas'
+            )
+        ),
+        'posts_per_page' => -1
+    );
+    
+    $products = new WP_Query($args);
+    $pokritie_products = array();
+    
+    if ($products->have_posts()) {
+        while ($products->have_posts()) {
+            $products->the_post();
+            $product = wc_get_product(get_the_ID());
+            
+            $pokritie_terms = wc_get_product_terms(get_the_ID(), 'pa_pokritie', array('fields' => 'all'));
+            
+            if (!empty($pokritie_terms)) {
+                $pokritie_term = $pokritie_terms[0];
+                // Create the archive URL with swoof filter
+                $archive_url = home_url('/product-category/ogradni-sthori-i-lamarini/ogradni-sthori-atlas/swoof/pokritie-' . $pokritie_term->slug . '/');
+                
+                $pokritie_products[] = array(
+                    'id' => get_the_ID(),
+                    'title' => get_the_title(),
+                    'pokritie' => $pokritie_term->name,
+                    'price' => floatval($product->get_regular_price()),
+                    'sale_price' => floatval($product->get_sale_price()),
+                    'link' => $archive_url, // Using archive URL instead of product URL
+                    'component_prices' => array(
+                        'u_profile_left' => floatval(get_field('price_u_profile_left')),
+                        'u_profile_right' => floatval(get_field('price_u_profile_right')),
+                        'u_horizontal_panel' => floatval(get_field('price_u_horizontal_panel')),
+                        'reinforcing_profile' => floatval(get_field('price_reinforcing_profile')),
+                        'rivets' => floatval(get_field('price_rivets')),
+                        'self_tapping_screw' => floatval(get_field('price_self_tapping_screw')),
+                        'dowels' => floatval(get_field('price_dowels')),
+                        'corners' => floatval(get_field('price_corners'))
+                    )
+                );
+            }
+        }
+        wp_reset_postdata();
+    }
+    
+    return $pokritie_products;
+}
+
+function get_gamma_pokritie_products() {
+    $args = array(
+        'post_type' => 'product',
+        'tax_query' => array(
+            array(
+                'taxonomy' => 'product_tag',
+                'field' => 'slug',
+                'terms' => 'gamma'
+            )
+        ),
+        'posts_per_page' => -1
+    );
+    
+    $products = new WP_Query($args);
+    error_log('Gamma query results: ' . print_r($products->posts, true));
+    $pokritie_products = array();
+    
+    if ($products->have_posts()) {
+        while ($products->have_posts()) {
+            $products->the_post();
+            $product = wc_get_product(get_the_ID());
+            error_log('Processing product: ' . get_the_title());
+            
+            $pokritie_terms = wc_get_product_terms(get_the_ID(), 'pa_pokritie', array('fields' => 'all'));
+            error_log('Pokritie terms: ' . print_r($pokritie_terms, true));
+            
+            if (!empty($pokritie_terms)) {
+                $pokritie_term = $pokritie_terms[0];
+                $archive_url = home_url('/product-category/ogradni-sthori-i-lamarini/ogradni-sthori-gamma/swoof/pokritie-' . $pokritie_term->slug . '/');
+                
+                $pokritie_products[] = array(
+                    'id' => get_the_ID(),
+                    'title' => get_the_title(),
+                    'pokritie' => $pokritie_term->name,
+                    'price' => floatval($product->get_regular_price()),
+                    'sale_price' => floatval($product->get_sale_price()),
+                    'link' => $archive_url,
+                    'component_prices' => array(
+                        'u_profile_left' => floatval(get_field('price_u_profile_left')),
+                        'u_profile_right' => floatval(get_field('price_u_profile_right')),
+                        'u_horizontal_panel' => floatval(get_field('price_u_horizontal_panel')),
+                        'reinforcing_profile' => floatval(get_field('price_reinforcing_profile')),
+                        'rivets' => floatval(get_field('price_rivets')),
+                        'self_tapping_screw' => floatval(get_field('price_self_tapping_screw')),
+                        'dowels' => floatval(get_field('price_dowels')),
+                        'corners' => floatval(get_field('price_corners'))
+                    )
+                );
+            }
+        }
+        wp_reset_postdata();
+    }
+    
+    return $pokritie_products;
+}
+
+function get_sigma_pokritie_products() {
+    $args = array(
+        'post_type' => 'product',
+        'tax_query' => array(
+            array(
+                'taxonomy' => 'product_tag',
+                'field' => 'slug',
+                'terms' => 'sigma'
+            )
+        ),
+        'posts_per_page' => -1
+    );
+    
+    $products = new WP_Query($args);
+    $pokritie_products = array();
+    
+    if ($products->have_posts()) {
+        while ($products->have_posts()) {
+            $products->the_post();
+            $product = wc_get_product(get_the_ID());
+            
+            $pokritie_terms = wc_get_product_terms(get_the_ID(), 'pa_pokritie', array('fields' => 'all'));
+            
+            if (!empty($pokritie_terms)) {
+                $pokritie_term = $pokritie_terms[0];
+                $archive_url = home_url('/product-category/ogradni-sthori-i-lamarini/ogradni-sthori-sigma/swoof/pokritie-' . $pokritie_term->slug . '/');
+                
+                $pokritie_products[] = array(
+                    'id' => get_the_ID(),
+                    'title' => get_the_title(),
+                    'pokritie' => $pokritie_term->name,
+                    'price' => floatval($product->get_regular_price()),
+                    'sale_price' => floatval($product->get_sale_price()),
+                    'link' => $archive_url,
+                    'component_prices' => array(
+                        'u_profile_left' => floatval(get_field('price_u_profile_left')),
+                        'u_profile_right' => floatval(get_field('price_u_profile_right')),
+                        'u_horizontal_panel' => floatval(get_field('price_u_horizontal_panel')),
+                        'reinforcing_profile' => floatval(get_field('price_reinforcing_profile')),
+                        'rivets' => floatval(get_field('price_rivets')),
+                        'self_tapping_screw' => floatval(get_field('price_self_tapping_screw')),
+                        'dowels' => floatval(get_field('price_dowels')),
+                        'corners' => floatval(get_field('price_corners'))
+                    )
+                );
+            }
+        }
+        wp_reset_postdata();
+    }
+    
+    return $pokritie_products;
+}
+
+function get_piramida_pokritie_products() {
+    $args = array(
+        'post_type' => 'product',
+        'tax_query' => array(
+            array(
+                'taxonomy' => 'product_tag', 
+                'field' => 'slug',
+                'terms' => 'piramida'
+            )
+        ),
+        'posts_per_page' => -1
+    );
+    
+    $products = new WP_Query($args);
+    $pokritie_products = array();
+    
+    if ($products->have_posts()) {
+        while ($products->have_posts()) {
+            $products->the_post();
+            $product = wc_get_product(get_the_ID());
+            
+            $pokritie_terms = wc_get_product_terms(get_the_ID(), 'pa_pokritie', array('fields' => 'all'));
+            
+            if (!empty($pokritie_terms)) {
+                $pokritie_term = $pokritie_terms[0];
+                $archive_url = home_url('/product-category/ogradni-sthori-i-lamarini/ogradni-sthori-piramida/swoof/pokritie-' . $pokritie_term->slug . '/');
+                
+                $pokritie_products[] = array(
+                    'id' => get_the_ID(),
+                    'title' => get_the_title(),
+                    'pokritie' => $pokritie_term->name,
+                    'price' => floatval($product->get_regular_price()),
+                    'sale_price' => floatval($product->get_sale_price()),
+                    'link' => $archive_url,
+                    'component_prices' => array(
+                        'u_profile_left' => floatval(get_field('price_u_profile_left')),
+                        'u_profile_right' => floatval(get_field('price_u_profile_right')),
+                        'u_horizontal_panel' => floatval(get_field('price_u_horizontal_panel')),
+                        'reinforcing_profile' => floatval(get_field('price_reinforcing_profile')),
+                        'rivets' => floatval(get_field('price_rivets')),
+                        'self_tapping_screw' => floatval(get_field('price_self_tapping_screw')),
+                        'dowels' => floatval(get_field('price_dowels')),
+                        'corners' => floatval(get_field('price_corners'))
+                    )
+                );
+            }
+        }
+        wp_reset_postdata();
+    }
+    
+    return $pokritie_products;
+ }
+ 
+ function get_terra_pokritie_products() {
+    $args = array(
+        'post_type' => 'product',
+        'tax_query' => array(
+            array(
+                'taxonomy' => 'product_tag',
+                'field' => 'slug',
+                'terms' => 'terra'
+            )
+        ),
+        'posts_per_page' => -1
+    );
+    
+    $products = new WP_Query($args);
+    $pokritie_products = array();
+    
+    if ($products->have_posts()) {
+        while ($products->have_posts()) {
+            $products->the_post();
+            $product = wc_get_product(get_the_ID());
+            
+            $pokritie_terms = wc_get_product_terms(get_the_ID(), 'pa_pokritie', array('fields' => 'all'));
+            
+            if (!empty($pokritie_terms)) {
+                $pokritie_term = $pokritie_terms[0];
+                $archive_url = home_url('/product-category/ogradni-sthori-i-lamarini/ogradni-sthori-terra/swoof/pokritie-' . $pokritie_term->slug . '/');
+                
+                $pokritie_products[] = array(
+                    'id' => get_the_ID(),
+                    'title' => get_the_title(),
+                    'pokritie' => $pokritie_term->name,
+                    'price' => floatval($product->get_regular_price()),
+                    'sale_price' => floatval($product->get_sale_price()),
+                    'link' => $archive_url,
+                    'component_prices' => array(
+                        'u_profile_left' => floatval(get_field('price_u_profile_left')),
+                        'u_profile_right' => floatval(get_field('price_u_profile_right')),
+                        'u_horizontal_panel' => floatval(get_field('price_u_horizontal_panel')),
+                        'reinforcing_profile' => floatval(get_field('price_reinforcing_profile')),
+                        'rivets' => floatval(get_field('price_rivets')),
+                        'self_tapping_screw' => floatval(get_field('price_self_tapping_screw')),
+                        'dowels' => floatval(get_field('price_dowels')),
+                        'corners' => floatval(get_field('price_corners'))
+                    )
+                );
+            }
+        }
+        wp_reset_postdata();
+    }
+    
+    return $pokritie_products;
+ }

@@ -10,9 +10,11 @@
             @foreach($category_list_builder as $category_id)
                 @php
                     $category = get_term($category_id, 'product_cat');
-                    $category_link = get_term_link($category);
-                    $thumbnail_id = get_term_meta($category_id, 'thumbnail_id', true);
-                    $image_url = $thumbnail_id ? wp_get_attachment_url($thumbnail_id) : $no_thumbnail_url;
+                    if (!is_wp_error($category) && $category) {
+                        $category_link = get_term_link($category);
+                        $category_link = is_wp_error($category_link) ? '#' : $category_link;
+                        $thumbnail_id = get_term_meta($category_id, 'thumbnail_id', true);
+                        $image_url = $thumbnail_id ? wp_get_attachment_url($thumbnail_id) : $no_thumbnail_url;
                 @endphp
                 <div class="category-item">
                     <a href="{{ $category_link }}">
@@ -22,6 +24,9 @@
                         <h3>{{ $category->name }}</h3>
                     </a>
                 </div>
+                @php
+                    }
+                @endphp
             @endforeach
         </div>
     </div>
@@ -32,9 +37,11 @@
             @foreach($category_list_builder as $category_id)
                 @php
                     $category = get_term($category_id, 'product_cat');
-                    $category_link = get_term_link($category);
-                    $thumbnail_id = get_term_meta($category_id, 'thumbnail_id', true);
-                    $image_url = $thumbnail_id ? wp_get_attachment_url($thumbnail_id) : $no_thumbnail_url;
+                    if (!is_wp_error($category) && $category) {
+                        $category_link = get_term_link($category);
+                        $category_link = is_wp_error($category_link) ? '#' : $category_link;
+                        $thumbnail_id = get_term_meta($category_id, 'thumbnail_id', true);
+                        $image_url = $thumbnail_id ? wp_get_attachment_url($thumbnail_id) : $no_thumbnail_url;
                 @endphp
                 <div class="swiper-slide">
                     <a href="{{ $category_link }}">
@@ -44,6 +51,9 @@
                         <h3>{{ $category->name }}</h3>
                     </a>
                 </div>
+                @php
+                    }
+                @endphp
             @endforeach
         </div>
 

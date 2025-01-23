@@ -14,9 +14,20 @@ $piramida_image = get_field('piramida_calculator_image');
 $terra_image = get_field('terra_calculator_image');
 @endphp
 
+@php
+    $atlasProducts = get_atlas_pokritie_products();
+    $gammaProducts = get_gamma_pokritie_products();
+    $sigmaProducts = get_sigma_pokritie_products();
+    $piramidaProducts = get_piramida_pokritie_products();
+    $terraProducts = get_terra_pokritie_products();
+@endphp
+
+
+
 @extends('layouts.app')
 
 @section('content')
+
 
 
   <header>
@@ -45,108 +56,222 @@ $terra_image = get_field('terra_calculator_image');
 
     {{-- Atlas Calculator Tab --}}
     <section class="calculator-tab active" id="atlas-calculator">
-      <div class="flex flex-col">
-        <h2 class="text-24 font-bold mb-6">Калкулатор за модел - ATLAS </h2>
-        <p>Въведете вашите индивидуални размери на оградата:</p>
-        
-        <form id="atlas-fence-calculator" class="space-y-6">
-          <div class="form-row">
-            {{-- Panel Width Input --}}
-            <div class="form-cell">
-              <label for="atlas-panel-width-calc" class="block text-14 font-medium text-label">
-                Ширина на паното (m)
-              </label>
-              <input 
-                type="number" 
-                id="atlas-panel-width-calc" 
-                name="atlas-panel-width-calc" 
-                step="0.01" 
-                min="0.3" 
-                max="3.3" 
-                required
-              class="input-normal"
-              >
-            </div>
-
-            {{-- Panel Height Select --}}
-            <div class="form-cell">
-              <label for="atlas-panel-height-calc" class="block text-14 font-medium text-label">
-                Височина на паното (m)
-              </label>
-              <select 
-                id="atlas-panel-height-calc" 
-                name="atlas-panel-height-calc" 
-                required
-                class="select-normal"
-              >
-                @foreach(range(0.745, 3.145, 0.1) as $height)
-                  <option value="{{ number_format($height, 3) }}">{{ number_format($height, 3) }}</option>
-                @endforeach
-              </select>
-            </div>
-
-            {{-- Number of Panels Input --}}
-            <div class="form-cell">
-              <label for="atlas-number-of-panels-calc" class="block text-14 font-medium text-label">
-                Брой пана (бр.)
-              </label>
-              <input 
-                type="number" 
-                id="atlas-number-of-panels-calc" 
-                name="atlas-number-of-panels-calc" 
-                min="1" 
-                required
-                class="input-normal"
-              >
+        <div class="caltulator-inner-content">
+          <div class="flex flex-col">
+            <h2 class="text-24 font-bold mb-6">Калкулатор за модел - ATLAS </h2>
+            <p>Въведете вашите индивидуални размери на оградата:</p>
+            
+            <form id="atlas-fence-calculator" class="space-y-6">
+              <div class="form-row">
+                {{-- Panel Width Input --}}
+                <div class="form-cell">
+                  <label for="atlas-panel-width-calc" class="block text-14 font-medium text-label">
+                    Ширина на паното (m)
+                  </label>
+                  <input 
+                    type="number" 
+                    id="atlas-panel-width-calc" 
+                    name="atlas-panel-width-calc" 
+                    step="0.01" 
+                    min="0.3" 
+                    max="3.3" 
+                    required
+                  class="input-normal"
+                  >
+                </div>
+    
+                {{-- Panel Height Select --}}
+                <div class="form-cell">
+                  <label for="atlas-panel-height-calc" class="block text-14 font-medium text-label">
+                    Височина на паното (m)
+                  </label>
+                  <select 
+                    id="atlas-panel-height-calc" 
+                    name="atlas-panel-height-calc" 
+                    required
+                    class="select-normal"
+                  >
+                    @foreach(range(0.745, 3.145, 0.1) as $height)
+                      <option value="{{ number_format($height, 3) }}">{{ number_format($height, 3) }}</option>
+                    @endforeach
+                  </select>
+                </div>
+    
+                {{-- Number of Panels Input --}}
+                <div class="form-cell">
+                  <label for="atlas-number-of-panels-calc" class="block text-14 font-medium text-label">
+                    Брой пана (бр.)
+                  </label>
+                  <input 
+                    type="number" 
+                    id="atlas-number-of-panels-calc" 
+                    name="atlas-number-of-panels-calc" 
+                    min="1" 
+                    required
+                    class="input-normal"
+                  >
+                </div>
+              </div>
+            </form>
+    
+            
+            
+    
+            {{-- Results Section --}}
+            <div class="mt-8 border border-border rounded-lg bg-white ">
+              <div class="px-4 py-3 border-b border-border flex items-center justify-between">
+                <h3 class="text-18 font-medium text-second">Какво включва комплекта:</h3>
+    
+              </div>
+    
+              
+    
+              
+              <div id="atlas-calculator-results-calc" class="hidden px-4 py-3">
+                <div id="atlas-results-calc" class="divide-y divide-border">
+                  {{-- Results will be populated by JavaScript --}}
+                </div>
+                
+              </div>
+              {{-- For Atlas --}}
+    
+      
+              
+    
             </div>
           </div>
-        </form>
-
-        {{-- Results Section --}}
-        <div class="mt-8 border border-border rounded-lg bg-white">
-          <div class="px-4 py-3 border-b border-border flex items-center justify-between">
-            <h3 class="text-18 font-medium text-second">Какво включва комплекта:</h3>
-
+          @if($featured_img_url)
+            <div class="featured-image ">
+                <img src="{{ $featured_img_url }}" alt="{{ get_the_title() }}" class="w-full h-auto">
+            </div>
+          @endif
+          @if($atlas_image)
+          <div class="featured-image">
+              <img src="{{ $atlas_image['url'] }}" alt="{{ $atlas_image['alt'] ?? 'Atlas Calculator Image' }}" class="w-full h-auto">
           </div>
-          
-          <div id="atlas-calculator-results-calc" class="hidden px-4 py-3">
-            <div id="atlas-results-calc" class="divide-y divide-border">
-              {{-- Results will be populated by JavaScript --}}
-            </div>
-
-            <div id="atlas-final-price" class="mt-4 pt-4 border-t border-border font-medium text-second">
-              {{-- Final price will be populated by JavaScript --}}
-            </div>
+          @endif
+        </div>{{-- caltulator-inner-content --}}
+        <div class="calculator-price--box">
+          <h3 class="font-semibold">Цената на оградата според вашите параметри в различни покрития.</h3>
+          <p>Изберете покритие, за да видите наличните цветове:</p>
+          {{-- In template-calculator.blade.php, right after your header section --}}
+          <script>
+            window.atlasProducts = @json($atlasProducts ?? []);
+            //console.log('Atlas Products loaded:', window.atlasProducts);
+          </script>
+          <div id="atlas-pokritie-prices" class="pokritie-prices">
+            <!-- Pokritie prices will be populated here -->
           </div>
         </div>
-      </div>
-      @if($featured_img_url)
-        <div class="featured-image ">
-            <img src="{{ $featured_img_url }}" alt="{{ get_the_title() }}" class="w-full h-auto">
-        </div>
-      @endif
-      @if($atlas_image)
-      <div class="featured-image">
-          <img src="{{ $atlas_image['url'] }}" alt="{{ $atlas_image['alt'] ?? 'Atlas Calculator Image' }}" class="w-full h-auto">
-      </div>
-    @endif
+
     </section>
 
     {{-- Gamma Calculator Tab --}}
     <section class="calculator-tab" id="gamma-calculator" style="display: none;">
-      <div class="flex flex-col">
-      <h2 class="text-24 font-bold mb-6">Калкулатор за модел - GAMMA </h2>
+      <div class="caltulator-inner-content">
+        <div class="flex flex-col">
+          <h2 class="text-24 font-bold mb-6">Калкулатор за модел - GAMMA </h2>
+          
+          <form id="gamma-fence-calculator" class="space-y-6">
+              <div class="form-row">
+                  <div class="form-cell">
+                    <label for="gamma-panel-width-calc" class="block text-14 font-medium text-label">
+                      Ширина на паното (m)
+                    </label>
+                    <input 
+                      type="number" 
+                      id="gamma-panel-width-calc" 
+                      name="gamma-panel-width-calc" 
+                      step="0.01" 
+                      min="0.3" 
+                      max="3.3" 
+                      required
+                      class="input-normal"
+                    >
+                  </div>
+          
+                  <div class="form-cell">
+                    <label for="gamma-panel-height-calc" class="block text-14 font-medium text-label">
+                      Височина на паното (m)
+                    </label>
+                    <select 
+                      id="gamma-panel-height-calc" 
+                      name="gamma-panel-height-calc" 
+                      required
+                      class="select-normal"
+                    >
+                      @foreach([0.85, 1.01, 1.17, 1.33, 1.49, 1.65, 1.81, 1.97, 2.13, 2.29, 2.45, 2.61, 2.77, 2.93, 3.09] as $height)
+                        <option value="{{ number_format($height, 3) }}">{{ number_format($height, 3) }}</option>
+                      @endforeach
+                    </select>
+                  </div>
+          
+                  <div class="form-cell">
+                    <label for="gamma-number-of-panels-calc" class="block text-14 font-medium text-label">
+                      Брой пана (бр.)
+                    </label>
+                    <input 
+                      type="number" 
+                      id="gamma-number-of-panels-calc" 
+                      name="gamma-number-of-panels-calc" 
+                      min="1" 
+                      required
+                      class="input-normal"
+                    >
+                  </div>
+              </div>
+          </form>
+    
+          <div class="mt-8 border border-border rounded-lg bg-white">
+            <div class="px-4 py-3 border-b border-border flex items-center justify-between">
+              <h3 class="text-18 font-medium text-second">Какво включва комплекта::</h3>
+    
+            </div>
+            
+            <div id="gamma-calculator-results-calc" class="hidden px-4 py-3">
+              <div id="gamma-results-calc" class="divide-y divide-border">
+                  {{-- Results will be populated by JavaScript --}}
+              </div>
+          </div>
+          </div>
+        </div>
+        @if($gamma_image)
+          <div class="featured-image">
+              <img src="{{ $gamma_image['url'] }}" alt="{{ $gamma_image['alt'] ?? 'Gamma Calculator Image' }}" class="w-full h-auto">
+          </div>
+        @endif
       
-      <form id="gamma-fence-calculator" class="space-y-6">
-          <div class="form-row">
+      </div>{{-- caltulator-inner-content --}}
+
+    <div class="calculator-price--box">
+      <h3 class="font-semibold">Цената на оградата според вашите параметри в различни покрития.</h3>
+      <p>Изберете покритие, за да видите наличните цветове:</p>
+      <script>
+          window.gammaProducts = @json($gammaProducts ?? []);
+          console.log("Raw gamma products data:", @json($gammaProducts ?? []));
+      </script>
+      <div id="gamma-pokritie-prices" class="pokritie-prices"></div>
+  </div>
+    </section>
+
+    {{-- Sigma Calculator Tab --}}
+    <section class="calculator-tab" id="sigma-calculator" style="display: none;">
+      <div class="caltulator-inner-content">
+
+
+        <div class="flex flex-col">
+          <h2 class="text-24 font-bold mb-6">Калкулатор за модел - SIGMA</h2>
+          
+          <form id="sigma-fence-calculator" class="space-y-6">
+            <div class="form-row">
               <div class="form-cell">
-                <label for="gamma-panel-width-calc" class="block text-14 font-medium text-label">
+                <label for="sigma-panel-width-calc" class="block text-14 font-medium text-label">
                   Ширина на паното (m)
                 </label>
                 <input 
                   type="number" 
-                  id="gamma-panel-width-calc" 
-                  name="gamma-panel-width-calc" 
+                  id="sigma-panel-width-calc" 
+                  name="sigma-panel-width-calc" 
                   step="0.01" 
                   min="0.3" 
                   max="3.3" 
@@ -156,324 +281,280 @@ $terra_image = get_field('terra_calculator_image');
               </div>
       
               <div class="form-cell">
-                <label for="gamma-panel-height-calc" class="block text-14 font-medium text-label">
+                <label for="sigma-panel-height-calc" class="block text-14 font-medium text-label">
                   Височина на паното (m)
                 </label>
                 <select 
-                  id="gamma-panel-height-calc" 
-                  name="gamma-panel-height-calc" 
+                  id="sigma-panel-height-calc" 
+                  name="sigma-panel-height-calc" 
                   required
                   class="select-normal"
                 >
-                  @foreach([0.85, 1.01, 1.17, 1.33, 1.49, 1.65, 1.81, 1.97, 2.13, 2.29, 2.45, 2.61, 2.77, 2.93, 3.09] as $height)
+                  @foreach(range(0.78, 3.1, 0.08) as $height)
                     <option value="{{ number_format($height, 3) }}">{{ number_format($height, 3) }}</option>
                   @endforeach
                 </select>
               </div>
       
               <div class="form-cell">
-                <label for="gamma-number-of-panels-calc" class="block text-14 font-medium text-label">
+                <label for="sigma-number-of-panels-calc" class="block text-14 font-medium text-label">
                   Брой пана (бр.)
                 </label>
                 <input 
                   type="number" 
-                  id="gamma-number-of-panels-calc" 
-                  name="gamma-number-of-panels-calc" 
+                  id="sigma-number-of-panels-calc" 
+                  name="sigma-number-of-panels-calc" 
                   min="1" 
                   required
                   class="input-normal"
                 >
               </div>
+            </div>
+          </form>
+    
+          <div class="mt-8 border border-border rounded-lg bg-white">
+            <div class="px-4 py-3 border-b border-border flex items-center justify-between">
+              <h3 class="text-18 font-medium text-second">Какво включва комплекта:</h3>
+    
+            </div>
+            
+            <div id="sigma-calculator-results-calc" class="hidden px-4 py-3">
+              <div id="sigma-results-calc" class="divide-y divide-border">
+                  {{-- Results will be populated by JavaScript --}}
+              </div>
           </div>
-      </form>
-
-      <div class="mt-8 border border-border rounded-lg bg-white">
-        <div class="px-4 py-3 border-b border-border flex items-center justify-between">
-          <h3 class="text-18 font-medium text-second">Какво включва комплекта::</h3>
-
-        </div>
-        
-        <div id="gamma-calculator-results-calc" class="hidden px-4 py-3">
-          <div id="gamma-results-calc" class="divide-y divide-border">
-              {{-- Results will be populated by JavaScript --}}
-          </div>
-      </div>
-      </div>
-    </div>
-    @if($gamma_image)
-      <div class="featured-image">
-          <img src="{{ $gamma_image['url'] }}" alt="{{ $gamma_image['alt'] ?? 'Gamma Calculator Image' }}" class="w-full h-auto">
-      </div>
-    @endif
-
-    </section>
-
-    {{-- Sigma Calculator Tab --}}
-    <section class="calculator-tab" id="sigma-calculator" style="display: none;">
-      <div class="flex flex-col">
-      <h2 class="text-24 font-bold mb-6">Калкулатор за модел - SIGMA</h2>
-      
-      <form id="sigma-fence-calculator" class="space-y-6">
-        <div class="form-row">
-          <div class="form-cell">
-            <label for="sigma-panel-width-calc" class="block text-14 font-medium text-label">
-              Ширина на паното (m)
-            </label>
-            <input 
-              type="number" 
-              id="sigma-panel-width-calc" 
-              name="sigma-panel-width-calc" 
-              step="0.01" 
-              min="0.3" 
-              max="3.3" 
-              required
-              class="input-normal"
-            >
-          </div>
-  
-          <div class="form-cell">
-            <label for="sigma-panel-height-calc" class="block text-14 font-medium text-label">
-              Височина на паното (m)
-            </label>
-            <select 
-              id="sigma-panel-height-calc" 
-              name="sigma-panel-height-calc" 
-              required
-              class="select-normal"
-            >
-              @foreach(range(0.78, 3.1, 0.08) as $height)
-                <option value="{{ number_format($height, 3) }}">{{ number_format($height, 3) }}</option>
-              @endforeach
-            </select>
-          </div>
-  
-          <div class="form-cell">
-            <label for="sigma-number-of-panels-calc" class="block text-14 font-medium text-label">
-              Брой пана (бр.)
-            </label>
-            <input 
-              type="number" 
-              id="sigma-number-of-panels-calc" 
-              name="sigma-number-of-panels-calc" 
-              min="1" 
-              required
-              class="input-normal"
-            >
           </div>
         </div>
-      </form>
-
-      <div class="mt-8 border border-border rounded-lg bg-white">
-        <div class="px-4 py-3 border-b border-border flex items-center justify-between">
-          <h3 class="text-18 font-medium text-second">Какво включва комплекта:</h3>
-
+        @if($sigma_image)
+        <div class="featured-image">
+            <img src="{{ $sigma_image['url'] }}" alt="{{ $sigma_image['alt'] ?? 'Sigma Calculator Image' }}" class="w-full h-auto">
         </div>
-        
-        <div id="sigma-calculator-results-calc" class="hidden px-4 py-3">
-          <div id="sigma-results-calc" class="divide-y divide-border">
-              {{-- Results will be populated by JavaScript --}}
-          </div>
+      @endif
+      </div>{{-- caltulator-inner-content --}}
+      {{-- For Sigma --}}
+      <div class="calculator-price--box">
+        <h3 class="font-semibold">Цената на оградата според вашите параметри в различни покрития.</h3>
+        <p>Изберете покритие, за да видите наличните цветове:</p>
+        <script>
+            window.sigmaProducts = @json($sigmaProducts ?? []);
+        </script>
+        <div id="sigma-pokritie-prices" class="pokritie-prices"></div>
       </div>
-      </div>
-    </div>
-    @if($sigma_image)
-    <div class="featured-image">
-        <img src="{{ $sigma_image['url'] }}" alt="{{ $sigma_image['alt'] ?? 'Sigma Calculator Image' }}" class="w-full h-auto">
-    </div>
-  @endif
-
     </section>
 
     {{-- Piramida Calculator Tab --}}
     <section class="calculator-tab" id="piramida-calculator" style="display: none;">
-      <div class="flex flex-col">
-      <h2 class="text-24 font-bold mb-6">Калкулатор за модел - PIRAMIDA</h2>
-      
-      <form id="piramida-fence-calculator" class="space-y-6">
-          <div class="form-row">
-            <div class="form-cell">
-              <label for="piramida-panel-width-calc" class="block text-14 font-medium text-label">
-                Ширина на паното (m)
-              </label>
-              <input 
-                type="number" 
-                id="piramida-panel-width-calc" 
-                name="piramida-panel-width-calc" 
-                step="0.01" 
-                min="0.3" 
-                max="3.3" 
-                required
-                class="input-normal"
-              >
-            </div>
+      <div class="caltulator-inner-content">
+        <div class="flex flex-col">
+          <h2 class="text-24 font-bold mb-6">Калкулатор за модел - PIRAMIDA</h2>
+          
+          <form id="piramida-fence-calculator" class="space-y-6">
+              <div class="form-row">
+                <div class="form-cell">
+                  <label for="piramida-panel-width-calc" class="block text-14 font-medium text-label">
+                    Ширина на паното (m)
+                  </label>
+                  <input 
+                    type="number" 
+                    id="piramida-panel-width-calc" 
+                    name="piramida-panel-width-calc" 
+                    step="0.01" 
+                    min="0.3" 
+                    max="3.3" 
+                    required
+                    class="input-normal"
+                  >
+                </div>
+        
+                <div class="form-cell">
+                  <label for="piramida-panel-height-calc" class="block text-14 font-medium text-label">
+                    Височина на паното (m)
+                  </label>
+                  <select 
+                    id="piramida-panel-height-calc" 
+                    name="piramida-panel-height-calc" 
+                    required
+                    class="select-normal"
+                  >
+                    @foreach([0.775, 0.84, 0.905, 0.97, 1.035, 1.1, 1.165, 1.23, 1.295, 1.36, 1.425, 1.49, 1.555, 1.62, 1.685, 1.75, 1.815, 1.88, 1.945, 2.01, 2.075, 2.14, 2.205, 2.27, 2.335, 2.4, 2.465, 2.53, 2.595, 2.66, 2.725, 2.79, 2.855, 2.92, 2.985, 3.05] as $height)
+                      <option value="{{ number_format($height, 3) }}">{{ number_format($height, 3) }}</option>
+                    @endforeach
+                  </select>
+                </div>
+        
+                <div class="form-cell">
+                  <label for="piramida-number-of-panels-calc" class="block text-14 font-medium text-label">
+                    Брой пана (бр.)
+                  </label>
+                  <input 
+                    type="number" 
+                    id="piramida-number-of-panels-calc" 
+                    name="piramida-number-of-panels-calc" 
+                    min="1" 
+                    required
+                    class="input-normal"
+                  >
+                </div>
+              </div>
+          </form>
     
-            <div class="form-cell">
-              <label for="piramida-panel-height-calc" class="block text-14 font-medium text-label">
-                Височина на паното (m)
-              </label>
-              <select 
-                id="piramida-panel-height-calc" 
-                name="piramida-panel-height-calc" 
-                required
-                class="select-normal"
-              >
-                @foreach([0.775, 0.84, 0.905, 0.97, 1.035, 1.1, 1.165, 1.23, 1.295, 1.36, 1.425, 1.49, 1.555, 1.62, 1.685, 1.75, 1.815, 1.88, 1.945, 2.01, 2.075, 2.14, 2.205, 2.27, 2.335, 2.4, 2.465, 2.53, 2.595, 2.66, 2.725, 2.79, 2.855, 2.92, 2.985, 3.05] as $height)
-                  <option value="{{ number_format($height, 3) }}">{{ number_format($height, 3) }}</option>
-                @endforeach
-              </select>
-            </div>
+          <div class="mt-8 border border-border rounded-lg bg-white">
+            <div class="px-4 py-3 border-b border-border flex items-center justify-between">
+              <h3 class="text-18 font-medium text-second">Какво включва комплекта:</h3>
     
-            <div class="form-cell">
-              <label for="piramida-number-of-panels-calc" class="block text-14 font-medium text-label">
-                Брой пана (бр.)
-              </label>
-              <input 
-                type="number" 
-                id="piramida-number-of-panels-calc" 
-                name="piramida-number-of-panels-calc" 
-                min="1" 
-                required
-                class="input-normal"
-              >
+            </div>
+            
+            <div id="piramida-calculator-results-calc" class="hidden px-4 py-3">
+              <div id="piramida-results-calc" class="divide-y divide-border">
+                    {{-- Results will be populated by JavaScript --}}
+                </div>
             </div>
           </div>
-      </form>
-
-      <div class="mt-8 border border-border rounded-lg bg-white">
-        <div class="px-4 py-3 border-b border-border flex items-center justify-between">
-          <h3 class="text-18 font-medium text-second">Какво включва комплекта:</h3>
-
         </div>
-        
-        <div id="piramida-calculator-results-calc" class="hidden px-4 py-3">
-          <div id="piramida-results-calc" class="divide-y divide-border">
-                {{-- Results will be populated by JavaScript --}}
-            </div>
+        @if($piramida_image)
+        <div class="featured-image">
+            <img src="{{ $piramida_image['url'] }}" alt="{{ $piramida_image['alt'] ?? 'Piramida Calculator Image' }}" class="w-full h-auto">
         </div>
+      @endif
+      </div>{{-- caltulator-inner-content --}}
+      {{-- For Piramida --}}
+      <div class="calculator-price--box">
+        <h3 class="font-semibold">Цената на оградата според вашите параметри в различни покрития.</h3>
+        <p>Изберете покритие, за да видите наличните цветове:</p>
+        <script>
+            window.piramidaProducts = @json($piramidaProducts ?? []);
+        </script>
+        <div id="piramida-pokritie-prices" class="pokritie-prices"></div>
       </div>
-    </div>
-    @if($piramida_image)
-    <div class="featured-image">
-        <img src="{{ $piramida_image['url'] }}" alt="{{ $piramida_image['alt'] ?? 'Piramida Calculator Image' }}" class="w-full h-auto">
-    </div>
-  @endif
-
     </section>
 
     {{-- Terra Calculator Tab --}}
     <section class="calculator-tab" id="terra-calculator" style="display: none;">
-      <div class="flex flex-col">
-      <h2 class="text-24 font-bold mb-6">Калкулатор за модел - TERRA </h2>
-      
-      <form id="terra-fence-calculator" class="space-y-6">
-        <div class="form-row">
-          <div class="form-cell">
-            <label for="terra-panel-width-calc" class="block text-14 font-medium text-label">
-              Ширина на паното (m)
-            </label>
-            <input 
-              type="number" 
-              id="terra-panel-width-calc" 
-              name="terra-panel-width-calc" 
-              required
-              class="input-normal"
-            >
-          </div>
-  
-          <div class="form-cell">
-            <label for="terra-panel-height-calc" class="block text-14 font-medium text-label">
-              Височина на паното (m)
-            </label>
-            <input 
-              type="number" 
-              id="terra-panel-height-calc" 
-              name="terra-panel-height-calc" 
-              required
-              class="input-normal"
-            >
-          </div>
-  
-          <div class="form-cell">
-            <label for="terra-panel-distance-cassettes-calc" class="block text-14 font-medium text-label">
-              Разстояние между ламели (cm)
-            </label>
-            <input 
-              type="number" 
-              id="terra-panel-distance-cassettes-calc" 
-              name="terra-panel-distance-cassettes-calc" 
-              required
-              class="input-normal"
-            >
-          </div>
-  
-          
-        </div>
-
-        <div class="form-row">
-          <div class="form-cell">
-            <label for="terra-panel-base-distance-calc" class="block text-14 font-medium text-label">
-              Разстояние от основата (cm)
-            </label>
-            <input 
-              type="number" 
-              id="terra-panel-base-distance-calc" 
-              name="terra-panel-base-distance-calc" 
-              required
-              class="input-normal"
-            >
-          </div>
-  
-          <div class="form-cell">
-            <label for="terra-number-of-panels-calc" class="block text-14 font-medium text-label">
-              Брой пана (бр.)
-            </label>
-            <input 
-              type="number" 
-              id="terra-number-of-panels-calc" 
-              name="terra-number-of-panels-calc" 
-              min="1" 
-              required
-              class="input-normal"
-            >
-          </div>
-  
-          <div class="form-cell">
-            <label for="terra-panel-optimal-height-calc" class="block text-14 font-medium text-label">
-              Препоръчителна височина (m)
-            </label>
-            <input 
-              type="number" 
-              id="terra-panel-optimal-height-calc" 
-              name="terra-panel-optimal-height-calc" 
-              readonly 
-              disabled
-              class="input-normal"
-            >
-          </div>
-        </div>
-      </form>
-
-      <div class="mt-8 border border-border rounded-lg bg-white">
-        <div class="px-4 py-3 border-b border-border flex items-center justify-between">
-          <h3 class="text-18 font-medium text-second">Какво включва комплекта:</h3>
- 
-        </div>
+      <div class="caltulator-inner-content">
         
-        <div id="terra-calculator-results-calc" class="hidden px-4 py-3">
-          <div id="terra-results-calc" class="divide-y divide-border">
-                {{-- Results will be populated by JavaScript --}}
+      
+        <div class="flex flex-col">
+          <h2 class="text-24 font-bold mb-6">Калкулатор за модел - TERRA </h2>
+          
+          <form id="terra-fence-calculator" class="space-y-6">
+            <div class="form-row">
+              <div class="form-cell">
+                <label for="terra-panel-width-calc" class="block text-14 font-medium text-label">
+                  Ширина на паното (m)
+                </label>
+                <input 
+                  type="number" 
+                  id="terra-panel-width-calc" 
+                  name="terra-panel-width-calc" 
+                  required
+                  class="input-normal"
+                >
+              </div>
+      
+              <div class="form-cell">
+                <label for="terra-panel-height-calc" class="block text-14 font-medium text-label">
+                  Височина на паното (m)
+                </label>
+                <input 
+                  type="number" 
+                  id="terra-panel-height-calc" 
+                  name="terra-panel-height-calc" 
+                  required
+                  class="input-normal"
+                >
+              </div>
+      
+              <div class="form-cell">
+                <label for="terra-panel-distance-cassettes-calc" class="block text-14 font-medium text-label">
+                  Разстояние между ламели (cm)
+                </label>
+                <input 
+                  type="number" 
+                  id="terra-panel-distance-cassettes-calc" 
+                  name="terra-panel-distance-cassettes-calc" 
+                  required
+                  class="input-normal"
+                >
+              </div>
+      
+              
             </div>
+    
+            <div class="form-row">
+              <div class="form-cell">
+                <label for="terra-panel-base-distance-calc" class="block text-14 font-medium text-label">
+                  Разстояние от основата (cm)
+                </label>
+                <input 
+                  type="number" 
+                  id="terra-panel-base-distance-calc" 
+                  name="terra-panel-base-distance-calc" 
+                  required
+                  class="input-normal"
+                >
+              </div>
+      
+              <div class="form-cell">
+                <label for="terra-number-of-panels-calc" class="block text-14 font-medium text-label">
+                  Брой пана (бр.)
+                </label>
+                <input 
+                  type="number" 
+                  id="terra-number-of-panels-calc" 
+                  name="terra-number-of-panels-calc" 
+                  min="1" 
+                  required
+                  class="input-normal"
+                >
+              </div>
+      
+              <div class="form-cell">
+                <label for="terra-panel-optimal-height-calc" class="block text-14 font-medium text-label">
+                  Препоръчителна височина (m)
+                </label>
+                <input 
+                  type="number" 
+                  id="terra-panel-optimal-height-calc" 
+                  name="terra-panel-optimal-height-calc" 
+                  readonly 
+                  disabled
+                  class="input-normal"
+                >
+              </div>
+            </div>
+          </form>
+    
+          <div class="mt-8 border border-border rounded-lg bg-white">
+            <div class="px-4 py-3 border-b border-border flex items-center justify-between">
+              <h3 class="text-18 font-medium text-second">Какво включва комплекта:</h3>
+     
+            </div>
+            
+            <div id="terra-calculator-results-calc" class="hidden px-4 py-3">
+              <div id="terra-results-calc" class="divide-y divide-border">
+                    {{-- Results will be populated by JavaScript --}}
+                </div>
+            </div>
+    
+    
+          </div>
         </div>
+    
+        @if($terra_image)
+        <div class="featured-image">
+            <img src="{{ $terra_image['url'] }}" alt="{{ $terra_image['alt'] ?? 'Terra Calculator Image' }}" class="w-full h-auto">
+        </div>
+      @endif
+      </div>{{-- caltulator-inner-content --}}
+      {{-- For Terra --}}
+      <div class="calculator-price--box">
+        <h3 class="font-semibold">Цената на оградата според вашите параметри в различни покрития.</h3>
+        <p>Изберете покритие, за да видите наличните цветове:</p>
+        <script>
+            window.terraProducts = @json($terraProducts ?? []);
+        </script>
+        <div id="terra-pokritie-prices" class="pokritie-prices"></div>
       </div>
-    </div>
-
-    @if($terra_image)
-  <div class="featured-image">
-      <img src="{{ $terra_image['url'] }}" alt="{{ $terra_image['alt'] ?? 'Terra Calculator Image' }}" class="w-full h-auto">
-  </div>
-@endif
-
-
     </section>
 
 
