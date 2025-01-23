@@ -1,7 +1,7 @@
 {
   "app": {
     "js": [
-      "js/runtime.ed9c25.js",
+      "js/runtime.755881.js",
       "js/625.dadc15.js",
       "js/app.1065f6.js"
     ],
@@ -12,7 +12,7 @@
   },
   "editor": {
     "js": [
-      "js/runtime.ed9c25.js",
+      "js/runtime.755881.js",
       "js/515.f9de99.js",
       "js/editor.94807e.js"
     ],

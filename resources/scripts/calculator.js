@@ -119,25 +119,24 @@ jQuery(document).ready(function ($) {
         }
 
         calculatePokritiePrices(calculatedData, model) {
-            console.log('Calculating pokritie prices for model:', model);
-            console.log('Window products data:', window[`${model}Products`]);
-    
-            
             if (!window[`${model}Products`]) {
-                console.log(`No ${model} products data found`);
                 return '';
             }
-
-            return window[`${model}Products`].map(product => {
-                console.log('Processing product:', product);
-
+        
+            // Group products by pokritie type
+            const groupedProducts = window[`${model}Products`].reduce((acc, product) => {
+                const pokritie = product.pokritie;
+                if (!acc[pokritie]) {
+                    acc[pokritie] = product;
+                }
+                return acc;
+            }, {});
+        
+            return Object.values(groupedProducts).map(product => {
                 const totalPrice = this.calculateTotalPrice(calculatedData, product);
-                console.log('Calculated total price:', totalPrice);
-
                 const salePrice = product.sale_price ? 
                     this.calculateTotalPrice(calculatedData, product, true) : null;
-                console.log('Calculated sale price:', salePrice);
-
+        
                 return `
                     <div class="pokritie-boxes">
                         <div class="flex justify-between items-center">
@@ -152,11 +151,10 @@ jQuery(document).ready(function ($) {
                             </div>
                             <a href="${product.link}" class="">
                                 <svg width="40" height="41" viewBox="0 0 40 41" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect y="0.5" width="40" height="40" rx="5" fill="white"/>
-<path d="M23.5799 20.5C23.5799 22.48 21.9799 24.08 19.9999 24.08C18.0199 24.08 16.4199 22.48 16.4199 20.5C16.4199 18.52 18.0199 16.92 19.9999 16.92C21.9799 16.92 23.5799 18.52 23.5799 20.5Z" stroke="#0F4C81" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M20.0001 28.7699C23.5301 28.7699 26.8201 26.6899 29.1101 23.0899C30.0101 21.6799 30.0101 19.3099 29.1101 17.8999C26.8201 14.2999 23.5301 12.2199 20.0001 12.2199C16.4701 12.2199 13.1801 14.2999 10.8901 17.8999C9.99009 19.3099 9.99009 21.6799 10.8901 23.0899C13.1801 26.6899 16.4701 28.7699 20.0001 28.7699Z" stroke="#0F4C81" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-
+                                    <rect y="0.5" width="40" height="40" rx="5" fill="white"/>
+                                    <path d="M23.5799 20.5C23.5799 22.48 21.9799 24.08 19.9999 24.08C18.0199 24.08 16.4199 22.48 16.4199 20.5C16.4199 18.52 18.0199 16.92 19.9999 16.92C21.9799 16.92 23.5799 18.52 23.5799 20.5Z" stroke="#0F4C81" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M20.0001 28.7699C23.5301 28.7699 26.8201 26.6899 29.1101 23.0899C30.0101 21.6799 30.0101 19.3099 29.1101 17.8999C26.8201 14.2999 23.5301 12.2199 20.0001 12.2199C16.4701 12.2199 13.1801 14.2999 10.8901 17.8999C9.99009 19.3099 9.99009 21.6799 10.8901 23.0899C13.1801 26.6899 16.4701 28.7699 20.0001 28.7699Z" stroke="#0F4C81" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
                             </a>
                         </div>
                     </div>
