@@ -1747,53 +1747,59 @@ if ( ! function_exists( 'zah_shop_out_of_stock' ) ) :
 endif;
 
 function zah_change_displayed_sale_price_html() {
+    global $product;
+    $zah_sale_badge = '';
 
-	global $product, $price;
-	$zah_sale_badge = '';
+    if ($product && $product->is_on_sale() && !$product->is_type('grouped') && !$product->is_type('bundle')) {
+        $percentage = 0;
 
+        if ($product->is_type('variable')) {
+            $available_variations = $product->get_available_variations();
+            $percentages = array();
 
-	if ( $product->is_on_sale() && ! $product->is_type( 'grouped' ) && ! $product->is_type( 'bundle' ) ) {
+            // Convert product data to JSON for console logging
+            $product_data = array(
+                'id' => $product->get_id(),
+                'type' => $product->get_type(),
+                'variations' => array()
+            );
 
-		if ( $product->is_type( 'variable' ) ) {
-			$percentages = array();
+            foreach ($available_variations as $variation) {
+                $variation_obj = wc_get_product($variation['variation_id']);
+                $regular_price = (float) $variation_obj->get_regular_price();
+                $sale_price = (float) $variation_obj->get_sale_price();
 
-			// Get all variation prices.
-			$prices = $product->get_variation_prices();
+                $product_data['variations'][] = array(
+                    'id' => $variation['variation_id'],
+                    'regular_price' => $regular_price,
+                    'sale_price' => $sale_price
+                );
 
-			// Loop through variation prices.
-			foreach ( $prices['price'] as $key => $price ) {
-				// Only on sale variations.
-				if ( $prices['regular_price'][ $key ] !== $price && $prices['regular_price'][ $key ] > 0.005) {
-					// Calculate and set in the array the percentage for each variation on sale.
-					$percentages[] = round( 100 - ( $prices['sale_price'][ $key ] / $prices['regular_price'][ $key ] * 100 ) );
-				}
-			}
-			// Keep the highest value.
-			if ( ! empty( $percentages ) ) {
-				$percentage = max( $percentages ) . '%';
-			}
-		} else {
-			$percentage = 0;
-			$regular_price = (float) $product->get_regular_price();
-			if ( $regular_price > 0.005 ) {
-				$sale_price    = (float) $product->get_price();
-				$percentage = round( 100 - ( $sale_price / $regular_price * 100 ), 0 ) . '%';
-			}
-		}
+                if ($regular_price > 0 && $sale_price > 0) {
+                    $percentages[] = round(100 - ($sale_price / $regular_price * 100));
+                }
+            }
 
-		if ( isset( $percentage ) && $percentage > 0 ) {
+            echo '<script>console.log("Product Data:", ' . json_encode($product_data) . ');</script>';
 
+            if (!empty($percentages)) {
+                $percentage = max($percentages);
+            }
+        }
 
-				$zah_sale_badge .= sprintf( __( '<span class="sale-item product-label type-rounded">-%s</span>', 'zah' ), $percentage );
+        if ($percentage > 0) {
+            $zah_sale_badge = sprintf(
+                __('<div class="product-badges"><span class="product-badge sale">-%s%%</span></div>', 'zah'),
+                $percentage
+            );
+        }
+    }
 
-		}
-	}
-
-
-		echo zah_safe_html( $zah_sale_badge );
-
-
+    echo wp_kses_post($zah_sale_badge);
 }
+
+// Add to archive pages
+add_action('woocommerce_before_shop_loop_item_title', 'zah_change_displayed_sale_price_html', 10);
 
 /**
  * Variation selected highlight
@@ -2667,43 +2673,32 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
     $has_siding = has_term('siding', 'product_tag', $product->get_id());
 
 
-    // Handle siding products first, before the models loop
-    if ($has_siding) {
-        // Get the siding-specific fields directly
-        $panel_siding_sqm = floatval(get_field('panel_siding_sqm', $product->get_id()) ?: 0);
-        $panel_siding_useful = floatval(get_field('panel_siding_useful', $product->get_id()) ?: 0);
-        $base_price = floatval($product->get_regular_price() ?: 0);
-        $sale_price = floatval($product->get_sale_price() ?: 0);
-    
-        // Calculate price for 1m² (using panel_siding_sqm like in the calculator)
-        $width = 1; // Using 1m as base
-        $panels = 1; // Using 1 panel as base
-        $totalArea = $width * $panels * $panel_siding_sqm;
+        // Inside your existing action hook, in the siding section
+        if ($has_siding) {
+            $panel_siding_sqm = floatval(get_field('panel_siding_sqm', $product->get_id()) ?: 0);
+            $base_price = floatval($product->get_regular_price() ?: 0);
+            $sale_price = floatval($product->get_sale_price() ?: 0);
         
-        // Calculate total prices
-        $total_price = $totalArea * $base_price;
-        $discounted_price = $sale_price > 0 ? $totalArea * $sale_price : $total_price;
-    
-        // Display price
-        if ($product->is_on_sale() && $sale_price > 0 && $sale_price < $base_price) {
-            echo '<div class="price">';
-            echo '<span class="woocommerce-Price-amount amount">';
-            echo '<del><bdi>' . number_format($total_price, 2) . '&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi></del> ';
-            echo '<ins><bdi>' . number_format($discounted_price, 2) . '&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi></ins>';
-            echo '<span class="custom-text-after-price">(вкл. ДДС)</span>';
-            echo '</span>';
-            echo '</div>';
-        } else {
-            echo '<div class="price">';
-            echo '<span class="woocommerce-Price-amount amount">';
-            echo '<bdi>' . number_format($total_price, 2) . '&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>';
-            echo '<span class="custom-text-after-price">(вкл. ДДС)</span>';
-            echo '</span>';
-            echo '</div>';
+            // Show the base price directly (27.48 лв.)
+            if ($product->is_on_sale() && $sale_price > 0 && $sale_price < $base_price) {
+                echo '<div class="price">';
+                echo '<span class="woocommerce-Price-amount amount">';
+                echo '<del><bdi>' . number_format($base_price, 2) . '&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi></del> ';
+                echo '<ins><bdi>' . number_format($sale_price, 2) . '&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi></ins>';
+                echo '<span class="custom-text-after-price">/м²</span>';
+                echo '</span>';
+                echo '</div>';
+            } else {
+                echo '<div class="price">';
+                echo '<span class="woocommerce-Price-amount amount">';
+                echo '<bdi>' . number_format($base_price, 2) . '&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>';
+                echo '<span class="custom-text-after-price">/м²</span>';
+                echo '</span>';
+                echo '</div>';
+            }
+        
+            return;
         }
-    
-        return; // Exit early for siding products
-    }
 
     if (!$has_atlas && !$has_sigma && !$has_gamma && !$has_piramida && !$has_terra && !$has_siding) {
         //echo "<script>console.log('No relevant tags found');</script>";
