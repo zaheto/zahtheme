@@ -1780,7 +1780,7 @@ function zah_change_displayed_sale_price_html() {
                 }
             }
 
-            echo '<script>console.log("Product Data:", ' . json_encode($product_data) . ');</script>';
+            //echo '<script>console.log("Product Data:", ' . json_encode($product_data) . ');</script>';
 
             if (!empty($percentages)) {
                 $percentage = max($percentages);

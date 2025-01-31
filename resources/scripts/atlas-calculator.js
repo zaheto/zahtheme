@@ -1,13 +1,23 @@
 jQuery(document).ready(function ($) {  // Pass $ as parameter
+    
     // Hide the results section by default
     $('#atlas-calculator-results').hide();
 
+    // Remove any existing click handlers
+    $('.required-materials--toggle-link').off('click');
+
+    // Add the new click handler
     $('.required-materials--toggle-link').on('click', function(e) {
         e.preventDefault();
+        e.stopPropagation(); // Stop event propagation
+        
         const resultsSection = $('#atlas-calculator-results');
         const toggleIcon = $(this).find('.toggle-icon');
         
-        if (resultsSection.is(':visible')) {
+        // Store the current state
+        const isVisible = resultsSection.is(':visible');
+        
+        if (isVisible) {
             resultsSection.slideUp(300, function() {
                 resultsSection.addClass('hidden').css('display', '');
                 toggleIcon.text('+');
@@ -18,7 +28,14 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
             });
         }
     });
-    
+
+    // Prevent clicks inside the results from bubbling up
+    $('#atlas-calculator-results').on('click', function(e) {
+        e.stopPropagation();
+    });
+
+    // Remove any click handlers on the document that might affect our toggle
+    $(document).off('click.atlasCalculator');
 
     // Get price elements
     const priceElement = $('.inside-product--top-wrap .price');
@@ -66,13 +83,13 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
     
         try {
             // Debug: Log the atlas_pricing object
-            console.log('atlas_pricing:', atlas_pricing);
+            //console.log('atlas_pricing:', atlas_pricing);
     
             // Debug: Log the sale price
-            console.log('Sale Price:', atlas_pricing.sale_price);
+            //console.log('Sale Price:', atlas_pricing.sale_price);
     
             // Debug: Log the base price
-            console.log('Base Price:', atlas_pricing.base_price);
+            //console.log('Base Price:', atlas_pricing.base_price);
     
             // Format width and height
             const formattedWidth = panelWidth.toFixed(2);
@@ -147,14 +164,14 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
             }
     
             // Debug: Log the total and discounted prices
-            console.log('Total Price:', totalPrice);
-            console.log('Discounted Price:', discountedPrice);
+            //console.log('Total Price:', totalPrice);
+            //console.log('Discounted Price:', discountedPrice);
     
             // Calculate the discount percentage
             let discountPercentage = 0;
             if (totalPrice > 0 && discountedPrice > 0) {
                 discountPercentage = Math.round(100 - (discountedPrice / totalPrice * 100));
-                console.log('Discount Percentage:', discountPercentage + '%');
+                //console.log('Discount Percentage:', discountPercentage + '%');
             }
     
             // Update the discount badge
@@ -265,7 +282,7 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
             // Update the badge text dynamically
             if (discountPercentage > 0) {
                 $(this).html(`-${discountPercentage}%`);
-                console.log(`Discount Badge Updated: -${discountPercentage}%`);
+                //console.log(`Discount Badge Updated: -${discountPercentage}%`);
             }
         });
     });

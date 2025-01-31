@@ -107,12 +107,12 @@
                 @endforeach
               </div>
               <!-- Add these navigation buttons -->
-              <div class="subcategories-prev absolute -left-2 top-[82px] md:top-[88px] z-10 w-14 h-14 bg-white/80 hover:bg-white rounded-md shadow-lg flex items-center justify-center focus:outline-none cursor-pointer">
+              <div class="subcategories-prev absolute -left-2 top-[82px] md:top-[88px] z-10 w-14 h-14 bg-main text-white hover:bg-main/60 rounded-md shadow-lg flex items-center justify-center focus:outline-none cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
               </div>
-              <div class="subcategories-next absolute -right-2 top-[82px] md:top-[88px] z-10 w-14 h-14 bg-white/80 hover:bg-white rounded-md shadow-lg flex items-center justify-center focus:outline-none cursor-pointer">
+              <div class="subcategories-next absolute -right-2 top-[82px] md:top-[88px] z-10 w-14 h-14 bg-main text-white hover:bg-main/60 rounded-md shadow-lg flex items-center justify-center focus:outline-none cursor-pointer">
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                   </svg>
