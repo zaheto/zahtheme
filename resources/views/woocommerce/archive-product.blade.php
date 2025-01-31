@@ -56,7 +56,7 @@
           }
         @endphp
 
-        @if (!empty($categories))
+        @if (!empty($categories) && !is_search())
           <div class="relative w-full mb-2 md:mb-8">
             <!-- Mobile Grid (under 768px) -->
             <div class="block md:hidden pt-4">

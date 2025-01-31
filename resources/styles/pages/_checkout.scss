@@ -345,3 +345,11 @@ form.woocommerce-checkout  {
     float: left!important;
   }
 }
+
+#billing_entity_type_field .woocommerce-input-wrapper {
+  @apply flex items-center gap-1;
+}
+
+#billing_entity_type_field .woocommerce-input-wrapper label {
+  @apply mb-0;
+}

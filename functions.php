@@ -3593,3 +3593,229 @@ function get_piramida_pokritie_products() {
     
     return $pokritie_products;
  }
+
+
+
+// Add custom fields to checkout
+add_filter('woocommerce_checkout_fields', 'add_custom_company_checkout_fields');
+function add_custom_company_checkout_fields($fields) {
+    // Add invoice checkbox after phone field
+    $fields['billing']['billing_invoice'] = array(
+        'type'        => 'checkbox',
+        'label'       => __('Искам фактура', 'woocommerce'),
+        'required'    => false,
+        'class'       => array('form-row-wide'),
+        'priority'    => 51, // After phone (50)
+        'clear'       => true
+    );
+
+    // Add entity type radio buttons
+    $fields['billing']['billing_entity_type'] = array(
+        'type'        => 'radio',
+        'options'     => array(
+            'juridical' => __('Юридическо лице', 'woocommerce'),
+            'physical'  => __('Физическо лице', 'woocommerce')
+        ),
+        'required'    => false,
+        'class'       => array('form-row-wide', 'hide-company-field'),
+        'priority'    => 52 // Right after invoice checkbox
+    );
+    
+    // Company name (using default WooCommerce field)
+    $fields['billing']['billing_company']['label'] = __('Име на фирмата', 'woocommerce');
+    $fields['billing']['billing_company']['class'] = array('form-row-wide', 'hide-company-field');
+    $fields['billing']['billing_company']['priority'] = 53;
+    
+    // EIK field
+    $fields['billing']['billing_eik'] = array(
+        'type'        => 'text',
+        'label'       => __('ЕИК', 'woocommerce'),
+        'placeholder' => __('Въведете ЕИК номер', 'woocommerce'),
+        'required'    => false,
+        'class'       => array('form-row-wide', 'hide-company-field'),
+        'priority'    => 54
+    );
+    
+    // VAT number
+    $fields['billing']['billing_vat_number'] = array(
+        'type'        => 'text',
+        'label'       => __('ДДС Номер', 'woocommerce'),
+        'placeholder' => __('Въведете ДДС номер', 'woocommerce'),
+        'required'    => false,
+        'class'       => array('form-row-wide', 'hide-company-field'),
+        'priority'    => 55
+    );
+    
+    // MOL field
+    $fields['billing']['billing_mol'] = array(
+        'type'        => 'text',
+        'label'       => __('МОЛ', 'woocommerce'),
+        'placeholder' => __('Въведете име на МОЛ', 'woocommerce'),
+        'required'    => false,
+        'class'       => array('form-row-wide', 'hide-company-field'),
+        'priority'    => 56
+    );
+    
+    // Company address
+    $fields['billing']['billing_company_address'] = array(
+        'type'        => 'textarea',
+        'label'       => __('Адрес на фирмата', 'woocommerce'),
+        'placeholder' => __('Въведете адрес на фирмата', 'woocommerce'),
+        'required'    => false,
+        'class'       => array('form-row-wide', 'hide-company-field'),
+        'priority'    => 57
+    );
+
+    return $fields;
+}
+
+// Add invoice checkbox and modify fields
+add_filter('woocommerce_checkout_fields', 'add_invoice_checkbox_and_modify_company_fields');
+function add_invoice_checkbox_and_modify_company_fields($fields) {
+    // Add invoice checkbox after phone field
+    $fields['billing']['billing_invoice'] = array(
+        'type'        => 'checkbox',
+        'label'       => __('Искам фактура', 'woocommerce'),
+        'required'    => false,
+        'class'       => array('form-row-wide'),
+        'priority'    => 51, // Set priority after phone (which is 50)
+        'clear'       => true
+    );
+
+    return $fields;
+}
+
+// Save custom fields to order meta
+add_action('woocommerce_checkout_create_order', 'save_custom_company_checkout_fields', 10, 2);
+function save_custom_company_checkout_fields($order, $data) {
+    $fields_to_save = array(
+        'billing_invoice',
+        'billing_entity_type',
+        'billing_eik',
+        'billing_vat_number',
+        'billing_mol',
+        'billing_company_address'
+    );
+
+    foreach ($fields_to_save as $field) {
+        if (!empty($_POST[$field])) {
+            $order->update_meta_data('_' . $field, sanitize_text_field($_POST[$field]));
+        }
+    }
+}
+
+// Display custom fields in admin order details
+add_action('woocommerce_admin_order_data_after_billing_address', 'display_custom_company_fields_in_admin', 10, 1);
+function display_custom_company_fields_in_admin($order) {
+    $fields = array(
+        'billing_entity_type' => __('Тип лице', 'woocommerce'),
+        'billing_eik' => __('ЕИК', 'woocommerce'),
+        'billing_vat_number' => __('ДДС Номер', 'woocommerce'),
+        'billing_mol' => __('МОЛ', 'woocommerce'),
+        'billing_company_address' => __('Адрес на фирмата', 'woocommerce')
+    );
+
+    foreach ($fields as $field_key => $label) {
+        $value = $order->get_meta('_' . $field_key);
+        if ($value) {
+            if ($field_key === 'billing_entity_type') {
+                $value = $value === 'juridical' ? 'Юридическо лице' : 'Физическо лице';
+            }
+            echo '<p><strong>' . $label . ':</strong> ' . esc_html($value) . '</p>';
+        }
+    }
+}
+
+// Add CSS and JavaScript
+add_action('wp_footer', 'add_company_fields_scripts');
+function add_company_fields_scripts() {
+    if (!is_checkout()) return;
+    ?>
+    <style>
+        .hide-company-field {
+            display: none;
+        }
+
+        /* Style for radio buttons */
+        .woocommerce-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Style for radio buttons */
+        .woocommerce-input-wrapper input[type="radio"] {
+            margin-right: 8px;
+        }
+        .woocommerce-input-wrapper label {
+            margin-right: 15px;
+        }
+    </style>
+    <script>
+    jQuery(function($){
+        function toggleCompanyFields() {
+            var isChecked = $('#billing_invoice').is(':checked');
+            $('.hide-company-field').toggle(isChecked);
+        }
+
+        // Initial state
+        toggleCompanyFields();
+
+        // Handle checkbox changes
+        $(document).on('change', '#billing_invoice', function() {
+            toggleCompanyFields();
+        });
+
+        // Handle form updates
+        $(document.body).on('updated_checkout', function() {
+            toggleCompanyFields();
+        });
+    });
+    </script>
+    <?php
+}
+
+// Add custom checkbox field to checkout
+add_action('woocommerce_review_order_before_submit', 'add_custom_checkout_field');
+function add_custom_checkout_field($checkout) {
+    woocommerce_form_field('no_contact_needed', array(
+        'type' => 'checkbox',
+        'class' => array('form-row-wide'),
+        'label' => 'Потвръждавам поръчката, не желая потвръждение по телефона.',
+        'required' => false,
+    ));
+}
+
+// Save checkbox value to order
+add_action('woocommerce_checkout_create_order', 'save_custom_checkout_field');
+function save_custom_checkout_field($order) {
+    if (!empty($_POST['no_contact_needed'])) {
+        $order->update_meta_data('no_contact_needed', 'yes');
+    } else {
+        $order->update_meta_data('no_contact_needed', 'no');
+    }
+}
+
+// Display the field value on admin order page
+add_action('woocommerce_admin_order_data_after_billing_address', 'display_custom_field_in_admin');
+function display_custom_field_in_admin($order) {
+    $no_contact = $order->get_meta('no_contact_needed');
+    if ($no_contact) {
+        echo '<p><strong>Не е нужен контакт:</strong> ' . 
+             ($no_contact === 'yes' ? 'Да' : 'Не') . '</p>';
+    }
+}
+
+// Add the field to order emails
+add_action('woocommerce_email_after_order_table', 'add_custom_field_to_emails', 10, 4);
+function add_custom_field_to_emails($order, $sent_to_admin, $plain_text, $email) {
+    $no_contact = $order->get_meta('no_contact_needed');
+    if ($no_contact) {
+        if ($plain_text) {
+            echo "\nНе е нужен контакт: " . ($no_contact === 'yes' ? 'Да' : 'Не') . "\n";
+        } else {
+            echo '<p><strong>Не е нужен контакт:</strong> ' . 
+                 ($no_contact === 'yes' ? 'Да' : 'Не') . '</p>';
+        }
+    }
+}
