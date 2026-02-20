@@ -1,4 +1,8 @@
 jQuery(document).ready(function ($) {  // Pass $ as parameter
+
+    // EUR conversion rate (1 EUR = 1.95470 BGN)
+    const exchangeRate = 1.95580;
+
     // Hide the results section by default
     $('#gamma-calculator-results').hide();
 
@@ -116,38 +120,38 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
             let dowelsPcs = numberOfPanels * 10 + F20 * numberOfPanels;
             let cornerPcs = F20 * numberOfPanels;
     
-            // Price Calculations
-            let basePrice = parseFloat(gamma_pricing.base_price) * blindsProfileLm;
-            let totalPrice = basePrice;
-    
+            // Price Calculations - prices are now stored in EUR
+            let basePriceEUR = parseFloat(gamma_pricing.base_price) * blindsProfileLm;
+            let totalPriceEUR = basePriceEUR;
+
             // Add essential components
-            totalPrice += uProfileLeftLm * parseFloat(gamma_pricing.price_u_profile_left || 0);
-            totalPrice += uProfileRightLm * parseFloat(gamma_pricing.price_u_profile_right || 0);
-            totalPrice += horizontalUProfileLm * parseFloat(gamma_pricing.price_u_horizontal_panel || 0);
-            totalPrice += reinforcingProfileLm * parseFloat(gamma_pricing.price_reinforcing_profile || 0);
-            totalPrice += rivetsPcs * parseFloat(gamma_pricing.price_rivets || 0);
-            totalPrice += selfTappingScrewPcs * parseFloat(gamma_pricing.price_self_tapping_screw || 0);
-            totalPrice += dowelsPcs * parseFloat(gamma_pricing.price_dowels || 0);
-            totalPrice += cornerPcs * parseFloat(gamma_pricing.price_corners || 0);
-    
+            totalPriceEUR += uProfileLeftLm * parseFloat(gamma_pricing.price_u_profile_left || 0);
+            totalPriceEUR += uProfileRightLm * parseFloat(gamma_pricing.price_u_profile_right || 0);
+            totalPriceEUR += horizontalUProfileLm * parseFloat(gamma_pricing.price_u_horizontal_panel || 0);
+            totalPriceEUR += reinforcingProfileLm * parseFloat(gamma_pricing.price_reinforcing_profile || 0);
+            totalPriceEUR += rivetsPcs * parseFloat(gamma_pricing.price_rivets || 0);
+            totalPriceEUR += selfTappingScrewPcs * parseFloat(gamma_pricing.price_self_tapping_screw || 0);
+            totalPriceEUR += dowelsPcs * parseFloat(gamma_pricing.price_dowels || 0);
+            totalPriceEUR += cornerPcs * parseFloat(gamma_pricing.price_corners || 0);
+
             // Calculate the discounted price if a sale price exists and is valid
-            let discountedPrice = totalPrice;
-            if (gamma_pricing.sale_price && 
-                parseFloat(gamma_pricing.sale_price) > 0 && 
+            let discountedPriceEUR = totalPriceEUR;
+            if (gamma_pricing.sale_price &&
+                parseFloat(gamma_pricing.sale_price) > 0 &&
                 parseFloat(gamma_pricing.sale_price) < parseFloat(gamma_pricing.base_price)) {
-                
+
                 // Start with the base blinds profile calculation using sale price
-                discountedPrice = parseFloat(gamma_pricing.sale_price) * blindsProfileLm;
-                
+                discountedPriceEUR = parseFloat(gamma_pricing.sale_price) * blindsProfileLm;
+
                 // Add the rest of the components (these aren't discounted)
-                discountedPrice += uProfileLeftLm * parseFloat(gamma_pricing.price_u_profile_left || 0);
-                discountedPrice += uProfileRightLm * parseFloat(gamma_pricing.price_u_profile_right || 0);
-                discountedPrice += horizontalUProfileLm * parseFloat(gamma_pricing.price_u_horizontal_panel || 0);
-                discountedPrice += reinforcingProfileLm * parseFloat(gamma_pricing.price_reinforcing_profile || 0);
-                discountedPrice += rivetsPcs * parseFloat(gamma_pricing.price_rivets || 0);
-                discountedPrice += selfTappingScrewPcs * parseFloat(gamma_pricing.price_self_tapping_screw || 0);
-                discountedPrice += dowelsPcs * parseFloat(gamma_pricing.price_dowels || 0);
-                discountedPrice += cornerPcs * parseFloat(gamma_pricing.price_corners || 0);
+                discountedPriceEUR += uProfileLeftLm * parseFloat(gamma_pricing.price_u_profile_left || 0);
+                discountedPriceEUR += uProfileRightLm * parseFloat(gamma_pricing.price_u_profile_right || 0);
+                discountedPriceEUR += horizontalUProfileLm * parseFloat(gamma_pricing.price_u_horizontal_panel || 0);
+                discountedPriceEUR += reinforcingProfileLm * parseFloat(gamma_pricing.price_reinforcing_profile || 0);
+                discountedPriceEUR += rivetsPcs * parseFloat(gamma_pricing.price_rivets || 0);
+                discountedPriceEUR += selfTappingScrewPcs * parseFloat(gamma_pricing.price_self_tapping_screw || 0);
+                discountedPriceEUR += dowelsPcs * parseFloat(gamma_pricing.price_dowels || 0);
+                discountedPriceEUR += cornerPcs * parseFloat(gamma_pricing.price_corners || 0);
             }
 
             // Add these debug logs right before the discount calculation
@@ -155,66 +159,76 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
             console.log('Base price type:', typeof gamma_pricing.base_price);
             console.log('Sale price as float:', parseFloat(gamma_pricing.sale_price));
             console.log('Base price as float:', parseFloat(gamma_pricing.base_price));
-            console.log('Is sale price valid?', 
-                parseFloat(gamma_pricing.sale_price) > 0 && 
+            console.log('Is sale price valid?',
+                parseFloat(gamma_pricing.sale_price) > 0 &&
                 parseFloat(gamma_pricing.sale_price) < parseFloat(gamma_pricing.base_price)
             );
 
             // Debug: Log the total and discounted prices
-            console.log('Total Price:', totalPrice);
-            console.log('Discounted Price:', discountedPrice);
-    
+            console.log('Total Price EUR:', totalPriceEUR);
+            console.log('Discounted Price EUR:', discountedPriceEUR);
+
             // Calculate the discount percentage
             let discountPercentage = 0;
-            if (totalPrice > 0 && discountedPrice < totalPrice) {  // Changed condition
-                discountPercentage = Math.round(100 - (discountedPrice / totalPrice * 100));
+            if (totalPriceEUR > 0 && discountedPriceEUR < totalPriceEUR) {
+                discountPercentage = Math.round(100 - (discountedPriceEUR / totalPriceEUR * 100));
                 console.log('Discount Percentage:', discountPercentage + '%');
             }
-    
+
             // Update the discount badge
             $('.product-badge.sale').text(`-${discountPercentage}%`);
-    
-            // Set hidden fields for total_price and discounted_price
-            $('#total_price').val(totalPrice.toFixed(2));
-            $('#discounted_price').val(discountedPrice.toFixed(2));
-    
-            // In your gamma-calculator.js, find this section and replace it:
-            // Update displayed price
-            if (gamma_pricing.sale_price && 
-                parseFloat(gamma_pricing.sale_price) > 0 && 
+
+            // Calculate BGN prices from EUR with proper rounding
+            const totalPriceBGN = (Math.round(totalPriceEUR * exchangeRate * 100) / 100).toFixed(2);
+            const discountedPriceBGN = (Math.round(discountedPriceEUR * exchangeRate * 100) / 100).toFixed(2);
+
+            // Set hidden fields for total_price and discounted_price (in EUR)
+            $('#total_price').val(totalPriceEUR.toFixed(2));
+            $('#discounted_price').val(discountedPriceEUR.toFixed(2));
+
+            // Update displayed price - EUR as primary, BGN as secondary
+            if (gamma_pricing.sale_price &&
+                parseFloat(gamma_pricing.sale_price) > 0 &&
                 parseFloat(gamma_pricing.sale_price) < parseFloat(gamma_pricing.base_price)) {
-                
+
                 console.log('Entering discount price display condition'); // Add this debug log
-                
+
                 priceElement.html(`
-                    <span class="woocommerce-Price-amount amount">
-                        <del>
-                            <bdi>${totalPrice.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
-                        </del>
-                        <ins>
-                            <bdi>${discountedPrice.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
-                        </ins>
+                    <span class="woocommerce-Price-amount amount" data-bgn-converted="true">
+                        <span class="regular-price-witheuro">
+                            <del class="eur-regular eur-inline">€${totalPriceEUR.toFixed(2)}</del> /
+                            <del>
+                                <bdi>${totalPriceBGN}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
+                            </del>
+                        </span>
+                        <span class="sale-price-witheuro">
+                            <ins class="eur-sale eur-inline">€${discountedPriceEUR.toFixed(2)}</ins> /
+                            <ins>
+                                <bdi>${discountedPriceBGN}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
+                            </ins>
+                        </span>
                         <span class="custom-text-after-price">(вкл. ДДС)</span>
                     </span>
                 `);
             } else {
                 console.log('Using regular price display'); // Add this debug log
-                
+
                 priceElement.html(`
-                    <span class="woocommerce-Price-amount amount">
-                        <bdi>${totalPrice.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
+                    <span class="woocommerce-Price-amount amount" data-bgn-converted="true">
+                        <bdi>€${totalPriceEUR.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol"></span></bdi> /
+                        <bdi>${totalPriceBGN}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
                         <span class="custom-text-after-price">(вкл. ДДС)</span>
                     </span>
                 `);
             }
     
             // Update hidden fields and button attributes
-            $('#calculated_price').val(discountedPrice.toFixed(2));
+            $('#calculated_price').val(discountedPriceEUR.toFixed(2));
             $('#gamma_panel_width').val(formattedWidth);
             $('#gamma_panel_height').val(formattedHeight);
             $('#gamma_number_of_panels').val(numberOfPanels);
-    
-            addToCartButton.attr('data-calculated-price', discountedPrice.toFixed(2));
+
+            addToCartButton.attr('data-calculated-price', discountedPriceEUR.toFixed(2));
             addToCartButton.attr('data-panel-width', formattedWidth);
             addToCartButton.attr('data-panel-height', formattedHeight);
             addToCartButton.attr('data-panels', numberOfPanels);
@@ -234,7 +248,7 @@ jQuery(document).ready(function ($) {  // Pass $ as parameter
                 </ul>
             `);
     
-            $('#gamma-final-price').html(`<p>Крайна цена: ${discountedPrice.toFixed(2)} лв.</p>`);
+            $('#gamma-final-price').html(`<p>Крайна цена: €${discountedPriceEUR.toFixed(2)} / ${discountedPriceBGN} лв.</p>`);
     
         } catch (error) {
             console.error("An error occurred during calculations: ", error);

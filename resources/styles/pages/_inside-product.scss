@@ -620,7 +620,11 @@ div.product table.variations select {
 #piramida-calculator-results,
 #sigma-calculator-results,
 #siding-calculator-results,
-#terra-calculator-results {
+#terra-calculator-results,
+#romb-pro-calculator-results,
+#romb-mini-calculator-results,
+#romb-grande-calculator-results,
+#romb-max-calculator-results {
   @apply p-6 rounded-md border border-[#E2EAF0] bg-white  flex-col gap-4;
 }
 
@@ -629,7 +633,11 @@ div.product table.variations select {
 #siding-calculator-results h2,
 #piramida-calculator-results h2,
 #sigma-calculator-results h2,
-#terra-calculator-results h2 {
+#terra-calculator-results h2,
+#romb-pro-calculator-results h2,
+#romb-mini-calculator-results h2,
+#romb-grande-calculator-results h2,
+#romb-max-calculator-results h2 {
   @apply font-bold text-base;
 }
 
@@ -639,7 +647,11 @@ div.product table.variations select {
 #siding-calculator-results ul,
 #piramida-calculator-results ul,
 #sigma-calculator-results ul,
-#terra-calculator-results ul {
+#terra-calculator-results ul,
+#romb-pro-calculator-results ul,
+#romb-mini-calculator-results ul,
+#romb-grande-calculator-results ul,
+#romb-max-calculator-results ul {
   @apply w-full ;
 }
 
@@ -648,7 +660,11 @@ div.product table.variations select {
 #siding-calculator-results ul li,
 #piramida-calculator-results ul li,
 #sigma-calculator-results ul li,
-#terra-calculator-results ul li {
+#terra-calculator-results ul li,
+#romb-pro-calculator-results ul li,
+#romb-mini-calculator-results ul li,
+#romb-grande-calculator-results ul li,
+#romb-max-calculator-results ul li {
   @apply w-full flex items-center justify-between text-14 px-2 py-2 odd:bg-gray/80;
 }
 
@@ -657,7 +673,11 @@ div.product table.variations select {
 #siding-calculator-results ul li span,
 #piramida-calculator-results ul li span,
 #sigma-calculator-results ul li span,
-#terra-calculator-results ul li span {
+#terra-calculator-results ul li span,
+#romb-pro-calculator-results ul li span,
+#romb-mini-calculator-results ul li span,
+#romb-grande-calculator-results ul li span,
+#romb-max-calculator-results ul li span {
   @apply font-bold;
 }
 
@@ -670,7 +690,11 @@ div.product table.variations select {
 #siding-calculator-form,
 #piramida-calculator-form,
 #sigma-calculator-form,
-#terra-calculator-form {
+#terra-calculator-form,
+#romb-pro-calculator-form,
+#romb-mini-calculator-form,
+#romb-grande-calculator-form,
+#romb-max-calculator-form {
   @apply bg-gray p-6 rounded-md;
 }
 
@@ -679,7 +703,11 @@ div.product table.variations select {
 #siding-calculator-form h2,
 #piramida-calculator-form h2,
 #sigma-calculator-form h2,
-#terra-calculator-form h2 {
+#terra-calculator-form h2,
+#romb-pro-calculator-form h2,
+#romb-mini-calculator-form h2,
+#romb-grande-calculator-form h2,
+#romb-max-calculator-form h2 {
   @apply font-semibold text-base text-black/90;
 }
 
@@ -695,12 +723,23 @@ div.product table.variations select {
   @apply grid grid-cols-1 lg:grid-cols-3 gap-2;
 }
 
+#romb-pro-calculator-form .romb-pro-calculator-section,
+#romb-mini-calculator-form .romb-mini-calculator-section,
+#romb-grande-calculator-form .romb-grande-calculator-section,
+#romb-max-calculator-form .romb-max-calculator-section {
+  @apply grid grid-cols-1 lg:grid-cols-3 gap-2;
+}
+
 #atlas-calculator-form .atlas-calculator-section .form-row,
 #gamma-calculator-form .gamma-calculator-section .form-row,
 #siding-calculator-form .siding-calculator-section .form-row,
 #piramida-calculator-form .piramida-calculator-section .form-row,
 #sigma-calculator-form .sigma-calculator-section .form-row,
-#terra-calculator-form .terra-calculator-section .form-row {
+#terra-calculator-form .terra-calculator-section .form-row,
+#romb-pro-calculator-form .romb-pro-calculator-section .form-row,
+#romb-mini-calculator-form .romb-mini-calculator-section .form-row,
+#romb-grande-calculator-form .romb-grande-calculator-section .form-row,
+#romb-max-calculator-form .romb-max-calculator-section .form-row {
   @apply m-0 p-0;
 }
 
@@ -756,6 +795,42 @@ div.product table.variations select {
 
 #terra-calculator-form label {
   @apply font-medium text-12 text-[#545454];
+}
+
+#romb-pro-calculator-form .romb-pro-calculator-section select,
+#romb-pro-calculator-form .romb-pro-calculator-section input {
+  @apply border-transparent h-[50px] leading-[50px]
+}
+
+#romb-pro-calculator-form label {
+  @apply font-medium text-13 text-[#545454];
+}
+
+#romb-mini-calculator-form .romb-mini-calculator-section select,
+#romb-mini-calculator-form .romb-mini-calculator-section input {
+  @apply border-transparent h-[50px] leading-[50px]
+}
+
+#romb-mini-calculator-form label {
+  @apply font-medium text-13 text-[#545454];
+}
+
+#romb-grande-calculator-form .romb-grande-calculator-section select,
+#romb-grande-calculator-form .romb-grande-calculator-section input {
+  @apply border-transparent h-[50px] leading-[50px]
+}
+
+#romb-grande-calculator-form label {
+  @apply font-medium text-13 text-[#545454];
+}
+
+#romb-max-calculator-form .romb-max-calculator-section select,
+#romb-max-calculator-form .romb-max-calculator-section input {
+  @apply border-transparent h-[50px] leading-[50px]
+}
+
+#romb-max-calculator-form label {
+  @apply font-medium text-13 text-[#545454];
 }
 
 .predefined-sizes {

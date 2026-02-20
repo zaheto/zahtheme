@@ -1,4 +1,8 @@
 jQuery(document).ready(function ($) {
+
+    // EUR conversion rate (1 EUR = 1.95470 BGN)
+    const exchangeRate = 1.95580;
+
     // Hide the results section by default
     $('#piramida-calculator-results').hide();
 
@@ -98,84 +102,95 @@ jQuery(document).ready(function ($) {
             let selfTappingScrewPcs = numberOfPanels * 10;
             let dowelsPcs = numberOfPanels * 10;
     
-            // Price Calculations
-            let basePrice = parseFloat(piramida_pricing.base_price) * blindsProfileLm;
-            let totalPrice = basePrice;
-    
+            // Price Calculations - prices are now stored in EUR
+            let basePriceEUR = parseFloat(piramida_pricing.base_price) * blindsProfileLm;
+            let totalPriceEUR = basePriceEUR;
+
             // Add essential components
-            totalPrice += uProfileLeftLm * parseFloat(piramida_pricing.price_u_profile_left || 0);
-            totalPrice += uProfileRightLm * parseFloat(piramida_pricing.price_u_profile_right || 0);
-            totalPrice += horizontalUProfileLm * parseFloat(piramida_pricing.price_u_horizontal_panel || 0);
-            totalPrice += rivetsPcs * parseFloat(piramida_pricing.price_rivets || 0);
-            totalPrice += selfTappingScrewPcs * parseFloat(piramida_pricing.price_self_tapping_screw || 0);
-            totalPrice += dowelsPcs * parseFloat(piramida_pricing.price_dowels || 0);
-    
+            totalPriceEUR += uProfileLeftLm * parseFloat(piramida_pricing.price_u_profile_left || 0);
+            totalPriceEUR += uProfileRightLm * parseFloat(piramida_pricing.price_u_profile_right || 0);
+            totalPriceEUR += horizontalUProfileLm * parseFloat(piramida_pricing.price_u_horizontal_panel || 0);
+            totalPriceEUR += rivetsPcs * parseFloat(piramida_pricing.price_rivets || 0);
+            totalPriceEUR += selfTappingScrewPcs * parseFloat(piramida_pricing.price_self_tapping_screw || 0);
+            totalPriceEUR += dowelsPcs * parseFloat(piramida_pricing.price_dowels || 0);
+
             // Calculate the discounted price if a sale price exists and is valid
-            let discountedPrice = totalPrice;
-            if (piramida_pricing.sale_price && 
-                parseFloat(piramida_pricing.sale_price) > 0 && 
+            let discountedPriceEUR = totalPriceEUR;
+            if (piramida_pricing.sale_price &&
+                parseFloat(piramida_pricing.sale_price) > 0 &&
                 parseFloat(piramida_pricing.sale_price) < parseFloat(piramida_pricing.base_price)) {
-                
-                discountedPrice = parseFloat(piramida_pricing.sale_price) * blindsProfileLm;
-                discountedPrice += uProfileLeftLm * parseFloat(piramida_pricing.price_u_profile_left || 0);
-                discountedPrice += uProfileRightLm * parseFloat(piramida_pricing.price_u_profile_right || 0);
-                discountedPrice += horizontalUProfileLm * parseFloat(piramida_pricing.price_u_horizontal_panel || 0);
-                discountedPrice += rivetsPcs * parseFloat(piramida_pricing.price_rivets || 0);
-                discountedPrice += selfTappingScrewPcs * parseFloat(piramida_pricing.price_self_tapping_screw || 0);
-                discountedPrice += dowelsPcs * parseFloat(piramida_pricing.price_dowels || 0);
+
+                discountedPriceEUR = parseFloat(piramida_pricing.sale_price) * blindsProfileLm;
+                discountedPriceEUR += uProfileLeftLm * parseFloat(piramida_pricing.price_u_profile_left || 0);
+                discountedPriceEUR += uProfileRightLm * parseFloat(piramida_pricing.price_u_profile_right || 0);
+                discountedPriceEUR += horizontalUProfileLm * parseFloat(piramida_pricing.price_u_horizontal_panel || 0);
+                discountedPriceEUR += rivetsPcs * parseFloat(piramida_pricing.price_rivets || 0);
+                discountedPriceEUR += selfTappingScrewPcs * parseFloat(piramida_pricing.price_self_tapping_screw || 0);
+                discountedPriceEUR += dowelsPcs * parseFloat(piramida_pricing.price_dowels || 0);
             }
-    
+
             // Debug: Log the prices
-            console.log('Total Price:', totalPrice);
-            console.log('Discounted Price:', discountedPrice);
-    
+            console.log('Total Price EUR:', totalPriceEUR);
+            console.log('Discounted Price EUR:', discountedPriceEUR);
+
             // Calculate the discount percentage
             let discountPercentage = 0;
-            if (totalPrice > 0 && discountedPrice < totalPrice) {
-                discountPercentage = Math.round(100 - (discountedPrice / totalPrice * 100));
+            if (totalPriceEUR > 0 && discountedPriceEUR < totalPriceEUR) {
+                discountPercentage = Math.round(100 - (discountedPriceEUR / totalPriceEUR * 100));
                 console.log('Discount Percentage:', discountPercentage + '%');
             }
-    
+
             // Update the discount badge
             $('.product-badge.sale').text(`-${discountPercentage}%`);
-    
-            // Set hidden fields for total_price and discounted_price
-            $('#total_price').val(totalPrice.toFixed(2));
-            $('#discounted_price').val(discountedPrice.toFixed(2));
-    
-            // Update displayed price
-            if (piramida_pricing.sale_price && 
-                parseFloat(piramida_pricing.sale_price) > 0 && 
+
+            // Calculate BGN prices from EUR with proper rounding
+            const totalPriceBGN = (Math.round(totalPriceEUR * exchangeRate * 100) / 100).toFixed(2);
+            const discountedPriceBGN = (Math.round(discountedPriceEUR * exchangeRate * 100) / 100).toFixed(2);
+
+            // Set hidden fields for total_price and discounted_price (in EUR)
+            $('#total_price').val(totalPriceEUR.toFixed(2));
+            $('#discounted_price').val(discountedPriceEUR.toFixed(2));
+
+            // Update displayed price - EUR as primary, BGN as secondary
+            if (piramida_pricing.sale_price &&
+                parseFloat(piramida_pricing.sale_price) > 0 &&
                 parseFloat(piramida_pricing.sale_price) < parseFloat(piramida_pricing.base_price)) {
-                
+
                 priceElement.html(`
-                    <span class="woocommerce-Price-amount amount">
-                        <del>
-                            <bdi>${totalPrice.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
-                        </del>
-                        <ins>
-                            <bdi>${discountedPrice.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
-                        </ins>
+                    <span class="woocommerce-Price-amount amount" data-bgn-converted="true">
+                        <span class="regular-price-witheuro">
+                            <del class="eur-regular eur-inline">€${totalPriceEUR.toFixed(2)}</del> /
+                            <del>
+                                <bdi>${totalPriceBGN}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
+                            </del>
+                        </span>
+                        <span class="sale-price-witheuro">
+                            <ins class="eur-sale eur-inline">€${discountedPriceEUR.toFixed(2)}</ins> /
+                            <ins>
+                                <bdi>${discountedPriceBGN}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
+                            </ins>
+                        </span>
                         <span class="custom-text-after-price">(вкл. ДДС)</span>
                     </span>
                 `);
             } else {
                 priceElement.html(`
-                    <span class="woocommerce-Price-amount amount">
-                        <bdi>${totalPrice.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
+                    <span class="woocommerce-Price-amount amount" data-bgn-converted="true">
+                        <bdi>€${totalPriceEUR.toFixed(2)}&nbsp;<span class="woocommerce-Price-currencySymbol"></span></bdi> /
+                        <bdi>${totalPriceBGN}&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>
                         <span class="custom-text-after-price">(вкл. ДДС)</span>
                     </span>
                 `);
             }
     
             // Update hidden fields and button attributes
-            $('#calculated_price').val(discountedPrice.toFixed(2));
+            $('#calculated_price').val(discountedPriceEUR.toFixed(2));
             $('#piramida_panel_width').val(formattedWidth);
             $('#piramida_panel_height').val(formattedHeight);
             $('#piramida_number_of_panels').val(numberOfPanels);
-    
+
             // Update button attributes
-            addToCartButton.attr('data-calculated-price', discountedPrice.toFixed(2));
+            addToCartButton.attr('data-calculated-price', discountedPriceEUR.toFixed(2));
             addToCartButton.attr('data-panel-width', formattedWidth);
             addToCartButton.attr('data-panel-height', formattedHeight);
             addToCartButton.attr('data-panels', numberOfPanels);
@@ -199,7 +214,7 @@ jQuery(document).ready(function ($) {
                 </ul>
             `);
     
-            $('#piramida-final-price').html(`<p>Крайна цена: ${discountedPrice.toFixed(2)} лв.</p>`);
+            $('#piramida-final-price').html(`<p>Крайна цена: €${discountedPriceEUR.toFixed(2)} / ${discountedPriceBGN} лв.</p>`);
     
         } catch (error) {
             console.error("An error occurred during calculations: ", error);

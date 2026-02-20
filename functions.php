@@ -145,19 +145,19 @@ function zah_enqueue_calculator_scripts() {
 
     if (is_product()) {
         if (has_term('siding', 'product_tag')) {
-            wp_enqueue_script('zah-siding-calculator', 
-                get_template_directory_uri() . '/resources/scripts/siding-calculator.js', 
-                array('jquery'), 
-                null, 
+            wp_enqueue_script('zah-siding-calculator',
+                get_template_directory_uri() . '/resources/scripts/siding-calculator.js',
+                array('jquery'),
+                '1.0.1',
                 true
             );
         }
 
         if (has_term('atlas', 'product_tag')) {
-            wp_enqueue_script('zah-atlas-calculator', 
-                get_template_directory_uri() . '/resources/scripts/atlas-calculator.js', 
-                array('jquery'), 
-                null, 
+            wp_enqueue_script('zah-atlas-calculator',
+                get_template_directory_uri() . '/resources/scripts/atlas-calculator.js',
+                array('jquery'),
+                '1.0.1',
                 true
             );
         }
@@ -186,10 +186,42 @@ function zah_enqueue_calculator_scripts() {
             );
         }
         if (has_term('terra', 'product_tag')) {
-            wp_enqueue_script('zah-terra-calculator', 
-                get_template_directory_uri() . '/resources/scripts/terra-calculator.js', 
-                array('jquery'), 
-                null, 
+            wp_enqueue_script('zah-terra-calculator',
+                get_template_directory_uri() . '/resources/scripts/terra-calculator.js',
+                array('jquery'),
+                null,
+                true
+            );
+        }
+        if (has_term(['romb_mini', 'romb-mini'], 'product_tag')) {
+            wp_enqueue_script('zah-romb-mini-calculator',
+                get_template_directory_uri() . '/resources/scripts/romb_mini-calculator.js',
+                array('jquery'),
+                null,
+                true
+            );
+        }
+        if (has_term(['romb_pro', 'romb-pro'], 'product_tag')) {
+            wp_enqueue_script('zah-romb-pro-calculator',
+                get_template_directory_uri() . '/resources/scripts/romb_pro-calculator.js',
+                array('jquery'),
+                null,
+                true
+            );
+        }
+        if (has_term(['romb_grande', 'romb-grande'], 'product_tag')) {
+            wp_enqueue_script('zah-romb-grande-calculator',
+                get_template_directory_uri() . '/resources/scripts/romb_grande-calculator.js',
+                array('jquery'),
+                null,
+                true
+            );
+        }
+        if (has_term(['romb_max', 'romb-max'], 'product_tag')) {
+            wp_enqueue_script('zah-romb-max-calculator',
+                get_template_directory_uri() . '/resources/scripts/romb_max-calculator.js',
+                array('jquery'),
+                null,
                 true
             );
         }
@@ -2344,7 +2376,7 @@ add_filter('woocommerce_product_tabs', function($tabs) {
 
 // Change "Add to Cart" button text and URL for Atlas products on the archive page
 add_filter('woocommerce_loop_add_to_cart_link', function($button, $product) {
-    if (has_term(['atlas', 'sigma', 'gamma', 'piramida', 'terra'], 'product_tag', $product->get_id())) {
+    if (has_term(['atlas', 'sigma', 'gamma', 'piramida', 'terra', 'romb_mini', 'romb-mini', 'romb_pro', 'romb-pro', 'romb_grande', 'romb-grande', 'romb_max', 'romb-max'], 'product_tag', $product->get_id())) {
         $product_url = get_permalink($product->get_id());
         $button_text = __('Calculate', 'zah');
         $button = sprintf('<a href="%s" class="button">%s</a>', esc_url($product_url), esc_html($button_text));
@@ -2354,9 +2386,9 @@ add_filter('woocommerce_loop_add_to_cart_link', function($button, $product) {
 
 // Hook the calculator form after product title
 add_action('woocommerce_single_product_summary', function() {
-    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra', 'romb_mini', 'romb_pro', 'romb_grande', 'romb_max'];
     foreach ($models as $model) {
-        if (has_term($model, 'product_tag') && function_exists('get_field')) {
+        if (has_term([$model, str_replace('_', '-', $model)], 'product_tag') && function_exists('get_field')) {
             $pricing = [
                // 'price_panels_lin_meter' => get_field('price_panels_lin_meter'),
                 'price_u_profile_left' => get_field('price_u_profile_left'),
@@ -2389,9 +2421,9 @@ add_action('woocommerce_single_product_summary', function() {
 
 // Hook the calculator results after product meta
 add_action('woocommerce_after_add_to_cart_form', function() {
-    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra']; // Add other models here as needed
+    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra', 'romb_mini', 'romb_pro', 'romb_grande', 'romb_max'];
     foreach ($models as $model) {
-        if (has_term($model, 'product_tag')) {
+        if (has_term([$model, str_replace('_', '-', $model)], 'product_tag')) {
             echo view("partials.product.{$model}-calculator-results")->render();
         }
     }
@@ -2399,9 +2431,9 @@ add_action('woocommerce_after_add_to_cart_form', function() {
 
 // Modify the price before adding to cart
 add_filter('woocommerce_add_cart_item_data', function ($cart_item_data, $product_id) {
-    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra'];
+    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra', 'romb_mini', 'romb_pro', 'romb_grande', 'romb_max'];
     foreach ($models as $model) {
-        if (has_term($model, 'product_tag', $product_id)) {
+        if (has_term([$model, str_replace('_', '-', $model)], 'product_tag', $product_id)) {
             // Get base values for all models
             $calculated_price = isset($_POST['calculated_price']) ? floatval($_POST['calculated_price']) : 0;
             $panel_width = isset($_POST["{$model}_panel_width"]) ? floatval($_POST["{$model}_panel_width"]) : 0;
@@ -2431,9 +2463,9 @@ add_filter('woocommerce_add_cart_item_data', function ($cart_item_data, $product
 
 // Add the calculated price to the add to cart form
 add_action('woocommerce_before_add_to_cart_button', function() {
-    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra'];
+    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra', 'romb_mini', 'romb_pro', 'romb_grande', 'romb_max'];
     foreach ($models as $model) {
-        if (has_term($model, 'product_tag')) {
+        if (has_term([$model, str_replace('_', '-', $model)], 'product_tag')) {
             ?>
             <input type="hidden" name="calculated_price" id="calculated_price" value="">
             <input type="hidden" name="<?php echo $model; ?>_panel_width" id="<?php echo $model; ?>_panel_width" value="">
@@ -2499,7 +2531,7 @@ add_action('woocommerce_before_add_to_cart_button', function() {
 
 // Display width, height, and number of panels in the mini cart
 add_filter('woocommerce_get_item_data', function($item_data, $cart_item) {
-    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra'];
+    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra', 'romb_mini', 'romb_pro', 'romb_grande', 'romb_max'];
     foreach ($models as $model) {
         if (isset($cart_item["{$model}_panel_width"])) {
             $item_data[] = [
@@ -2532,7 +2564,7 @@ add_filter('woocommerce_get_item_data', function($item_data, $cart_item) {
 }, 10, 2);
 
 add_filter('woocommerce_get_cart_item_from_session', function($cart_item, $values) {
-    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra'];
+    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra', 'romb_mini', 'romb_pro', 'romb_grande', 'romb_max'];
     foreach ($models as $model) {
         if (isset($values['custom_price'])) {
             $cart_item['custom_price'] = $values['custom_price'];
@@ -2555,7 +2587,7 @@ add_filter('woocommerce_get_cart_item_from_session', function($cart_item, $value
 
 // Save the custom data to the order items
 add_action('woocommerce_checkout_create_order_line_item', function($item, $cart_item_key, $values, $order) {
-    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra'];
+    $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra', 'romb_mini', 'romb_pro', 'romb_grande', 'romb_max'];
     foreach ($models as $model) {
         if (isset($values["{$model}_panel_width"])) {
             $item->add_meta_data(__('Panel Width', 'zah'), $values["{$model}_panel_width"] . 'm');
@@ -2573,7 +2605,7 @@ add_action('woocommerce_checkout_create_order_line_item', function($item, $cart_
 
 
 add_filter('woocommerce_get_price_html', function($price, $product) {
-    if (has_term(['atlas', 'sigma', 'gamma', 'piramida', 'terra'], 'product_tag', $product->get_id())) {
+    if (has_term(['atlas', 'sigma', 'gamma', 'piramida', 'terra', 'romb_mini', 'romb-mini', 'romb_pro', 'romb-pro', 'romb_grande', 'romb-grande', 'romb_max', 'romb-max'], 'product_tag', $product->get_id())) {
         return ''; // Return an empty string to hide the price
     }
     return $price;
@@ -2586,17 +2618,17 @@ function populate_height_field($field) {
     // Reset the choices
     $field['choices'] = [];
 
-    // Query for products with the "Atlas" or "Sigma" tag
+    // Query for products with fence-related tags
     $args = [
         'post_type' => 'product',
         'tax_query' => [
             [
                 'taxonomy' => 'product_tag',
                 'field' => 'slug',
-                'terms' => ['atlas', 'sigma', 'gamma', 'piramida', 'terra'],
+                'terms' => ['atlas', 'sigma', 'gamma', 'piramida', 'terra', 'romb-mini', 'romb-pro', 'romb-grande', 'romb-max'],
             ],
         ],
-        'posts_per_page' => 6, // Assuming the heights are the same for all "Atlas" and "Sigma" products
+        'posts_per_page' => -1,
     ];
     $query = new WP_Query($args);
 
@@ -2644,11 +2676,6 @@ add_filter('woocommerce_add_cart_item', function($cart_item) {
     return $cart_item;
 }, 10, 1);
 
-// add_action('woocommerce_add_to_cart', function($cart_item_key, $product_id, $quantity, $variation_id, $variation, $cart_item_data) {
-//     ////error_log('Add to Cart Event:');
-//     ////error_log('POST Data: ' . print_r($_POST, true));
-//     ////error_log('Cart Item Data: ' . print_r($cart_item_data, true));
-// }, 10, 6);
 
 
 if( function_exists('acf_add_options_page') ) {
@@ -2665,65 +2692,79 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
     global $product;
 
     // Check if product has relevant tags
-    $has_atlas = has_term('atlas', 'product_tag', $product->get_id());
-    $has_sigma = has_term('sigma', 'product_tag', $product->get_id());
-    $has_gamma = has_term('gamma', 'product_tag', $product->get_id());
-    $has_piramida = has_term('piramida', 'product_tag', $product->get_id());
-    $has_terra = has_term('terra', 'product_tag', $product->get_id());
-    $has_siding = has_term('siding', 'product_tag', $product->get_id());
+    $has_atlas    = has_term('atlas',      'product_tag', $product->get_id());
+    $has_sigma    = has_term('sigma',      'product_tag', $product->get_id());
+    $has_gamma    = has_term('gamma',      'product_tag', $product->get_id());
+    $has_piramida = has_term('piramida',   'product_tag', $product->get_id());
+    $has_terra    = has_term('terra',      'product_tag', $product->get_id());
+    $has_siding   = has_term('siding',     'product_tag', $product->get_id());
+    $has_romb_mini   = has_term(['romb_mini',  'romb-mini'],  'product_tag', $product->get_id());
+    $has_romb_pro    = has_term(['romb_pro',   'romb-pro'],   'product_tag', $product->get_id());
+    $has_romb_grande = has_term(['romb_grande', 'romb-grande'], 'product_tag', $product->get_id());
+    $has_romb_max    = has_term(['romb_max',   'romb-max'],   'product_tag', $product->get_id());
 
+    // Inside your existing action hook, in the siding section
+    if ($has_siding) {
+        $panel_siding_sqm = floatval(get_field('panel_siding_sqm', $product->get_id()) ?: 0);
+        $base_price_eur = floatval($product->get_regular_price() ?: 0); // Price is stored in EUR
+        $sale_price_eur = floatval($product->get_sale_price() ?: 0);
 
-        // Inside your existing action hook, in the siding section
-        if ($has_siding) {
-            $panel_siding_sqm = floatval(get_field('panel_siding_sqm', $product->get_id()) ?: 0);
-            $base_price = floatval($product->get_regular_price() ?: 0);
-            $sale_price = floatval($product->get_sale_price() ?: 0);
-        
-            // Show the base price directly (27.48 лв.)
-            if ($product->is_on_sale() && $sale_price > 0 && $sale_price < $base_price) {
-                echo '<div class="price">';
-                echo '<span class="woocommerce-Price-amount amount">';
-                echo '<del><bdi>' . number_format($base_price, 2) . '&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi></del> ';
-                echo '<ins><bdi>' . number_format($sale_price, 2) . '&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi></ins>';
-                echo '<span class="custom-text-after-price">/м²</span>';
-                echo '</span>';
-                echo '</div>';
-            } else {
-                echo '<div class="price">';
-                echo '<span class="woocommerce-Price-amount amount">';
-                echo '<bdi>' . number_format($base_price, 2) . '&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>';
-                echo '<span class="custom-text-after-price">/м²</span>';
-                echo '</span>';
-                echo '</div>';
-            }
-        
-            return;
+        // EUR to BGN conversion rate
+        $exchange_rate = 1.95470;
+        $base_price_bgn = $base_price_eur * $exchange_rate;
+        $sale_price_bgn = $sale_price_eur * $exchange_rate;
+
+        // Show EUR as main currency, BGN as secondary
+        if ($product->is_on_sale() && $sale_price_eur > 0 && $sale_price_eur < $base_price_eur) {
+            echo '<div class="price">';
+            echo '<span class="woocommerce-Price-amount amount">';
+            echo '<del class="eur-regular">€' . number_format($base_price_eur, 2) . '</del> / ';
+            echo '<del><bdi>' . number_format($base_price_bgn, 2) . '&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi></del> ';
+            echo '<ins class="eur-sale">€' . number_format($sale_price_eur, 2) . '</ins> / ';
+            echo '<ins><bdi>' . number_format($sale_price_bgn, 2) . '&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi></ins>';
+            echo '<span class="custom-text-after-price">/м²</span>';
+            echo '</span>';
+            echo '</div>';
+        } else {
+            echo '<div class="price">';
+            echo '<span class="woocommerce-Price-amount amount">';
+            echo '<bdi>€' . number_format($base_price_eur, 2) . '</bdi> / ';
+            echo '<bdi>' . number_format($base_price_bgn, 2) . '&nbsp;<span class="woocommerce-Price-currencySymbol">лв.</span></bdi>';
+            echo '<span class="custom-text-after-price">/м²</span>';
+            echo '</span>';
+            echo '</div>';
         }
 
-    if (!$has_atlas && !$has_sigma && !$has_gamma && !$has_piramida && !$has_terra && !$has_siding) {
-        //echo "<script>console.log('No relevant tags found');</script>";
+        return;
+    }
+
+    if (!$has_atlas && !$has_sigma && !$has_gamma && !$has_piramida && !$has_terra && !$has_siding &&
+        !$has_romb_mini && !$has_romb_pro && !$has_romb_grande && !$has_romb_max) {
         return;
     }
 
     $models = get_field('models', 'option');
 
-   if (!$models || !is_array($models)) {
-       //echo "<script>console.log('No models found or invalid models');</script>";
-       return;
-   }
+    if (!$models || !is_array($models)) {
+        return;
+    }
 
     foreach ($models as $model) {
         // Get tag info
         $tag_id = isset($model['tag'][0]) ? $model['tag'][0] : null;
         $term = get_term($tag_id, 'product_tag');
-        $tag_slug = $term ? $term->slug : '';
+        $tag_slug = $term ? str_replace('-', '_', $term->slug) : '';
 
-        if (($has_sigma && $tag_slug === 'sigma') || 
-            ($has_atlas && $tag_slug === 'atlas') || 
-            ($has_gamma && $tag_slug === 'gamma') || 
+        if (($has_sigma && $tag_slug === 'sigma') ||
+            ($has_atlas && $tag_slug === 'atlas') ||
+            ($has_gamma && $tag_slug === 'gamma') ||
             ($has_piramida && $tag_slug === 'piramida') ||
             ($has_terra && $tag_slug === 'terra') ||
-            ($has_siding && $tag_slug === 'siding')) {
+            ($has_siding && $tag_slug === 'siding') ||
+            ($has_romb_mini && $tag_slug === 'romb_mini') ||
+            ($has_romb_pro && $tag_slug === 'romb_pro') ||
+            ($has_romb_grande && $tag_slug === 'romb_grande') ||
+            ($has_romb_max && $tag_slug === 'romb_max')) {
             
             $predefined_sizes = $model['predefined_sizes'];
 
@@ -2750,34 +2791,41 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
                 ];
 
                 if (($has_siding && $tag_slug === 'siding')) {
-                    
-                    // Get the siding-specific fields directly
+
                     $panel_siding_sqm = floatval(get_field('panel_siding_sqm', $product->get_id()) ?: 0);
                     $panel_siding_useful = floatval(get_field('panel_siding_useful', $product->get_id()) ?: 0);
-                    $base_price = floatval($product->get_regular_price() ?: 0);
-                    $sale_price = floatval($product->get_sale_price() ?: 0);
-                
-                    // Calculate example price for 1m²
-                    $total_price = $base_price;
-                    $discounted_price = $sale_price > 0 ? $sale_price : $total_price;
-                
-                    // Display price per square meter
-                    if ($product->is_on_sale() && $sale_price > 0 && $sale_price < $base_price) {
+                    $base_price_eur = floatval($product->get_regular_price() ?: 0); // Price is stored in EUR
+                    $sale_price_eur = floatval($product->get_sale_price() ?: 0);
+
+                    // EUR to BGN conversion rate
+                    $exchange_rate = 1.95470;
+
+                    $total_price_eur = $base_price_eur;
+                    $discounted_price_eur = $sale_price_eur > 0 ? $sale_price_eur : $total_price_eur;
+
+                    $total_price_bgn = $total_price_eur * $exchange_rate;
+                    $discounted_price_bgn = $discounted_price_eur * $exchange_rate;
+
+                    // Display price per square meter - EUR as main, BGN as secondary
+                    if ($product->is_on_sale() && $sale_price_eur > 0 && $sale_price_eur < $base_price_eur) {
                         echo '<div class="price">';
-                        echo '<del>' . wc_price($total_price) . '</del> ';
-                        echo '<ins>' . wc_price($discounted_price) . '</ins>';
+                        echo '<del class="eur-regular">€' . number_format($total_price_eur, 2) . '</del> / ';
+                        echo '<del>' . wc_price($total_price_bgn) . '</del> ';
+                        echo '<ins class="eur-sale">€' . number_format($discounted_price_eur, 2) . '</ins> / ';
+                        echo '<ins>' . wc_price($discounted_price_bgn) . '</ins>';
                         echo '<span class="price-suffix">' . __('/м²', 'zah') . '</span>';
                         echo '</div>';
                     } else {
                         echo '<div class="price">';
-                        echo wc_price($total_price);
+                        echo '€' . number_format($total_price_eur, 2) . ' / ';
+                        echo wc_price($total_price_bgn);
                         echo '<span class="price-suffix">' . __('/м²', 'zah') . '</span>';
                         echo '</div>';
                     }
-                
+
                     break;
                 } elseif ($tag_slug === 'terra') {
-                    // Terra calculations (existing code)
+                    // Terra calculations
                     $cassetteDistance = 2;
                     $baseDistance = 2;
                     
@@ -2810,8 +2858,70 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
                                       $selfTappingScrewPcs * $prices['self_tapping_screw'] +
                                       $dowelsPcs * $prices['dowels'];
 
+                } elseif (in_array($tag_slug, ['romb_mini', 'romb_pro', 'romb_grande', 'romb_max'])) {
+                    // ROMB models — lookup-table based calculation
+                    $romb_slats = [];
+                    if ($tag_slug === 'romb_mini') {
+                        $romb_slats = [0.795=>7,0.9=>8,1.005=>9,1.11=>10,1.215=>11,1.325=>12,1.43=>13,1.535=>14,1.64=>15,1.745=>16,1.855=>17,1.96=>18,2.065=>19,2.17=>20,2.275=>21,2.385=>22,2.49=>23];
+                    } elseif ($tag_slug === 'romb_pro') {
+                        $romb_slats = [0.855=>5,1.015=>6,1.175=>7,1.335=>8,1.495=>9,1.655=>10,1.815=>11,1.975=>12,2.135=>13,2.295=>14,2.455=>15,2.615=>16,2.775=>17];
+                    } elseif ($tag_slug === 'romb_grande') {
+                        $romb_slats = [1.085=>4,1.34=>5,1.595=>6,1.85=>7,2.105=>8,2.36=>9,2.615=>10,2.87=>11,3.125=>12];
+                    } elseif ($tag_slug === 'romb_max') {
+                        $romb_slats = [0.78=>3,1.02=>4,1.26=>5,1.5=>6,1.74=>7,1.98=>8,2.22=>9,2.46=>10,2.7=>11,2.94=>12,3.18=>13];
+                    }
+
+                    $slatsPerPanel = isset($romb_slats[$height]) ? $romb_slats[$height] : 0;
+                    $blindsPcs     = $slatsPerPanel * $panels;
+                    $blindsLm      = max(($width - 0.01) * $blindsPcs, 0);
+
+                    $uProfileLeftLm       = $height * $panels;
+                    $uProfileRightLm      = $height * $panels;
+                    $horizontalUProfileLm = $width * $panels;
+
+                    $reinforcingPcs = ($width > 1.69) ? $panels : 0;
+                    $reinforcingLm  = $height * $reinforcingPcs;
+
+                    // Corner: MINI/PRO = reinforcingPcs; GRANDE/MAX = panels always
+                    if (in_array($tag_slug, ['romb_mini', 'romb_pro'])) {
+                        $cornerPcs = $reinforcingPcs;
+                    } else {
+                        $cornerPcs = $panels;
+                    }
+
+                    $dowelsPcs = 10 * $panels + $cornerPcs;
+
+                    // Rivets per model
+                    if ($tag_slug === 'romb_mini') {
+                        $rivetsPcs = ($width < 1.7) ? (8 * $blindsPcs + 4 * $panels) : (9 * $blindsPcs + 4);
+                    } elseif ($tag_slug === 'romb_pro') {
+                        $rivetsPcs = ($width < 1.7) ? (12 * $blindsPcs + 4 * $panels) : (14 * $blindsPcs + 4 * $panels);
+                    } elseif ($tag_slug === 'romb_grande') {
+                        $rivetsPcs = ($width < 1.7) ? (16 * $blindsPcs + 4 * $panels) : (19 * $blindsPcs + 4 * $panels);
+                    } else { // romb_max
+                        $rivetsPcs = ($width < 1.7) ? (14 * $blindsPcs + 4 * $panels) : (16 * $blindsPcs + 4);
+                    }
+
+                    $total_price = $blindsLm * $prices['base_price'] +
+                                   $uProfileLeftLm * $prices['u_profile_left'] +
+                                   $uProfileRightLm * $prices['u_profile_right'] +
+                                   $horizontalUProfileLm * $prices['u_horizontal_panel'] +
+                                   $reinforcingLm * $prices['reinforcing_profile'] +
+                                   $rivetsPcs * $prices['rivets'] +
+                                   $dowelsPcs * $prices['dowels'] +
+                                   $cornerPcs * $prices['corners'];
+
+                    $discounted_price = $blindsLm * ($prices['sale_price'] ?: $prices['base_price']) +
+                                        $uProfileLeftLm * $prices['u_profile_left'] +
+                                        $uProfileRightLm * $prices['u_profile_right'] +
+                                        $horizontalUProfileLm * $prices['u_horizontal_panel'] +
+                                        $reinforcingLm * $prices['reinforcing_profile'] +
+                                        $rivetsPcs * $prices['rivets'] +
+                                        $dowelsPcs * $prices['dowels'] +
+                                        $cornerPcs * $prices['corners'];
+
                 } else {
-                    // Other models calculations (existing code)
+                    // Other models calculations
                     $F20 = 0;
                     if ($width > 1.29 && $width < 2.1) {
                         $F20 = 1;
@@ -2991,6 +3101,19 @@ add_filter('woocommerce_get_price_html', function($price, $product) {
     }
     return $price;
 }, 10, 2);
+
+// Disable BGNtoEUR plugin conversion for siding, atlas, sigma, gamma, piramida, terra products
+add_filter('wc_price', function($formatted_price, $price, $args) {
+    // Check if we're on a single product page with calculator products
+    if (is_product()) {
+        global $product;
+        if ($product && has_term(['siding', 'atlas', 'sigma', 'gamma', 'piramida', 'terra'], 'product_tag', $product->get_id())) {
+            // Return the price without BGNtoEUR conversion
+            return $formatted_price;
+        }
+    }
+    return $formatted_price;
+}, 5, 3); // Priority 5 to run before the BGNtoEUR plugin (priority 10)
 
 
 /**
@@ -3819,3 +3942,7 @@ function add_custom_field_to_emails($order, $sent_to_admin, $plain_text, $email)
         }
     }
 }
+
+
+
+

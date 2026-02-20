@@ -183,10 +183,10 @@ remove_action('woocommerce_single_product_summary', 'woocommerce_template_single
  * @see woocommerce_review_display_meta()
  * @see woocommerce_review_display_comment_text()
  */
-remove_action('woocommerce_review_before', 'woocommerce_review_display_gravatar', 10);
-remove_action('woocommerce_review_before_comment_meta', 'woocommerce_review_display_rating', 10);
-remove_action('woocommerce_review_meta', 'woocommerce_review_display_meta', 10);
-remove_action('woocommerce_review_comment_text', 'woocommerce_review_display_comment_text', 10);
+// remove_action('woocommerce_review_before', 'woocommerce_review_display_gravatar', 10);
+// remove_action('woocommerce_review_before_comment_meta', 'woocommerce_review_display_rating', 10);
+// remove_action('woocommerce_review_meta', 'woocommerce_review_display_meta', 10);
+// remove_action('woocommerce_review_comment_text', 'woocommerce_review_display_comment_text', 10);
 
 /**
  * Product Add to cart.
@@ -320,6 +320,17 @@ add_action( 'zah_before_site', 'zah_header_cart_drawer', 5 );
 // remove_filter('jetpack_comment_form_enabled_for_product', '__return_false');
 
 /**
+ * Enable comments/reviews for products
+ */
+add_filter('comments_open', function($open, $post_id) {
+    $post = get_post($post_id);
+    if ($post && $post->post_type === 'product') {
+        return true;
+    }
+    return $open;
+}, 10, 2);
+
+/**
  * My Account.
  */
 // remove_action('woocommerce_account_navigation', 'woocommerce_account_navigation');
@@ -350,3 +361,318 @@ add_action( 'zah_before_site', 'zah_header_cart_drawer', 5 );
 // remove_action('woocommerce_before_reset_password_form', 'woocommerce_output_all_notices', 10);
 
 add_filter( 'woocommerce_add_to_cart_fragments', 'zah_cart_link_fragment' );
+
+/**
+ * Remove reviews tab from product tabs
+ */
+add_filter('woocommerce_product_tabs', function($tabs) {
+    unset($tabs['reviews']);
+    return $tabs;
+}, 98);
+
+/**
+ * Display product reviews on single product page
+ */
+add_action('woocommerce_after_single_product_summary', function() {
+    if (is_product() && comments_open()) {
+        echo \Roots\view('woocommerce.single-product.reviews')->render();
+    }
+}, 15);
+
+/**
+ * Remove WooCommerce default rating HTML generation
+ */
+add_filter('woocommerce_product_review_comment_form_args', function($comment_form) {
+    // We'll handle rating in our custom template, so remove WooCommerce's default
+    return $comment_form;
+}, 20);
+
+/**
+ * Remove WooCommerce rating field HTML injection
+ */
+remove_action('comment_form_rating', 'woocommerce_product_review_comment_form_rating_field', 10);
+
+/**
+ * Disable WooCommerce from adding rating stars via JS
+ */
+add_action('wp_footer', function() {
+    if (is_product()) {
+        ?>
+        <style>
+            #reviews .comment-form-rating p.stars {
+                display: none !important;
+            }
+            #reviews .comment-form-rating select[name="rating"] {
+                display: none !important;
+            }
+        </style>
+        <?php
+    }
+}, 100);
+
+/**
+ * Handle review image uploads
+ */
+add_action('comment_post', function($comment_id) {
+    // Only process for product reviews
+    $comment = \get_comment($comment_id);
+    if (!$comment || \get_post_type($comment->comment_post_ID) !== 'product') {
+        return;
+    }
+
+    // Check if files were uploaded
+    if (empty($_FILES['review_images']) || empty($_FILES['review_images']['name'][0])) {
+        return;
+    }
+
+    // Require WordPress file handling functions
+    require_once(ABSPATH . 'wp-admin/includes/file.php');
+    require_once(ABSPATH . 'wp-admin/includes/image.php');
+    require_once(ABSPATH . 'wp-admin/includes/media.php');
+
+    $uploaded_images = [];
+    $files = $_FILES['review_images'];
+    $max_files = 5;
+    $max_file_size = 5 * 1024 * 1024; // 5MB
+    $allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+
+    // Process each uploaded file
+    $file_count = count($files['name']);
+    if ($file_count > $max_files) {
+        $file_count = $max_files;
+    }
+
+    for ($i = 0; $i < $file_count; $i++) {
+        if (empty($files['name'][$i])) {
+            continue;
+        }
+
+        // Validate file size
+        if ($files['size'][$i] > $max_file_size) {
+            continue;
+        }
+
+        // Validate file type
+        if (!in_array($files['type'][$i], $allowed_types)) {
+            continue;
+        }
+
+        // Prepare file for upload
+        $file = [
+            'name'     => $files['name'][$i],
+            'type'     => $files['type'][$i],
+            'tmp_name' => $files['tmp_name'][$i],
+            'error'    => $files['error'][$i],
+            'size'     => $files['size'][$i]
+        ];
+
+        // Upload file
+        $upload_overrides = [
+            'test_form' => false,
+            'mimes'     => [
+                'jpg|jpeg|jpe' => 'image/jpeg',
+                'png'          => 'image/png',
+                'webp'         => 'image/webp',
+            ]
+        ];
+
+        $uploaded = \wp_handle_upload($file, $upload_overrides);
+
+        if (isset($uploaded['file']) && !isset($uploaded['error'])) {
+            // Create attachment
+            $attachment = [
+                'post_mime_type' => $uploaded['type'],
+                'post_title'     => \sanitize_file_name(\pathinfo($uploaded['file'], PATHINFO_FILENAME)),
+                'post_content'   => '',
+                'post_status'    => 'inherit'
+            ];
+
+            $attachment_id = \wp_insert_attachment($attachment, $uploaded['file'], $comment->comment_post_ID);
+
+            if (!\is_wp_error($attachment_id)) {
+                // Generate attachment metadata
+                $attachment_data = \wp_generate_attachment_metadata($attachment_id, $uploaded['file']);
+                \wp_update_attachment_metadata($attachment_id, $attachment_data);
+
+                $uploaded_images[] = $attachment_id;
+            }
+        }
+    }
+
+    // Save image IDs to comment meta
+    if (!empty($uploaded_images)) {
+        \update_comment_meta($comment_id, 'review_images', $uploaded_images);
+    }
+}, 10, 1);
+
+/**
+ * Prevent review images from being deleted when comment is moderated
+ */
+add_action('wp_set_comment_status', function($comment_id, $status) {
+    // Keep the images regardless of comment status
+}, 10, 2);
+
+/**
+ * Add meta box to comment edit screen for review images
+ */
+add_action('add_meta_boxes_comment', function() {
+    \add_meta_box(
+        'review_images_metabox',
+        'Review Images',
+        function($comment) {
+            $review_images = \get_comment_meta($comment->comment_ID, 'review_images', true);
+            $review_images = $review_images ? (is_array($review_images) ? $review_images : []) : [];
+
+            \wp_nonce_field('review_images_save', 'review_images_nonce');
+
+            echo '<div class="review-images-admin">';
+
+            if (!empty($review_images)) {
+                echo '<div class="existing-images" style="margin-bottom: 15px;">';
+                echo '<h4 style="margin-top: 0;">Existing Images</h4>';
+                echo '<div style="display: flex; flex-wrap: wrap; gap: 10px;">';
+
+                foreach ($review_images as $image_id) {
+                    $image_url = \wp_get_attachment_image_url($image_id, 'thumbnail');
+                    $full_url = \wp_get_attachment_image_url($image_id, 'full');
+
+                    if ($image_url) {
+                        echo '<div class="review-image-item" style="position: relative; border: 1px solid #ddd; padding: 5px; background: #f9f9f9;">';
+                        echo '<a href="' . \esc_url($full_url) . '" target="_blank">';
+                        echo '<img src="' . \esc_url($image_url) . '" style="display: block; max-width: 100px; height: auto;" />';
+                        echo '</a>';
+                        echo '<label style="display: block; margin-top: 5px; text-align: center;">';
+                        echo '<input type="checkbox" name="delete_review_images[]" value="' . \esc_attr($image_id) . '" /> Delete';
+                        echo '</label>';
+                        echo '</div>';
+                    }
+                }
+
+                echo '</div>';
+                echo '</div>';
+            } else {
+                echo '<p>No images uploaded for this review.</p>';
+            }
+
+            echo '<div class="upload-new-images">';
+            echo '<h4>Upload New Images</h4>';
+            echo '<input type="file" name="new_review_images[]" accept="image/jpeg,image/jpg,image/png,image/webp" multiple />';
+            echo '<p class="description">You can upload up to 5 images. Max file size: 5MB. Allowed formats: JPG, PNG, WebP</p>';
+            echo '</div>';
+
+            echo '</div>';
+        },
+        'comment',
+        'normal'
+    );
+});
+
+/**
+ * Save review images when comment is updated in admin
+ */
+add_action('edit_comment', function($comment_id) {
+    // Verify nonce
+    if (!isset($_POST['review_images_nonce']) || !\wp_verify_nonce($_POST['review_images_nonce'], 'review_images_save')) {
+        return;
+    }
+
+    // Get existing images
+    $review_images = \get_comment_meta($comment_id, 'review_images', true);
+    $review_images = $review_images ? (is_array($review_images) ? $review_images : []) : [];
+
+    // Handle image deletions
+    if (!empty($_POST['delete_review_images']) && is_array($_POST['delete_review_images'])) {
+        foreach ($_POST['delete_review_images'] as $image_id) {
+            $image_id = intval($image_id);
+
+            // Remove from array
+            $review_images = array_diff($review_images, [$image_id]);
+
+            // Delete the attachment
+            \wp_delete_attachment($image_id, true);
+        }
+    }
+
+    // Handle new image uploads
+    if (!empty($_FILES['new_review_images']) && !empty($_FILES['new_review_images']['name'][0])) {
+        // Require WordPress file handling functions
+        require_once(ABSPATH . 'wp-admin/includes/file.php');
+        require_once(ABSPATH . 'wp-admin/includes/image.php');
+        require_once(ABSPATH . 'wp-admin/includes/media.php');
+
+        $files = $_FILES['new_review_images'];
+        $max_files = 5;
+        $max_file_size = 5 * 1024 * 1024; // 5MB
+        $allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+
+        // Calculate how many more images we can add
+        $current_count = count($review_images);
+        $remaining_slots = $max_files - $current_count;
+
+        if ($remaining_slots > 0) {
+            $file_count = min(count($files['name']), $remaining_slots);
+
+            for ($i = 0; $i < $file_count; $i++) {
+                if (empty($files['name'][$i])) {
+                    continue;
+                }
+
+                // Validate file size
+                if ($files['size'][$i] > $max_file_size) {
+                    continue;
+                }
+
+                // Validate file type
+                if (!in_array($files['type'][$i], $allowed_types)) {
+                    continue;
+                }
+
+                // Prepare file for upload
+                $file = [
+                    'name'     => $files['name'][$i],
+                    'type'     => $files['type'][$i],
+                    'tmp_name' => $files['tmp_name'][$i],
+                    'error'    => $files['error'][$i],
+                    'size'     => $files['size'][$i]
+                ];
+
+                // Upload file
+                $upload_overrides = [
+                    'test_form' => false,
+                    'mimes'     => [
+                        'jpg|jpeg|jpe' => 'image/jpeg',
+                        'png'          => 'image/png',
+                        'webp'         => 'image/webp',
+                    ]
+                ];
+
+                $uploaded = \wp_handle_upload($file, $upload_overrides);
+
+                if (isset($uploaded['file']) && !isset($uploaded['error'])) {
+                    $comment = \get_comment($comment_id);
+
+                    // Create attachment
+                    $attachment = [
+                        'post_mime_type' => $uploaded['type'],
+                        'post_title'     => \sanitize_file_name(\pathinfo($uploaded['file'], PATHINFO_FILENAME)),
+                        'post_content'   => '',
+                        'post_status'    => 'inherit'
+                    ];
+
+                    $attachment_id = \wp_insert_attachment($attachment, $uploaded['file'], $comment->comment_post_ID);
+
+                    if (!\is_wp_error($attachment_id)) {
+                        // Generate attachment metadata
+                        $attachment_data = \wp_generate_attachment_metadata($attachment_id, $uploaded['file']);
+                        \wp_update_attachment_metadata($attachment_id, $attachment_data);
+
+                        $review_images[] = $attachment_id;
+                    }
+                }
+            }
+        }
+    }
+
+    // Update comment meta with new image array
+    \update_comment_meta($comment_id, 'review_images', array_values($review_images));
+});

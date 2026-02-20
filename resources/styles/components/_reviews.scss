@@ -1,0 +1,397 @@
+// Global Star Rating Styles (product loops, single product, reviews)
+.star-rating {
+  @apply relative inline-block overflow-hidden;
+  width: 90px;
+  height: 22px;
+  line-height: 22px;
+
+  &::before {
+    @apply content-['★★★★★'] text-18 text-black/20 absolute top-0 left-0;
+  }
+
+  span {
+    @apply overflow-hidden absolute top-0 left-0 h-full;
+    line-height: 18px;
+    font-size: 0 !important; // Hide the text
+
+    &::before {
+      @apply content-['★★★★★'] text-18 text-main top-0 left-0 absolute;
+    }
+
+    strong {
+      @apply hidden; // Hide rating number
+    }
+  }
+}
+
+// Product Rating Summary (displayed in product summary)
+.woocommerce-product-rating {
+  @apply flex flex-wrap items-center gap-2 mb-4;
+
+  .woocommerce-review-link {
+    @apply text-14 text-black/60 hover:text-main hover:underline transition-all duration-200;
+  }
+}
+
+// Product Loop Star Rating (shop/archive pages)
+.woocommerce-card__header .star-rating,
+.product-loop--container .star-rating {
+  width: 90px;
+  height: 22px;
+  line-height: 22px;
+  margin-bottom: 8px;
+}
+
+// Product Reviews Section Styles
+#reviews.woocommerce-Reviews {
+  @apply mt-10 mb-10 w-full;
+}
+
+#reviews #comments {
+  @apply mb-8;
+}
+
+#reviews .woocommerce-Reviews-title {
+  @apply font-black text-28 md:text-40 mb-6 pb-0 uppercase text-black;
+}
+
+#reviews .woocommerce-noreviews {
+  @apply text-15 text-black/60 bg-gray rounded-md px-6 py-4;
+}
+
+// Reviews List
+#reviews .commentlist {
+  @apply list-none p-0 m-0 flex flex-col gap-4;
+}
+
+#reviews .commentlist .comment {
+  @apply bg-gray rounded-xl p-6 md:p-8 relative;
+}
+
+#reviews .commentlist .comment_container {
+  @apply flex flex-col md:flex-row gap-4;
+}
+
+// Avatar
+#reviews .commentlist .comment .avatar {
+  @apply w-[60px] h-[60px] rounded-full flex-shrink-0;
+}
+
+// Comment Content
+#reviews .commentlist .comment-text {
+  @apply flex-1;
+}
+
+#reviews .commentlist .meta {
+  @apply mb-3 flex flex-col md:flex-row md:items-center gap-2 md:gap-4;
+}
+
+#reviews .commentlist .woocommerce-review__author {
+  @apply text-18 font-bold text-second m-0;
+}
+
+#reviews .commentlist .woocommerce-review__dash {
+  @apply hidden md:inline text-black/40;
+}
+
+#reviews .commentlist .woocommerce-review__published-date {
+  @apply text-14 text-black/60;
+}
+
+#reviews .commentlist .woocommerce-review__verified {
+  @apply text-13 text-green font-medium;
+}
+
+// Star Rating
+#reviews .star-rating {
+  @apply relative inline-block w-[90px] h-[22px] leading-[22px] mb-2 overflow-hidden;
+
+  &::before {
+    @apply content-['★★★★★'] text-18 text-black/20 absolute top-0 left-0 float-left;
+  }
+
+  span {
+    @apply overflow-hidden absolute top-0 left-0 h-full leading-[22px];
+    font-size: 0 !important; // Hide the text inside span
+
+    &::before {
+      @apply content-['★★★★★'] text-18 text-main top-0 left-0 absolute;
+    }
+  }
+}
+
+#reviews .commentlist .description {
+  @apply text-15 text-black leading-6;
+  p {
+    @apply text-15 text-black leading-6 m-0;
+  }
+}
+
+// Pagination
+#reviews .woocommerce-pagination {
+  @apply mt-6 text-center;
+
+  ul {
+    @apply inline-flex items-center gap-2 list-none p-0 m-0;
+
+    li {
+      @apply p-0 m-0;
+
+      a, span {
+        @apply inline-flex items-center justify-center w-[40px] h-[40px] border border-black/20 rounded-md text-15 font-medium transition-all duration-200;
+      }
+
+      a {
+        @apply bg-white text-black hover:bg-main hover:text-white hover:border-main;
+      }
+
+      span.current {
+        @apply bg-main text-white border-main;
+      }
+    }
+  }
+}
+
+// Review Form
+#reviews #review_form_wrapper {
+  @apply mt-8 bg-gray rounded-xl px-6 md:px-[60px] py-8 md:py-10;
+}
+
+#reviews #review_form {
+  @apply w-full;
+}
+
+#reviews #reply-title {
+  @apply text-24 md:text-32 font-bold mb-6 text-black;
+}
+
+#reviews .comment-reply-title {
+  @apply text-24 md:text-32 font-bold mb-6 text-black;
+}
+
+// Rating Select
+#reviews .comment-form-rating {
+  @apply mb-4 relative flex flex-col;
+
+  label {
+    @apply font-semibold text-14 text-black/90 mb-2 block;
+  }
+
+  select {
+    @apply w-full md:w-auto py-0 px-2 h-10 leading-10 text-base rounded border border-black/20 bg-white;
+  }
+}
+
+// Star Rating Input
+#reviews .stars-rating-input {
+  @apply flex flex-col gap-2;
+
+  // Hide WooCommerce injected rating elements
+  > p.stars,
+  > select {
+    @apply hidden;
+  }
+}
+
+#reviews .stars-wrapper {
+  @apply flex items-center gap-1;
+}
+
+#reviews .stars-wrapper .star {
+  @apply text-32 md:text-40 cursor-pointer text-black/20 transition-all duration-200 select-none;
+
+  &:hover,
+  &.hover {
+    @apply text-main;
+  }
+
+  &.selected {
+    @apply text-main;
+  }
+}
+
+#reviews .rating-text {
+  @apply text-13 text-black/60 min-h-[20px];
+}
+
+// Form Fields
+#reviews .comment-form-author,
+#reviews .comment-form-email {
+  @apply mb-4 relative flex flex-col w-full md:w-[48%] md:inline-flex md:float-left;
+
+  &.comment-form-email {
+    @apply md:float-right;
+  }
+
+  label {
+    @apply font-semibold text-14 text-black/90 mb-1 block;
+  }
+
+  input {
+    @apply w-full py-0 px-2 h-10 leading-10 text-base rounded border border-black/20;
+  }
+}
+
+#reviews .comment-form-comment {
+  @apply mb-4 relative flex flex-col clear-both;
+
+  label {
+    @apply font-semibold text-14 text-black/90 mb-1 block;
+  }
+
+  textarea {
+    @apply w-full py-2 px-2 leading-relaxed md:leading-6 text-base rounded border border-black/20 min-h-[120px];
+  }
+}
+
+// Submit Button
+#reviews .form-submit {
+  @apply clear-both;
+
+  input[type="submit"],
+  #submit {
+    @apply inline-flex items-center content-center justify-center rounded-md px-8 py-3 text-base font-bold border gap-2 transition-all duration-300 hover:transition-all hover:duration-300;
+    @apply bg-main border-main text-white hover:bg-button-hover hover:border-button-hover hover:shadow-md hover:shadow-main/20;
+    @apply cursor-pointer;
+  }
+}
+
+// Required field indicator
+#reviews .required {
+  @apply text-main no-underline border-b-0;
+}
+
+// Login message
+#reviews .must-log-in {
+  @apply text-15 text-black/80 bg-white/50 rounded-md px-4 py-3;
+
+  a {
+    @apply text-main font-semibold hover:underline;
+  }
+}
+
+// Verification message
+#reviews .woocommerce-verification-required {
+  @apply text-15 text-black/80 bg-white/50 rounded-md px-4 py-3;
+}
+
+// Review Images Upload
+#reviews .comment-form-images {
+  @apply mb-4 relative flex flex-col clear-both;
+
+  label {
+    @apply font-semibold text-14 text-black/90 mb-1 block;
+  }
+
+  input[type="file"] {
+    @apply w-full py-2 px-3 text-base rounded border border-black/20 bg-white cursor-pointer;
+
+    &::-webkit-file-upload-button {
+      @apply py-2 px-4 bg-main text-white rounded border-0 cursor-pointer mr-4 transition-all duration-200;
+      @apply hover:bg-button-hover;
+    }
+
+    &::file-selector-button {
+      @apply py-2 px-4 bg-main text-white rounded border-0 cursor-pointer mr-4 transition-all duration-200;
+      @apply hover:bg-button-hover;
+    }
+  }
+
+  .description {
+    @apply text-12 text-black/60 mt-1;
+  }
+}
+
+// Image Preview
+#reviews .image-preview {
+  @apply flex flex-wrap gap-3 mt-4;
+}
+
+#reviews .preview-item {
+  @apply relative w-[100px] h-[100px] rounded-lg overflow-hidden border-2 border-black/10;
+
+  img {
+    @apply w-full h-full object-cover;
+  }
+
+  .remove-image {
+    @apply absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center cursor-pointer border-0 transition-all duration-200;
+    @apply hover:bg-red-600 hover:scale-110;
+
+    svg {
+      @apply w-4 h-4;
+    }
+  }
+}
+
+// Review Images Gallery (displayed with reviews)
+#reviews .review-images {
+  @apply flex flex-wrap gap-2 mt-4;
+}
+
+#reviews .review-image-link {
+  @apply block w-[80px] h-[80px] md:w-[100px] md:h-[100px] rounded-lg overflow-hidden border-2 border-black/10 transition-all duration-200;
+  @apply hover:border-main hover:scale-105 hover:shadow-lg;
+
+  img {
+    @apply w-full h-full object-cover;
+  }
+}
+
+// Lightbox
+.review-lightbox {
+  @apply fixed inset-0 z-[9999] flex items-center justify-center p-4;
+
+  .lightbox-overlay {
+    @apply absolute inset-0 bg-black/80 cursor-pointer;
+  }
+
+  .lightbox-content {
+    @apply relative z-10 max-w-[90vw] max-h-[90vh];
+
+    img {
+      @apply max-w-full max-h-[90vh] w-auto h-auto rounded-lg shadow-2xl;
+    }
+  }
+
+  .lightbox-close {
+    @apply absolute top-4 right-4 w-10 h-10 bg-white/90 text-black rounded-full flex items-center justify-center cursor-pointer border-0 transition-all duration-200;
+    @apply hover:bg-white hover:scale-110;
+
+    svg {
+      @apply w-6 h-6;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  #reviews .commentlist .comment {
+    @apply p-4;
+  }
+
+  #reviews #review_form_wrapper {
+    @apply px-4 py-6;
+  }
+
+  #reviews .comment-form-author,
+  #reviews .comment-form-email {
+    @apply w-full float-none;
+  }
+
+  #reviews .review-image-link {
+    @apply w-[70px] h-[70px];
+  }
+
+  .review-lightbox .lightbox-content img {
+    @apply max-h-[80vh];
+  }
+
+  .review-lightbox .lightbox-close {
+    @apply top-2 right-2 w-8 h-8;
+
+    svg {
+      @apply w-5 h-5;
+    }
+  }
+}

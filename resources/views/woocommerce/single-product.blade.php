@@ -32,9 +32,9 @@
             // Move this inside the loop to ensure we have the correct post ID
             $product = wc_get_product(get_the_ID());
             
-            $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra']; // Add other models here as needed
+            $models = ['atlas', 'sigma', 'gamma', 'piramida', 'terra', 'romb_mini', 'romb_pro', 'romb_grande', 'romb_max'];
             foreach ($models as $model) {
-                if (has_term($model, 'product_tag', get_the_ID())) {
+                if (has_term([$model, str_replace('_', '-', $model)], 'product_tag', get_the_ID())) {
                     ${"{$model}_pricing"} = [
                        'base_price' => $product->get_regular_price() ?: 0,
                         'sale_price' => (has_term($model, 'product_tag') && $product->is_on_sale()) ? $product->get_sale_price() : 0,
@@ -77,7 +77,7 @@
         @endphp
 
         @foreach ($models as $model)
-            @if (has_term($model, 'product_tag', get_the_ID()))
+            @if (has_term([$model, str_replace('_', '-', $model)], 'product_tag', get_the_ID()))
                 <script>
                     var {{ $model }}_pricing = @json(${"{$model}_pricing"});
                     //console.log('Initial {{ ucfirst($model) }} Pricing:', {{ $model }}_pricing);
