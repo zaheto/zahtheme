@@ -2890,6 +2890,7 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
                     }
 
                     $dowelsPcs = 10 * $panels + $cornerPcs;
+                    $selfTappingScrewPcs = $panels * 10;
 
                     // Rivets per model
                     if ($tag_slug === 'romb_mini') {
@@ -2908,6 +2909,7 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
                                    $horizontalUProfileLm * $prices['u_horizontal_panel'] +
                                    $reinforcingLm * $prices['reinforcing_profile'] +
                                    $rivetsPcs * $prices['rivets'] +
+                                   $selfTappingScrewPcs * $prices['self_tapping_screw'] +
                                    $dowelsPcs * $prices['dowels'] +
                                    $cornerPcs * $prices['corners'];
 
@@ -2917,6 +2919,7 @@ add_action('woocommerce_after_shop_loop_item_title', function() {
                                         $horizontalUProfileLm * $prices['u_horizontal_panel'] +
                                         $reinforcingLm * $prices['reinforcing_profile'] +
                                         $rivetsPcs * $prices['rivets'] +
+                                        $selfTappingScrewPcs * $prices['self_tapping_screw'] +
                                         $dowelsPcs * $prices['dowels'] +
                                         $cornerPcs * $prices['corners'];
 

@@ -86,6 +86,8 @@ jQuery(document).ready(function ($) {
             const rivetsPcs = panelWidth < 1.7
                 ? 12 * blindsProfilePcs + 4 * numberOfPanels
                 : 14 * blindsProfilePcs + 4 * numberOfPanels;
+            // Rivets are sold in boxes of 100 — round up to next 100 for display
+            const rivetsDisplayPcs = rivetsPcs > 0 ? Math.ceil(rivetsPcs / 100) * 100 : 0;
 
             const selfTappingScrewPcs = numberOfPanels * 10;
 
@@ -172,7 +174,7 @@ jQuery(document).ready(function ($) {
                     <li>Профил U отдясно: <span>${uProfileRightPcs} бр. / ${uProfileRightLm.toFixed(3)} лм</span></li>
                     <li>Хоризонтален профил U: <span>${uHorizPcs} бр. / ${uHorizLm.toFixed(2)} лм</span></li>
                     <li>Укрепващ профил: <span>${reinforcingPcs} бр. / ${reinforcingLm.toFixed(3)} лм</span></li>
-                    <li>Заклепки: <span>${rivetsPcs} бр.</span></li>
+                    <li>Заклепки: <span>${rivetsDisplayPcs} бр.</span></li>
                     <li>Самонарезни винтове: <span>${selfTappingScrewPcs} бр.</span></li>
                     <li>Ъгъл: <span>${cornerPcs} бр.</span></li>
                     <li>Тапи: <span>${dowelsPcs} бр.</span></li>

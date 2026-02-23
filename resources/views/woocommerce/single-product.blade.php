@@ -36,8 +36,8 @@
             foreach ($models as $model) {
                 if (has_term([$model, str_replace('_', '-', $model)], 'product_tag', get_the_ID())) {
                     ${"{$model}_pricing"} = [
-                       'base_price' => $product->get_regular_price() ?: 0,
-                        'sale_price' => (has_term($model, 'product_tag') && $product->is_on_sale()) ? $product->get_sale_price() : 0,
+                       'base_price' => (float)($product->get_regular_price() ?: 0),
+                        'sale_price' => $product->is_on_sale() ? (float)$product->get_sale_price() : 0,
                         'price_u_profile_left' => get_field('price_u_profile_left', get_the_ID()) ?: 0,
                         'price_u_profile_right' => get_field('price_u_profile_right', get_the_ID()) ?: 0,
                         'price_u_horizontal_panel' => get_field('price_u_horizontal_panel', get_the_ID()) ?: 0,
